@@ -1,16 +1,16 @@
 import { motion } from 'framer-motion'
 import { useStore } from '../store/useStore'
-import type { Word } from '../types/word'
+import type { Word } from '../types'
 
 export default function Stats() {
-  const { userProgress } = useStore()
+  const { userProgress, words } = useStore()
 
   const totalScore = userProgress.completedBlocks.reduce((sum, block) => sum + block.score, 0)
   const totalWords = userProgress.completedBlocks.reduce((acc, block) => {
-    return acc + block.words.length
+    return acc + (block.words?.length || 0)
   }, 0)
   const completedWords = userProgress.completedBlocks.reduce((acc, block) => {
-    return acc + block.words.length
+    return acc + (block.words?.length || 0)
   }, 0)
 
   const progress = Math.round((completedWords / totalWords) * 100)
@@ -62,15 +62,19 @@ export default function Stats() {
           <div className="bg-white rounded-lg shadow p-6 mt-8">
             <h2 className="text-2xl font-bold mb-4">Слова з помилками</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {userProgress.mistakes.map((word: Word, index: number) => (
-                <div
-                  key={`mistake-${word.id}-${index}`}
-                  className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <p className="font-semibold">{word.spanish}</p>
-                  <p className="text-gray-600">{word.ukrainian}</p>
-                </div>
-              ))}
+              {Object.entries(userProgress.mistakes).map(([wordId, count]) => {
+                const word = words.find(w => w.id === parseInt(wordId))
+                if (!word) return null
+                return (
+                  <div
+                    key={`mistake-${word.id}`}
+                    className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <p className="font-semibold">{word.spanish}</p>
+                    <p className="text-gray-600">{word.ukrainian}</p>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}

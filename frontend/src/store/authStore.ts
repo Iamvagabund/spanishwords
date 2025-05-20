@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { User } from '../types'
+import type { User } from '../types'
 import { login as loginApi } from '../services/authApi'
 import { useStore } from './useStore'
 
@@ -53,7 +53,7 @@ export const useAuthStore = create<AuthState>()(
           console.log('Token length:', token.length)
 
           set({ 
-            user, 
+            user: { ...user, role: 'user' }, 
             token, 
             isAuthenticated: true,
             isLoading: false,
@@ -92,7 +92,7 @@ export const useAuthStore = create<AuthState>()(
 
           const data = await response.json()
           set({
-            user: data.user,
+            user: { ...data.user, role: 'user' },
             token: data.token,
             isAuthenticated: true,
             isLoading: false,
@@ -146,7 +146,7 @@ export const useAuthStore = create<AuthState>()(
 
           const user = await response.json()
           set({
-            user,
+            user: { ...user, role: 'user' },
             token,
             isAuthenticated: true,
             error: null,
@@ -184,7 +184,7 @@ export const useAuthStore = create<AuthState>()(
           }
 
           const updatedUser = await response.json()
-          set({ user: updatedUser })
+          set({ user: { ...updatedUser, role: 'user' } })
         } catch (error) {
           console.error('Error updating profile:', error)
           throw error
