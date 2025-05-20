@@ -19,22 +19,9 @@ interface AuthResponse {
 }
 
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
-  console.log('Sending login request to:', `${API_URL}/auth/login`)
-  
   try {
     const response = await api.post('/auth/login', { email, password })
-
-    console.log('Login response status:', response.status)
-
-    const data = response.data
-
-    if (!response.ok) {
-      console.log('Login error response:', data)
-      throw new Error(data.message || 'Помилка входу')
-    }
-
-    console.log('Login success response:', data)
-    return data
+    return response.data
   } catch (error) {
     console.error('Login error:', error)
     throw error
@@ -44,14 +31,7 @@ export const login = async (email: string, password: string): Promise<AuthRespon
 export const register = async (email: string, password: string): Promise<AuthResponse> => {
   try {
     const response = await api.post('/auth/register', { email, password })
-
-    const data = response.data
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Помилка реєстрації')
-    }
-
-    return data
+    return response.data
   } catch (error) {
     console.error('Registration error:', error)
     throw error

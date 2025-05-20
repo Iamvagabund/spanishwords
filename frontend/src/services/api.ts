@@ -110,10 +110,8 @@ export async function submitControlTest(level: string, answers: Answer[]): Promi
     // Update progress
     const store = useStore.getState()
     if (score >= 7) { // Якщо оцінка 7 або вище, можна перейти на наступний рівень
-      const nextLevel = getNextLevel(level as 'A1' | 'A2' | 'B1' | 'B2' | 'C1')
-      if (nextLevel) {
-        store.setLevel(nextLevel)
-      }
+      const nextLevel = getNextLevel(level)
+      store.setLevel(parseInt(nextLevel))
     }
     mistakes.forEach(word => store.addMistake(word))
 
@@ -137,7 +135,7 @@ export async function fetchStats(): Promise<ApiResponse<any>> {
 }
 
 export const getNextLevel = (currentLevel: string): string => {
-  const levels = ['A1', 'A2', 'B1', 'B2', 'C1']
+  const levels = ['1', '2', '3', '4']
   const currentIndex = levels.indexOf(currentLevel)
   return currentIndex < levels.length - 1 ? levels[currentIndex + 1] : currentLevel
 }
