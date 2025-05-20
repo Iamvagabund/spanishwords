@@ -1,6 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useAuthStore } from '../store/authStore'
+import { Profile } from './Profile'
 
 export function Navbar() {
+  const { user } = useAuthStore()
   const location = useLocation()
 
   const isActive = (path: string) => {
@@ -16,7 +19,7 @@ export function Navbar() {
             <div className="text-sm text-gray-500">Palabras en español</div>
           </Link>
           
-          <div className="flex space-x-4">
+          <div className="flex items-center space-x-4">
             <Link 
               to="/" 
               className={`px-3 py-2 rounded-md text-sm font-medium ${
@@ -50,17 +53,17 @@ export function Navbar() {
               <div>Статистика</div>
               <div className="text-xs">Estadísticas</div>
             </Link>
+
+            {user ? (
+              <Profile />
+            ) : (
             <Link 
-              to="/settings" 
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
-                isActive('/settings') 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <div>Налаштування</div>
-              <div className="text-xs">Configuración</div>
+                to="/auth"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Увійти
             </Link>
+            )}
           </div>
         </div>
       </div>

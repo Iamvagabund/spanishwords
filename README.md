@@ -1,54 +1,80 @@
-# React + TypeScript + Vite
+# Spanish Words Learning App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full-stack application for learning Spanish words with spaced repetition system.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+spanishwords/
+├── frontend/     # React + TypeScript + Vite frontend
+└── backend/      # Node.js + Express + MongoDB backend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Frontend
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Frontend is built with:
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- ESLint
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+### Setup
+```bash
+cd frontend
+npm install
+npm run dev
 ```
+
+## Backend
+
+Backend is built with:
+- Node.js + Express
+- TypeScript
+- MongoDB
+- JWT Authentication
+
+### Setup
+```bash
+cd backend
+npm install
+# Create .env file with required variables
+npm run dev
+```
+
+### Environment Variables
+Create `.env` file in backend directory with:
+```
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/spanishwords
+JWT_SECRET=your-super-secret-key-change-in-production
+JWT_EXPIRES_IN=7d
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=admin123
+```
+
+## Development
+
+1. Start MongoDB (using Docker):
+```bash
+docker run -d --name mongo -p 27017:27017 -v mongo_data:/data/db mongo
+```
+
+2. Start backend:
+```bash
+cd backend
+npm run dev
+```
+
+3. Start frontend:
+```bash
+cd frontend
+npm run dev
+```
+
+## Features
+
+- User authentication
+- Word learning with spaced repetition
+- Progress tracking
+- Admin panel for word management
+- Responsive design

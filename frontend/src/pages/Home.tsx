@@ -10,7 +10,7 @@ export function Home() {
   const [error, setError] = useState<string | null>(null)
   const { userProgress } = useStore()
 
-  const totalScore = userProgress.completedBlocks.reduce((sum, block) => sum + block.score, 0)
+  const totalScore = userProgress?.completedBlocks?.reduce((sum, block) => sum + (block.score || 0), 0) || 0
 
   useEffect(() => {
     async function loadBlocks() {
@@ -46,11 +46,11 @@ export function Home() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <p className="text-sm text-gray-500">Завершено блоків</p>
-            <p className="text-2xl font-bold">{userProgress.completedBlocks.length}</p>
+            <p className="text-2xl font-bold">{userProgress?.completedBlocks?.length || 0}</p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Середній бал</p>
-            <p className="text-2xl font-bold">{userProgress.averageScore}</p>
+            <p className="text-2xl font-bold">{userProgress?.averageScore || 0}</p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Сума балів</p>
@@ -58,7 +58,7 @@ export function Home() {
           </div>
           <div>
             <p className="text-sm text-gray-500">Поточний рівень</p>
-            <p className="text-2xl font-bold">{userProgress.currentLevel}</p>
+            <p className="text-2xl font-bold">{userProgress?.currentLevel || 1}</p>
           </div>
         </div>
       </div>

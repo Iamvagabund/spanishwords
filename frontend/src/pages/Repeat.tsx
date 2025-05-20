@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore'
 import { motion } from 'framer-motion'
 import type { Word } from '../types'
 import { soundManager } from '../utils/sound'
+import { useNavigate } from 'react-router-dom'
 
 export default function Repeat() {
   const mistakes = useStore((state) => state.userProgress.mistakes)
@@ -12,16 +13,26 @@ export default function Repeat() {
   const [userAnswer, setUserAnswer] = useState('')
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [showTranslation, setShowTranslation] = useState(false)
+  const navigate = useNavigate()
 
-  if (!mistakes || mistakes.length === 0) {
+  // Отримуємо слова з помилками
+  const mistakeWords = Object.keys(mistakes).map(wordId => {
+    const word = useStore.getState().words.find(w => w.id === Number(wordId))
+    return word
+  }).filter(Boolean)
+
+  // Якщо немає помилок, показуємо повідомлення
+  if (mistakeWords.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Немає слів для повторення</h2>
-          <p className="text-gray-600">
-            Ви ще не зробили помилок або всі слова вже вивчені правильно
-          </p>
-        </div>
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Немає слів для повторення</h2>
+        <p className="text-gray-600 mb-8">Ви не зробили жодної помилки</p>
+        <button
+          onClick={() => navigate('/')}
+          className="px-6 py-3 bg-blue-500 text-white rounded-lg text-lg font-semibold shadow hover:bg-blue-600 transition-colors"
+        >
+          Повернутися на головну
+        </button>
       </div>
     )
   }
@@ -47,7 +58,7 @@ export default function Repeat() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {mistakes.map((word) => (
+          {mistakeWords.map((word) => (
             <motion.div
               key={word.id}
               initial={{ opacity: 0, y: 20 }}
@@ -72,7 +83,7 @@ export default function Repeat() {
     )
   }
 
-  const currentWord = mistakes[currentWordIndex]
+  const currentWord = mistakeWords[currentWordIndex]
 
   if (!currentWord) {
     setIsPracticing(false)
@@ -96,7 +107,7 @@ export default function Repeat() {
   }
 
   const handleNext = () => {
-    if (currentWordIndex < mistakes.length - 1) {
+    if (currentWordIndex < mistakeWords.length - 1) {
       setCurrentWordIndex(currentWordIndex + 1)
       setUserAnswer('')
       setIsCorrect(null)
@@ -160,13 +171,13 @@ export default function Repeat() {
                 onClick={handleNext}
                 className="mt-4 w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors text-lg font-medium shadow-sm hover:shadow-md"
               >
-                {currentWordIndex < mistakes.length - 1 ? 'Наступне слово' : 'Завершити'}
+                {currentWordIndex < mistakeWords.length - 1 ? 'Наступне слово' : 'Завершити'}
               </button>
             </div>
           )}
 
           <div className="mt-8 text-center text-gray-500">
-            Слово {currentWordIndex + 1} з {mistakes.length}
+            Слово {currentWordIndex + 1} з {mistakeWords.length}
           </div>
         </motion.div>
       </div>

@@ -17,4 +17,10 @@ export interface RepetitionProgress {
   interval: number // в днях
   easeFactor: number // множник для інтервалу
   repetitions: number // кількість успішних повторень
+}
+
+export interface User {
+  id: string
+  email: string
+  role: 'user' | 'admin'
 } 
