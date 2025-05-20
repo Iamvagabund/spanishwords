@@ -1,35 +1,40 @@
 import { useStore } from '../store/useStore'
-import { toast } from 'react-hot-toast'
+import { Container } from '../components/Container'
 
 export function Settings() {
-  const { resetStats } = useStore()
-
-  const handleResetStats = () => {
-    if (window.confirm('Ви впевнені, що хочете скинути всю статистику? Цю дію неможливо скасувати.')) {
-      resetStats()
-      toast.success('Статистику скинуто')
-    }
-  }
+  const { resetProgress } = useStore()
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Налаштування</h1>
+    <Container>
+      <h1 className="text-3xl font-bold mb-6">
+        <div>Налаштування</div>
+        <div className="text-sm text-gray-500">Configuración</div>
+      </h1>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">Скидання статистики</h2>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="font-medium">Скинути статистику</div>
-            <div className="text-sm text-gray-500">Видалити історію завершених блоків та середній бал</div>
-          </div>
+      <div className="bg-white dark:bg-dark-card rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4">
+          <div>Скидання статистики</div>
+          <div className="text-sm text-gray-500">Restablecer estadísticas</div>
+        </h2>
+
+        <div className="mb-6">
+          <h3 className="font-medium mb-2">
+            <div>Скинути статистику</div>
+            <div className="text-sm text-gray-500">Restablecer estadísticas</div>
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            <div>Видалити історію завершених блоків та середній бал</div>
+            <div className="text-sm text-gray-500">Eliminar el historial de bloques completados y la nota media</div>
+          </p>
           <button
-            onClick={handleResetStats}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            onClick={resetProgress}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
-            Скинути
+            <div>Скинути</div>
+            <div className="text-sm">Restablecer</div>
           </button>
         </div>
       </div>
-    </div>
+    </Container>
   )
 } 

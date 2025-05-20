@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    overflow-y: scroll;
+  }
+  
   body {
-    @apply w-full min-h-screen bg-gray-50 text-gray-900 flex justify-center;
+    @apply w-full min-h-screen bg-gray-50 text-gray-900;
   }
 }
 
@@ -34,10 +38,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {

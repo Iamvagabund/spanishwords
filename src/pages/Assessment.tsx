@@ -289,7 +289,7 @@ export function Assessment() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div>
       <div className="bg-white p-6 rounded-lg shadow-sm">
         <div className="mb-4">
           <div className="text-gray-600 mb-2">Українська:</div>

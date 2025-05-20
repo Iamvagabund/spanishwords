@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useTheme } from '../context/ThemeContext'
 import { soundManager } from '../utils/sound'
+import { Container } from './Container'
 
 const navigation = [
   { path: '/', label: 'Головна' },
@@ -33,7 +34,7 @@ export default function Navigation() {
 
   return (
     <nav className="bg-white dark:bg-dark-card shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4">
+      <Container>
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
@@ -133,7 +134,7 @@ export default function Navigation() {
             </button>
           </div>
         </div>
-      </div>
+      </Container>
 
       {/* Mobile Navigation */}
       <motion.div
