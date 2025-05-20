@@ -15,6 +15,7 @@ interface AuthState {
   logout: () => void
   checkAuth: () => Promise<void>
   updateProfile: (data: Partial<User>) => Promise<void>
+  setUser: (user: User | null) => void
 }
 
 const API_URL = 'http://localhost:5000/api'
@@ -34,6 +35,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      setUser: (user) => set({ user }),
 
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null })

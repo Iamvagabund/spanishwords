@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useStore } from '../store/useStore'
+import type { Word } from '../types/word'
 
 export default function Stats() {
   const { userProgress } = useStore()
@@ -61,7 +62,7 @@ export default function Stats() {
           <div className="bg-white rounded-lg shadow p-6 mt-8">
             <h2 className="text-2xl font-bold mb-4">Слова з помилками</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {userProgress.mistakes.map((word, index) => (
+              {userProgress.mistakes.map((word: Word, index: number) => (
                 <div
                   key={`mistake-${word.id}-${index}`}
                   className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"

@@ -9,6 +9,7 @@ export interface CompletedBlock {
   id: number
   score: number
   completedAt: string
+  words: number[] // Додаємо масив ID слів
 }
 
 export interface RepetitionProgress {
