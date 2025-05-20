@@ -5,6 +5,14 @@ export default function Stats() {
   const { userProgress } = useStore()
 
   const totalScore = userProgress.completedBlocks.reduce((sum, block) => sum + block.score, 0)
+  const totalWords = userProgress.completedBlocks.reduce((acc, block) => {
+    return acc + block.words.length
+  }, 0)
+  const completedWords = userProgress.completedBlocks.reduce((acc, block) => {
+    return acc + block.words.length
+  }, 0)
+
+  const progress = Math.round((completedWords / totalWords) * 100)
 
   return (
     <div className="container mx-auto px-4 py-8">

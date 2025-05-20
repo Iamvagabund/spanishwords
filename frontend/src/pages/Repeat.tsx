@@ -92,7 +92,8 @@ export default function Repeat() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!userAnswer.trim()) return
+    
+    if (!currentWord) return
 
     const isAnswerCorrect = userAnswer.toLowerCase() === currentWord.spanish.toLowerCase()
     setIsCorrect(isAnswerCorrect)

@@ -1,5 +1,5 @@
 import { blocks } from '../data/blocks'
-import type { Word } from '../types'
+import type { Word } from '../types/word'
 import { useStore } from '../store/useStore'
 import type { Block } from '../data/blocks'
 import { words } from '../data/words'
@@ -14,23 +14,29 @@ interface ApiResponse<T> {
   error?: string
 }
 
-export async function fetchBlocks(): Promise<ApiResponse<typeof blocks>> {
+export async function fetchBlocks(): Promise<ApiResponse<Block[]>> {
   try {
-    return { data: blocks }
+    const response = await fetch('/api/blocks')
+    if (!response.ok) {
+      throw new Error('Failed to fetch blocks')
+    }
+    const data = await response.json()
+    return { data }
   } catch (error) {
-    return { error: 'Failed to fetch blocks' }
+    return { error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
-export async function fetchBlock(blockId: number): Promise<ApiResponse<typeof blocks[0]>> {
+export async function fetchBlock(id: number): Promise<ApiResponse<Block>> {
   try {
-    const block = blocks.find(b => b.id === blockId)
-    if (!block) {
-      return { error: 'Block not found' }
+    const response = await fetch(`/api/blocks/${id}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch block')
     }
-    return { data: block }
+    const data = await response.json()
+    return { data }
   } catch (error) {
-    return { error: 'Failed to fetch block' }
+    return { error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
@@ -117,29 +123,16 @@ export async function submitControlTest(level: string, answers: Answer[]): Promi
   }
 }
 
-export async function fetchStats(): Promise<ApiResponse<{
-  completedBlocks: number
-  currentLevel: string
-  averageScore: number
-  mistakes: Word[]
-}>> {
+export async function fetchStats(): Promise<ApiResponse<any>> {
   try {
-    const store = useStore.getState()
-    const completedBlocks = store.userProgress.completedBlocks.length
-    const currentLevel = store.userProgress.currentLevel
-    const averageScore = store.userProgress.averageScore
-    const mistakes = store.userProgress.mistakes
-
-    return {
-      data: {
-        completedBlocks,
-        currentLevel,
-        averageScore,
-        mistakes
-      }
+    const response = await fetch('/api/stats')
+    if (!response.ok) {
+      throw new Error('Failed to fetch stats')
     }
+    const data = await response.json()
+    return { data }
   } catch (error) {
-    return { error: 'Failed to fetch stats' }
+    return { error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
@@ -147,4 +140,74 @@ export function getNextLevel(currentLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1'): 'A
   const levels: ('A1' | 'A2' | 'B1' | 'B2' | 'C1')[] = ['A1', 'A2', 'B1', 'B2', 'C1']
   const currentIndex = levels.indexOf(currentLevel)
   return levels[Math.min(currentIndex + 1, levels.length - 1)]
+}
+
+export async function fetchWords(): Promise<ApiResponse<Word[]>> {
+  try {
+    const response = await fetch('/api/words')
+    if (!response.ok) {
+      throw new Error('Failed to fetch words')
+    }
+    const data = await response.json()
+    return { data }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+export async function login(email: string, password: string): Promise<ApiResponse<any>> {
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to login')
+    }
+    const data = await response.json()
+    return { data }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+export async function register(email: string, password: string): Promise<ApiResponse<any>> {
+  try {
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to register')
+    }
+    const data = await response.json()
+    return { data }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+export async function completeBlock(blockId: number, score: number): Promise<ApiResponse<any>> {
+  try {
+    const response = await fetch('/api/blocks/complete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ blockId, score }),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to complete block')
+    }
+    const data = await response.json()
+    return { data }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Unknown error' }
+  }
 } 
