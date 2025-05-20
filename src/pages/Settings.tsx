@@ -22,10 +22,10 @@ export function Settings() {
             <div>Скинути статистику</div>
             <div className="text-sm text-gray-500">Restablecer estadísticas</div>
           </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
+          <div className="text-gray-600 dark:text-gray-300 mb-4">
             <div>Видалити історію завершених блоків та середній бал</div>
             <div className="text-sm text-gray-500">Eliminar el historial de bloques completados y la nota media</div>
-          </p>
+          </div>
           <button
             onClick={resetProgress}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
