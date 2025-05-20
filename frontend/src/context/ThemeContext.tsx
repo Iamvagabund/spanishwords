@@ -10,24 +10,42 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  console.log('ThemeProvider: Initializing')
+  
+  // Ініціалізуємо тему з localStorage
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('theme')
-    return (savedTheme as Theme) || 'light'
+    const savedTheme = localStorage.getItem('theme') as Theme
+    console.log('ThemeProvider: Initial theme from localStorage:', savedTheme || 'light')
+    return savedTheme || 'light'
   })
 
+  // Функція для перемикання теми
+  const toggleTheme = () => {
+    console.log('ThemeProvider: Toggle theme called, current theme:', theme)
+    setTheme(prevTheme => {
+      const newTheme = prevTheme === 'light' ? 'dark' : 'light'
+      console.log('ThemeProvider: Setting new theme to:', newTheme)
+      return newTheme
+    })
+  }
+
+  // Ефект для застосування теми
   useEffect(() => {
-    const root = window.document.documentElement
-    root.classList.remove('light', 'dark')
-    root.classList.add(theme)
+    console.log('ThemeProvider: Theme effect triggered, applying theme:', theme)
+    document.documentElement.classList.remove('light', 'dark')
+    document.documentElement.classList.add(theme)
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light')
+  const value = {
+    theme,
+    toggleTheme
   }
 
+  console.log('ThemeProvider: Rendering with theme:', theme)
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   )

@@ -8,7 +8,9 @@
   }
   
   body {
-    @apply w-full min-h-screen bg-gray-50 text-gray-900;
+    @apply w-full min-h-screen;
+    background-color: var(--background);
+    color: var(--text);
   }
 }
 
@@ -25,20 +27,40 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --background: #ffffff;
+  --text: #1a1a1a;
+  --primary: #3b82f6;
+  --secondary: #f3f4f6;
+  --accent: #2563eb;
+  --border: #e5e7eb;
+  --card: #ffffff;
+  --card-hover: #f9fafb;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+.dark {
+  --background: #1a1a1a;
+  --text: #ffffff;
+  --primary: #3b82f6;
+  --secondary: #2d2d2d;
+  --accent: #60a5fa;
+  --border: #404040;
+  --card: #2d2d2d;
+  --card-hover: #404040;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 h1 {
@@ -76,4 +98,163 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+.card {
+  @apply rounded-lg shadow-sm;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background-color: var(--card-hover);
+}
+
+.btn-primary {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+  background-color: var(--secondary);
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background-color: var(--card-hover);
+}
+
+.input {
+  @apply px-4 py-2 rounded-lg;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.select {
+  @apply px-4 py-2 rounded-lg;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.modal {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+}
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Додаткові стилі для темної теми */
+.dark {
+  @apply text-white;
+}
+
+.dark .text-gray-600 {
+  @apply text-gray-400;
+}
+
+.dark .text-gray-700 {
+  @apply text-gray-300;
+}
+
+.dark .bg-gray-100 {
+  @apply bg-gray-800;
+}
+
+.dark .bg-gray-200 {
+  @apply bg-gray-700;
+}
+
+.dark .border-gray-200 {
+  @apply border-gray-700;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  @apply hover:bg-gray-700;
+}
+
+.dark .hover\:bg-gray-200:hover {
+  @apply hover:bg-gray-600;
+}
+
+/* Стилі для перемикача теми */
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Стилі для іконок */
+.dark .sun-icon {
+  display: none;
+}
+
+.dark .moon-icon {
+  display: inline-block;
+}
+
+.light .sun-icon {
+  display: inline-block;
+}
+
+.light .moon-icon {
+  display: none;
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import { motion } from 'framer-motion'
-import type { Word } from '../types'
+
 import { soundManager } from '../utils/sound'
 import { useNavigate } from 'react-router-dom'
 
@@ -25,11 +25,11 @@ export default function Repeat() {
   if (mistakeWords.length === 0) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Немає слів для повторення</h2>
-        <p className="text-gray-600 mb-8">Ви не зробили жодної помилки</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-dark-text mb-4">Немає слів для повторення</h2>
+        <p className="text-gray-600 dark:text-dark-text-secondary mb-8">Ви не зробили жодної помилки</p>
         <button
           onClick={() => navigate('/')}
-          className="px-6 py-3 bg-blue-500 text-white rounded-lg text-lg font-semibold shadow hover:bg-blue-600 transition-colors"
+          className="bg-blue-500 hover:bg-blue-600 dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white px-6 py-2 rounded-md"
         >
           Повернутися на головну
         </button>

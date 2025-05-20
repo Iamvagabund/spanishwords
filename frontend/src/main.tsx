@@ -7,10 +7,10 @@ import { BlockPage } from './pages/BlockPage'
 import { BlockCompletionPage } from './pages/BlockCompletionPage'
 import Repeat from './pages/Repeat'
 import { StatsPage } from './pages/StatsPage'
-import { Settings } from './pages/Settings'
 import { Auth } from './components/Auth'
 import { ProfilePage } from './pages/ProfilePage'
 import { useAuthStore } from './store/authStore'
+import { ThemeProvider } from './context/ThemeContext'
 import './index.css'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -74,21 +74,19 @@ const router = createBrowserRouter([
             <StatsPage />
           </PrivateRoute>
         )
-      },
-      {
-        path: 'settings',
-        element: (
-          <PrivateRoute>
-            <Settings />
-          </PrivateRoute>
-        )
       }
     ]
   }
 ])
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Створюємо корінь додатку
+const root = ReactDOM.createRoot(document.getElementById('root')!)
+
+// Обгортаємо додаток в ThemeProvider
+root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>
 )

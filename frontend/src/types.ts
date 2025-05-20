@@ -23,4 +23,6 @@ export interface User {
   id: string
   email: string
   role: 'user' | 'admin'
+  nickname?: string
+  avatar?: string
 } 

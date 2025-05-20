@@ -17,7 +17,7 @@ export const Layout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-dark-bg">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <Outlet />

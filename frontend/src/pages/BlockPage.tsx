@@ -390,21 +390,21 @@ export function BlockPage() {
     return (
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">
-          <div>{blockTitle.uk}</div>
-          <div className="text-sm text-gray-500">{blockTitle.es}</div>
+          <div className="text-gray-900 dark:text-dark-text">{blockTitle.uk}</div>
+          <div className="text-sm text-gray-500 dark:text-dark-text-secondary">{blockTitle.es}</div>
         </h1>
         
-        <div className="bg-white p-6 rounded-lg shadow-sm">
+        <div className="bg-white dark:bg-dark-card p-6 rounded-lg shadow-sm">
           {showWordList ? (
             <>
               <div className="space-y-6">
-                {block.words.map((wordId, index) => {
+                {block.words.map((wordId) => {
                   const word = words.find(w => w.id === wordId)
                   if (!word) return null
                   return (
-                    <div key={`word-${word.id}-${index}-${word.spanish}`} className="border-b pb-4 last:border-b-0">
-                      <p className="font-medium">{word.ukrainian}</p>
-                      <p className="text-gray-600">{word.spanish}</p>
+                    <div key={word.id} className="border-b dark:border-dark-border pb-4 last:border-b-0">
+                      <p className="font-medium text-gray-900 dark:text-dark-text">{word.ukrainian}</p>
+                      <p className="text-gray-600 dark:text-dark-text-secondary">{word.spanish}</p>
                     </div>
                   )
                 })}
@@ -416,7 +416,7 @@ export function BlockPage() {
                   setIsMultipleChoice(true)
                   setCurrentWordIndex(0)
                 }}
-                className="w-full mt-6 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+                className="w-full mt-6 bg-blue-500 dark:bg-dark-accent text-white py-2 rounded-md hover:bg-blue-600 dark:hover:bg-dark-accent-hover"
               >
                 <div>Почати тест</div>
                 <div className="text-sm">Comenzar prueba</div>
@@ -476,8 +476,8 @@ export function BlockPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">
-        <div>{blockTitle.uk}</div>
-        <div className="text-sm text-gray-500">{blockTitle.es}</div>
+        <div className="text-gray-900 dark:text-dark-text">{blockTitle.uk}</div>
+        <div className="text-sm text-gray-500 dark:text-dark-text-secondary">{blockTitle.es}</div>
       </h1>
       
       <div className="bg-white p-6 rounded-lg shadow-sm">

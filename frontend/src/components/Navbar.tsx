@@ -11,12 +11,12 @@ export function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-white dark:bg-dark-card shadow-sm border-b border-gray-200 dark:border-dark-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-bold text-gray-800">
+          <Link to="/" className="text-xl font-bold text-gray-800 dark:text-dark-text">
             <div>Іспанські слова</div>
-            <div className="text-sm text-gray-500">Palabras en español</div>
+            <div className="text-sm text-gray-500 dark:text-dark-text-secondary">Palabras en español</div>
           </Link>
           
           <div className="flex items-center space-x-4">
@@ -24,8 +24,8 @@ export function Navbar() {
               to="/" 
               className={`px-3 py-2 rounded-md text-sm font-medium ${
                 isActive('/') 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-blue-500 text-white dark:bg-dark-accent dark:text-white' 
+                  : 'text-gray-600 dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-card-hover'
               }`}
             >
               <div>Головна</div>
@@ -35,8 +35,8 @@ export function Navbar() {
               to="/review" 
               className={`px-3 py-2 rounded-md text-sm font-medium ${
                 isActive('/review') 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-blue-500 text-white dark:bg-dark-accent dark:text-white' 
+                  : 'text-gray-600 dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-card-hover'
               }`}
             >
               <div>Повторення</div>
@@ -46,8 +46,8 @@ export function Navbar() {
               to="/stats" 
               className={`px-3 py-2 rounded-md text-sm font-medium ${
                 isActive('/stats') 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-blue-500 text-white dark:bg-dark-accent dark:text-white' 
+                  : 'text-gray-600 dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-card-hover'
               }`}
             >
               <div>Статистика</div>
@@ -57,12 +57,12 @@ export function Navbar() {
             {user ? (
               <Profile />
             ) : (
-            <Link 
+              <Link 
                 to="/auth"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                className="bg-blue-500 hover:bg-blue-600 dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Увійти
-            </Link>
+              </Link>
             )}
           </div>
         </div>
