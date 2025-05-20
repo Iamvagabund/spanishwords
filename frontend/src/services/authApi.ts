@@ -1,6 +1,13 @@
-import { User } from '../types'
+import axios from 'axios'
 
 const API_URL = 'http://localhost:5000/api'
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
 
 interface AuthResponse {
   user: {
@@ -15,17 +22,11 @@ export const login = async (email: string, password: string): Promise<AuthRespon
   console.log('Sending login request to:', `${API_URL}/auth/login`)
   
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
+    const response = await api.post('/auth/login', { email, password })
 
     console.log('Login response status:', response.status)
 
-    const data = await response.json()
+    const data = response.data
 
     if (!response.ok) {
       console.log('Login error response:', data)
@@ -42,15 +43,9 @@ export const login = async (email: string, password: string): Promise<AuthRespon
 
 export const register = async (email: string, password: string): Promise<AuthResponse> => {
   try {
-    const response = await fetch(`${API_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
+    const response = await api.post('/auth/register', { email, password })
 
-    const data = await response.json()
+    const data = response.data
 
     if (!response.ok) {
       throw new Error(data.message || 'Помилка реєстрації')
@@ -61,6 +56,16 @@ export const register = async (email: string, password: string): Promise<AuthRes
     console.error('Registration error:', error)
     throw error
   }
+}
+
+export const logout = async () => {
+  const response = await api.post('/auth/logout')
+  return response.data
+}
+
+export const getCurrentUser = async () => {
+  const response = await api.get('/auth/me')
+  return response.data
 }
 
 export function getToken(): string | null {

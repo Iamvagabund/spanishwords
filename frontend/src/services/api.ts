@@ -136,10 +136,10 @@ export async function fetchStats(): Promise<ApiResponse<any>> {
   }
 }
 
-export function getNextLevel(currentLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1'): 'A1' | 'A2' | 'B1' | 'B2' | 'C1' {
-  const levels: ('A1' | 'A2' | 'B1' | 'B2' | 'C1')[] = ['A1', 'A2', 'B1', 'B2', 'C1']
+export const getNextLevel = (currentLevel: string): string => {
+  const levels = ['A1', 'A2', 'B1', 'B2', 'C1']
   const currentIndex = levels.indexOf(currentLevel)
-  return levels[Math.min(currentIndex + 1, levels.length - 1)]
+  return currentIndex < levels.length - 1 ? levels[currentIndex + 1] : currentLevel
 }
 
 export async function fetchWords(): Promise<ApiResponse<Word[]>> {

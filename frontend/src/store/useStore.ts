@@ -60,48 +60,37 @@ const loadUserProgress = (userId: string): UserProgress | null => {
   return null
 }
 
-// Створюємо стор з унікальним ключем для кожного користувача
 export const useStore = create<Store>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       blocks,
       currentBlock: 1,
       words,
       userProgress: initialProgress,
+
       setCurrentBlock: (blockId) => set({ currentBlock: blockId }),
+
       completeBlock: (blockId, score) =>
         set((state) => {
           const block = state.blocks.find(b => b.id === blockId)
           if (!block) return state
 
-          // Отримуємо слова, які користувач правильно відповів
-          const correctWords = block.words.filter(wordId => {
-            const word = state.words.find(w => w.id === wordId)
-            return word && !state.userProgress.mistakes[wordId]
-          }).map(wordId => {
-            const word = state.words.find(w => w.id === wordId)
-            return word?.spanish || ''
-          }).filter(Boolean)
-          
-          // Додаємо нові слова до списку вивчених
-          const newLearnedWords = [...new Set([...state.userProgress.learnedWords, ...correctWords])]
-
-          // Оновлюємо список завершених блоків
           const newCompletedBlocks = [
             ...state.userProgress.completedBlocks,
             {
               id: blockId,
-              score: score || 0,
-              completedAt: new Date().toISOString()
+              score,
+              completedAt: new Date().toISOString(),
+              words: block.words
             }
           ]
 
-          // Рахуємо середній бал
-          const totalScore = newCompletedBlocks.reduce((sum, block) => sum + (block.score || 0), 0)
-          const averageScore = totalScore / newCompletedBlocks.length
+          const newLearnedWords = [...new Set([...state.userProgress.learnedWords, ...block.words.map(id => id.toString())])]
 
-          // Визначаємо рівень на основі кількості завершених блоків
-          let currentLevel = 1
+          const averageScore = newCompletedBlocks.reduce((sum, block) => sum + block.score, 0) / newCompletedBlocks.length
+
+          let currentLevel = state.userProgress.currentLevel
+
           if (newCompletedBlocks.length >= 10) {
             currentLevel = 4
           } else if (newCompletedBlocks.length >= 7) {
@@ -111,7 +100,7 @@ export const useStore = create<Store>()(
           }
 
           // Оновлюємо прогрес
-          const newProgress = {
+          const newProgress: UserProgress = {
             ...state.userProgress,
             completedBlocks: newCompletedBlocks,
             learnedWords: newLearnedWords,
@@ -132,9 +121,10 @@ export const useStore = create<Store>()(
             userProgress: newProgress
           }
         }),
+
       updateRepetitionProgress: (wordId, progress) =>
         set((state) => {
-          const newProgress = {
+          const newProgress: UserProgress = {
             ...state.userProgress,
             repetitionProgress: {
               ...state.userProgress.repetitionProgress,
@@ -152,9 +142,10 @@ export const useStore = create<Store>()(
             userProgress: newProgress
           }
         }),
+
       setLevel: (level) =>
         set((state) => {
-          const newProgress = {
+          const newProgress: UserProgress = {
             ...state.userProgress,
             currentLevel: level
           }
@@ -169,9 +160,10 @@ export const useStore = create<Store>()(
             userProgress: newProgress
           }
         }),
+
       resetProgress: () =>
-        set((state) => {
-          const newProgress = {
+        set(() => {
+          const newProgress: UserProgress = {
             ...initialProgress,
             currentLevel: 1,
             averageScore: 0
@@ -188,9 +180,10 @@ export const useStore = create<Store>()(
             currentBlock: 1
           }
         }),
+
       resetStats: () =>
         set((state) => {
-          const newProgress = {
+          const newProgress: UserProgress = {
             ...state.userProgress,
             completedBlocks: [],
             averageScore: 0,
@@ -207,9 +200,10 @@ export const useStore = create<Store>()(
             userProgress: newProgress
           }
         }),
+
       resetMistakes: () =>
         set((state) => {
-          const newProgress = {
+          const newProgress: UserProgress = {
             ...state.userProgress,
             mistakes: {}
           }
@@ -224,13 +218,15 @@ export const useStore = create<Store>()(
             userProgress: newProgress
           }
         }),
+
       addMistake: (word) =>
         set((state) => {
-          const newMistakes = { ...state.userProgress.mistakes }
-          newMistakes[word.id] = word.id
-          const newProgress = {
+          const newProgress: UserProgress = {
             ...state.userProgress,
-            mistakes: newMistakes
+            mistakes: {
+              ...state.userProgress.mistakes,
+              [word.id]: (state.userProgress.mistakes[word.id] || 0) + 1
+            }
           }
 
           // Зберігаємо прогрес для поточного користувача
@@ -243,13 +239,13 @@ export const useStore = create<Store>()(
             userProgress: newProgress
           }
         }),
+
       removeMistake: (wordId) =>
         set((state) => {
-          const newMistakes = { ...state.userProgress.mistakes }
-          delete newMistakes[wordId]
-          const newProgress = {
+          const { [wordId]: _, ...mistakes } = state.userProgress.mistakes
+          const newProgress: UserProgress = {
             ...state.userProgress,
-            mistakes: newMistakes
+            mistakes
           }
 
           // Зберігаємо прогрес для поточного користувача
@@ -262,19 +258,18 @@ export const useStore = create<Store>()(
             userProgress: newProgress
           }
         }),
+
       updateUserProgress: (userId) =>
-        set((state) => {
+        set(() => {
           // Завантажуємо прогрес для нового користувача
           const savedProgress = loadUserProgress(userId)
           if (savedProgress) {
             return {
-              ...state,
               userProgress: savedProgress
             }
           }
           // Якщо немає збереженого прогресу, скидаємо до початкового стану
           return {
-            ...state,
             userProgress: initialProgress
           }
         })
