@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { useStore } from '../store/useStore'
-import type { Word } from '../types'
 
 export default function StatsPage() {
   const { userProgress, words } = useStore()
@@ -54,7 +53,7 @@ export default function StatsPage() {
           <div className="bg-white rounded-lg shadow p-6 mt-8">
             <h2 className="text-2xl font-bold mb-4">Слова з помилками</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(userProgress.mistakes).map(([wordId, count]) => {
+              {Object.entries(userProgress.mistakes).map(([wordId]) => {
                 const word = words.find(w => w.id === parseInt(wordId))
                 if (!word) return null
                 return (

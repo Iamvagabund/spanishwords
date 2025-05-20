@@ -1,28 +1,61 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useStore } from '../store/useStore'
 import { motion } from 'framer-motion'
 
 import { soundManager } from '../utils/sound'
 import { useNavigate } from 'react-router-dom'
+import type { Word } from '../types'
 
 export default function Repeat() {
-  const mistakes = useStore((state) => state.userProgress.mistakes)
-  const removeMistake = useStore((state) => state.removeMistake)
-  const [isPracticing, setIsPracticing] = useState(false)
-  const [currentWordIndex, setCurrentWordIndex] = useState(0)
-  const [userAnswer, setUserAnswer] = useState('')
+  const { words, userProgress } = useStore()
+  const [currentWord, setCurrentWord] = useState<Word | null>(null)
+  const [answer, setAnswer] = useState('')
+  const [feedback, setFeedback] = useState('')
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [showTranslation, setShowTranslation] = useState(false)
   const navigate = useNavigate()
 
-  // Отримуємо слова з помилками
-  const mistakeWords = Object.keys(mistakes).map(wordId => {
-    const word = useStore.getState().words.find(w => w.id === Number(wordId))
-    return word
-  }).filter(Boolean)
+  useEffect(() => {
+    const learnedWords = userProgress.learnedWords.map(id => parseInt(id))
+    const availableWords = words.filter(word => learnedWords.includes(word.id))
+    if (availableWords.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableWords.length)
+      setCurrentWord(availableWords[randomIndex])
+    }
+  }, [words, userProgress.learnedWords])
 
-  // Якщо немає помилок, показуємо повідомлення
-  if (mistakeWords.length === 0) {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!currentWord) return
+
+    const isAnswerCorrect = answer.toLowerCase() === currentWord.spanish.toLowerCase()
+    setIsCorrect(isAnswerCorrect)
+    setFeedback(isAnswerCorrect ? 'Правильно!' : `Неправильно. Правильна відповідь: ${currentWord.spanish}`)
+    setShowTranslation(true)
+
+    if (isAnswerCorrect) {
+      soundManager.play('correct')
+    } else {
+      soundManager.play('wrong')
+    }
+  }
+
+  const handleNext = () => {
+    if (!currentWord) return
+
+    const learnedWords = userProgress.learnedWords.map(id => parseInt(id))
+    const availableWords = words.filter(word => learnedWords.includes(word.id))
+    if (availableWords.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableWords.length)
+      setCurrentWord(availableWords[randomIndex])
+    }
+    setAnswer('')
+    setFeedback('')
+    setIsCorrect(null)
+    setShowTranslation(false)
+  }
+
+  if (!currentWord) {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-dark-text mb-4">Немає слів для повторення</h2>
@@ -37,6 +70,8 @@ export default function Repeat() {
     )
   }
 
+  return (
+    <div className="container mx-auto px-4 py-8">
   if (!isPracticing) {
     return (
       <div className="container mx-auto px-4 py-8">

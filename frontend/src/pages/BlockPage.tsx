@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { fetchBlock, fetchBlocks } from '../services/api'
+import { fetchBlock } from '../services/api'
 import { useStore } from '../store/useStore'
 import type { Block } from '../data/blocks'
 import { words } from '../data/words'
+import { blocks } from '../data/blocks'
 
 interface BlockTitle {
   uk: string

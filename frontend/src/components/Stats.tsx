@@ -1,97 +1,30 @@
 import { useStore } from '../store/useStore'
-import { AverageScore } from './AverageScore'
 
-// Компонент для особистого кабінету
-export function Stats() {
+export default function Stats() {
   const { userProgress } = useStore()
 
-  // Рахуємо статистику
-  const totalWords = userProgress?.learnedWords?.length || 0
-  const completedBlocks = userProgress?.completedBlocks?.length || 0
-  const totalScore = userProgress?.completedBlocks?.reduce((sum, block) => sum + (block.score || 0), 0) || 0
-  const currentLevel = userProgress?.currentLevel || 1
-  const mistakesCount = userProgress?.mistakes ? Object.keys(userProgress.mistakes).length : 0
-
-  console.log('Stats component:', {
-    totalWords,
-    completedBlocks,
-    totalScore,
-    currentLevel,
-    mistakesCount,
-    userProgress
-  })
+  const totalScore = userProgress.completedBlocks.reduce((sum, block) => sum + block.score, 0)
 
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Завершено блоків</span>
-          <span>{completedBlocks}</span>
-        </div>
-      </div>
-      <div>
-        <AverageScore />
-      </div>
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Сума балів</span>
-          <span>{totalScore}</span>
-        </div>
-      </div>
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Помилок</span>
-          <span>{mistakesCount}</span>
-        </div>
-      </div>
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Поточний рівень</span>
-          <span>{currentLevel}</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// Компонент для інших сторінок
-export function StatsDisplay() {
-  const { userProgress } = useStore()
-
-  // Рахуємо статистику
-  const totalWords = userProgress?.learnedWords?.length || 0
-  const completedBlocks = userProgress?.completedBlocks?.length || 0
-  const totalScore = userProgress?.completedBlocks?.reduce((sum, block) => sum + (block.score || 0), 0) || 0
-  const currentLevel = userProgress?.currentLevel || 1
-  const mistakesCount = userProgress?.mistakes ? Object.keys(userProgress.mistakes).length : 0
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Завершено блоків</span>
-          <span>{completedBlocks}</span>
-        </div>
-      </div>
-      <div>
-        <AverageScore />
-      </div>
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Сума балів</span>
-          <span>{totalScore}</span>
-        </div>
-      </div>
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Помилок</span>
-          <span>{mistakesCount}</span>
-        </div>
-      </div>
-      <div>
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Поточний рівень</span>
-          <span>{currentLevel}</span>
+    <div className="bg-white dark:bg-dark-card rounded-lg shadow p-6">
+      <h2 className="text-2xl font-bold mb-4">Статистика</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p className="text-gray-600 dark:text-gray-300">
+            Завершено блоків: {userProgress.completedBlocks.length}
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Середній бал: {userProgress.averageScore}
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Сума балів: {totalScore}
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Помилок: {Object.keys(userProgress.mistakes).length}
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Поточний рівень: {userProgress.currentLevel}
+          </p>
         </div>
       </div>
     </div>
