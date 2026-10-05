@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
+import { API_URL } from '../config'
 import { useAuthStore } from '../store/authStore'
 import { useStore } from '../store/useStore'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { Stats } from '../components/Stats'
+import Stats from '../components/Stats'
 import { useTheme } from '../context/ThemeContext'
 
 export function ProfilePage() {
@@ -94,7 +95,7 @@ export function ProfilePage() {
           resolve(resizedBase64)
         }
       }).then(async (resizedBase64) => {
-        const response = await fetch('http://localhost:5000/api/user/profile', {
+        const response = await fetch(`${API_URL}/user/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -133,7 +134,7 @@ export function ProfilePage() {
 
     setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/api/user/reset-progress', {
+      const response = await fetch(`${API_URL}/user/reset-progress`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

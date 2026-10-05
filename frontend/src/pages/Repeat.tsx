@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useStore } from '../store/useStore'
-import { motion } from 'framer-motion'
 
 import { soundManager } from '../utils/sound'
 import { useNavigate } from 'react-router-dom'
@@ -12,7 +11,7 @@ export default function Repeat() {
   const [answer, setAnswer] = useState('')
   const [feedback, setFeedback] = useState('')
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [showTranslation, setShowTranslation] = useState(false)
+  const [, setShowTranslation] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {

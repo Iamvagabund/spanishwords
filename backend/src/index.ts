@@ -10,10 +10,14 @@ import { authenticateToken } from './middleware/auth'
 
 dotenv.config()
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET env variable is required')
+}
+
 const app = express()
 
 // Middleware
-app.use(cors())
+app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') ?? 'http://localhost:5173' }))
 app.use(express.json())
 
 // Routes

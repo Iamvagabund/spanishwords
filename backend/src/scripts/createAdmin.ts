@@ -9,7 +9,10 @@ const createAdmin = async () => {
     await mongoose.connect(process.env.MONGODB_URI!)
 
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com'
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
+    const adminPassword = process.env.ADMIN_PASSWORD
+    if (!adminPassword) {
+      throw new Error('ADMIN_PASSWORD env variable is required')
+    }
 
     const existingAdmin = await User.findOne({ email: adminEmail })
     if (existingAdmin) {

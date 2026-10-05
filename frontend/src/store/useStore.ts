@@ -76,7 +76,7 @@ export const useStore = create<Store>()(
           if (!block) return state
 
           const newCompletedBlocks = [
-            ...state.userProgress.completedBlocks,
+            ...state.userProgress.completedBlocks.filter(b => b.id !== blockId),
             {
               id: blockId,
               score,

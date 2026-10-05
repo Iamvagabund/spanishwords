@@ -1,4 +1,4 @@
-import { StatsDisplay } from '../components/Stats'
+import StatsDisplay from '../components/Stats'
 
 export function HomePage() {
   return (

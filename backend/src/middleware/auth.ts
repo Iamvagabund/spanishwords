@@ -36,8 +36,7 @@ const authenticateToken = async (
     }
 
     try {
-      console.log('JWT Secret:', process.env.JWT_SECRET || 'fallback-secret')
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as JwtPayload
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
       console.log('Decoded token:', decoded)
       
       const user = await User.findById(decoded.userId).select('-password')

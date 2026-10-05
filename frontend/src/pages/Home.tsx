@@ -1,7 +1,3 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { BlockProgress } from '../components/BlockProgress'
-import { fetchBlocks } from '../services/api'
 import { useStore } from '../store/useStore'
 
 export default function Home() {

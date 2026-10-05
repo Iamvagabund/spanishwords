@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { fetchBlock } from '../services/api'
 import { useStore } from '../store/useStore'
 import type { Block } from '../data/blocks'
 import { words } from '../data/words'
@@ -49,29 +48,11 @@ export function BlockPage() {
   const { addMistake, removeMistake } = useStore()
 
   useEffect(() => {
-    async function loadData() {
-      if (!blockId) return
-      
-      try {
-        console.log('Loading data for block:', blockId)
-        const blockResponse = await fetchBlock(parseInt(blockId))
-
-        if (blockResponse.error) {
-          console.error('Error loading block:', blockResponse.error)
-          setError(blockResponse.error)
-        } else if (blockResponse.data) {
-          console.log('Loaded block:', blockResponse.data)
-          setBlock(blockResponse.data)
-        }
-      } catch (error) {
-        console.error('Error in loadData:', error)
-        setError('Помилка завантаження даних')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadData()
+    if (!blockId) return
+    const found = blocks.find(b => b.id === parseInt(blockId))
+    setBlock(found ?? null)
+    setError(found ? null : 'Блок не знайдено')
+    setLoading(false)
   }, [blockId])
 
   useEffect(() => {

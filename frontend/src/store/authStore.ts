@@ -18,7 +18,7 @@ interface AuthState {
   setUser: (user: User | null) => void
 }
 
-const API_URL = 'http://localhost:5000/api'
+import { API_URL } from '../config'
 
 const handleApiError = (error: unknown): string => {
   if (error instanceof TypeError && error.message === 'Failed to fetch') {
@@ -48,9 +48,6 @@ export const useAuthStore = create<AuthState>()(
 
           const { user, token } = response
           
-          console.log('Login called with token:', token)
-          console.log('Token type:', typeof token)
-          console.log('Token length:', token.length)
 
           set({ 
             user: { ...user, role: 'user' }, 
