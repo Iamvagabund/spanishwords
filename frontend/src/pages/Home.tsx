@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useStore } from '../store/useStore'
 
 export default function Home() {
@@ -8,12 +9,12 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-6">Вітаємо!</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {blocks.map(block => (
-          <div key={block.id} className="p-4 bg-white dark:bg-dark-card rounded-lg shadow">
+          <Link key={block.id} to={`/block/${block.id}`} className="block p-4 bg-white dark:bg-dark-card rounded-lg shadow hover:shadow-md transition-shadow">
             <h2 className="text-xl font-semibold mb-2">Блок {block.id}</h2>
             <p className="text-gray-600 dark:text-gray-300">
               Слів: {block.words.length}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
