@@ -1,61 +1,27 @@
-import axios from 'axios'
+import { http, authHeader } from './http'
+import type { User } from '../types'
 
-import { API_URL } from '../config'
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-
-interface AuthResponse {
-  user: {
-    id: string
-    email: string
-    name: string
-  }
+export interface AuthResponse {
+  user: User
   token: string
 }
 
-export const login = async (email: string, password: string): Promise<AuthResponse> => {
-  try {
-    const response = await api.post('/auth/login', { email, password })
-    return response.data
-  } catch (error) {
-    console.error('Login error:', error)
-    throw error
-  }
+export async function login(email: string, password: string): Promise<AuthResponse> {
+  const { data } = await http.post<AuthResponse>('/auth/login', { email, password })
+  return data
 }
 
-export const register = async (email: string, password: string): Promise<AuthResponse> => {
-  try {
-    const response = await api.post('/auth/register', { email, password })
-    return response.data
-  } catch (error) {
-    console.error('Registration error:', error)
-    throw error
-  }
+export async function register(email: string, password: string): Promise<AuthResponse> {
+  const { data } = await http.post<AuthResponse>('/auth/register', { email, password })
+  return data
 }
 
-export const logout = async () => {
-  const response = await api.post('/auth/logout')
-  return response.data
+export async function getProfile(token: string): Promise<User> {
+  const { data } = await http.get<User>('/user/profile', { headers: authHeader(token) })
+  return data
 }
 
-export const getCurrentUser = async () => {
-  const response = await api.get('/auth/me')
-  return response.data
+export async function updateProfile(token: string, body: Partial<Pick<User, 'nickname' | 'avatar' | 'selectedLanguage'>>): Promise<User> {
+  const { data } = await http.put<User>('/user/profile', body, { headers: authHeader(token) })
+  return data
 }
-
-export function getToken(): string | null {
-  return localStorage.getItem('token')
-}
-
-export function setToken(token: string): void {
-  localStorage.setItem('token', token)
-}
-
-export function removeToken(): void {
-  localStorage.removeItem('token')
-} 

@@ -1,56 +1,102 @@
 import { useState, useRef, useEffect } from 'react'
-import { API_URL } from '../config'
-import { useAuthStore } from '../store/authStore'
-import { useStore } from '../store/useStore'
+import { useContentStore } from '../store/contentStore'
+import { errorMessage } from '../services/http'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import {
+  CameraIcon,
+  PencilSquareIcon,
+  ArrowRightOnRectangleIcon,
+  ExclamationTriangleIcon,
+  MoonIcon,
+  SunIcon,
+} from '@heroicons/react/24/outline'
+import { useAuthStore } from '../store/authStore'
+import { useStore } from '../store/useStore'
 import Stats from '../components/Stats'
 import { useTheme } from '../context/ThemeContext'
 
+const card = 'rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 sm:p-6'
+const btnBase =
+  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium transition disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
+const btnPrimary = `${btnBase} bg-indigo-600 hover:bg-indigo-500 text-white`
+const btnSecondary = `${btnBase} bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100`
+
+const resizeImage = (file: File, maxSize = 200): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file)
+    const img = new Image()
+    img.onload = () => {
+      let { width, height } = img
+      const scale = Math.min(1, maxSize / Math.max(width, height))
+      width = Math.round(width * scale)
+      height = Math.round(height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      canvas.getContext('2d')?.drawImage(img, 0, 0, width, height)
+      URL.revokeObjectURL(url)
+      resolve(canvas.toDataURL('image/jpeg', 0.7))
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      reject(new Error('Failed to load image'))
+    }
+    img.src = url
+  })
+
 export function ProfilePage() {
-  const { user, updateProfile, logout, token } = useAuthStore()
-  const { userProgress } = useStore()
+  const { user, updateProfile, logout, setSelectedLanguage } = useAuthStore()
+  const resetLangProgress = useStore(s => s.reset)
+  const progressMap = useStore(s => s.progress)
+  const { languages, loadLanguages } = useContentStore()
+  const [lang, setLang] = useState(user?.selectedLanguage || '')
   const [isEditing, setIsEditing] = useState(false)
   const [nickname, setNickname] = useState(user?.nickname || '')
   const [isLoading, setIsLoading] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
 
-  // Оновлюємо nickname при зміні user
   useEffect(() => {
-    if (user?.nickname) {
-      setNickname(user.nickname)
-    }
-  }, [user])
+    setNickname(user?.nickname || '')
+  }, [user?.nickname])
 
-  if (!user) {
-    return null
-  }
+  useEffect(() => {
+    void loadLanguages()
+  }, [loadLanguages])
+
+  useEffect(() => {
+    if (!lang && languages.length) setLang(user?.selectedLanguage || languages[0].code)
+  }, [lang, languages, user?.selectedLanguage])
+
+  const currentLang = languages.find(l => l.code === lang)
+
+  if (!user) return null
 
   const handleSave = async () => {
-    if (!nickname.trim()) {
+    const value = nickname.trim()
+    if (!value) {
       toast.error('Нікнейм не може бути порожнім')
       return
     }
     try {
       setIsLoading(true)
-      await updateProfile({ nickname: nickname.trim() })
+      await updateProfile({ nickname: value })
       setIsEditing(false)
       toast.success('Нікнейм оновлено')
-    } catch (error) {
+    } catch {
       toast.error('Помилка оновлення ніку')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click()
-  }
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    e.target.value = '' // allow re-selecting the same file
     if (!file) return
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Розмір файлу не може перевищувати 5MB')
@@ -62,57 +108,10 @@ export function ProfilePage() {
     }
     try {
       setIsLoading(true)
-      
-      // Зменшуємо розмір зображення
-      const img = new Image()
-      img.src = URL.createObjectURL(file)
-      
-      await new Promise((resolve) => {
-        img.onload = () => {
-          const canvas = document.createElement('canvas')
-          const MAX_SIZE = 200
-          let width = img.width
-          let height = img.height
-          
-          if (width > height) {
-            if (width > MAX_SIZE) {
-              height *= MAX_SIZE / width
-              width = MAX_SIZE
-            }
-          } else {
-            if (height > MAX_SIZE) {
-              width *= MAX_SIZE / height
-              height = MAX_SIZE
-            }
-          }
-          
-          canvas.width = width
-          canvas.height = height
-          const ctx = canvas.getContext('2d')
-          ctx?.drawImage(img, 0, 0, width, height)
-          
-          const resizedBase64 = canvas.toDataURL('image/jpeg', 0.7)
-          resolve(resizedBase64)
-        }
-      }).then(async (resizedBase64) => {
-        const response = await fetch(`${API_URL}/user/profile`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ avatar: resizedBase64 })
-        })
-
-        if (!response.ok) {
-          throw new Error('Failed to update avatar')
-        }
-
-        const updatedUser = await response.json()
-        await updateProfile(updatedUser)
-        toast.success('Аватарку оновлено')
-        window.location.reload()
-      })
+      const avatar = await resizeImage(file)
+      // updateProfile PUTs to the API and updates the store, so the avatar re-renders without reload
+      await updateProfile({ avatar })
+      toast.success('Аватарку оновлено')
     } catch (error) {
       console.error('Error updating avatar:', error)
       toast.error('Помилка завантаження аватарки')
@@ -128,214 +127,202 @@ export function ProfilePage() {
   }
 
   const handleResetProgress = async () => {
-    if (!window.confirm('Ви впевнені, що хочете скинути свої досягнення? Цю дію неможливо скасувати.')) {
-      return
-    }
-
     setIsLoading(true)
     try {
-      const response = await fetch(`${API_URL}/user/reset-progress`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to reset progress')
-      }
-
-      const updatedUser = await response.json()
-      await updateProfile(updatedUser)
-      toast.success('Ваші досягнення скинуто')
-      
-      // Очищаємо локальне сховище
-      localStorage.removeItem('user-progress')
-      
-      // Перезавантажуємо сторінку
-      window.location.reload()
+      await resetLangProgress(lang)
+      setConfirmReset(false)
+      toast.success(`Прогрес «${currentLang?.name ?? lang}» скинуто`)
     } catch (error) {
-      console.error('Error resetting progress:', error)
-      toast.error('Помилка скидання досягнень')
+      toast.error(errorMessage(error, 'Помилка скидання досягнень'))
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleThemeToggle = () => {
-    console.log('Profile: Theme toggle clicked, current theme:', theme)
-    toggleTheme()
-  }
-
-  // Рахуємо статистику тільки для досягнень
-  const totalWords = userProgress?.learnedWords?.length || 0
-  const currentStreak = userProgress?.completedBlocks?.length > 0 
-    ? Math.floor((new Date().getTime() - new Date(userProgress.completedBlocks[userProgress.completedBlocks.length - 1].completedAt).getTime()) / (1000 * 60 * 60 * 24))
-    : 0
-
-  // Перевіряємо досягнення
-  const hasFirstWord = totalWords > 0
-  const hasSevenDaysStreak = currentStreak >= 7
+  const avatarSrc =
+    user.avatar ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.email)}&background=6366f1&color=fff`
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-8">
-        <div className="flex items-center space-x-6 mb-8">
-          <div className="relative">
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 py-6 sm:py-10">
+      <section className={card}>
+        <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
+          <div className="relative shrink-0">
             <img
-              src={user.avatar || `https://ui-avatars.com/api/?name=${user.email}&background=random`}
+              src={avatarSrc}
               alt="Аватар"
-              className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 dark:border-dark-border"
+              className="h-24 w-24 rounded-full object-cover ring-4 ring-zinc-100 dark:ring-zinc-800"
             />
-            <button 
-              onClick={handleAvatarClick}
+            <button
+              onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
-              className="absolute bottom-0 right-0 bg-blue-500 dark:bg-dark-accent text-white p-2 rounded-full hover:bg-blue-600 dark:hover:bg-dark-accent-hover transition-colors disabled:opacity-50"
+              aria-label="Змінити аватар"
+              className="absolute -bottom-1 -right-1 rounded-full bg-indigo-600 p-2 text-white transition hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 disabled:opacity-50"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-              </svg>
+              <CameraIcon className="h-4 w-4" />
             </button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/*"
-              className="hidden"
-            />
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
           </div>
-          <div className="flex-1">
+
+          <div className="w-full min-w-0 flex-1">
             {isEditing ? (
-              <div className="flex items-center space-x-2">
+              <form
+                onSubmit={e => {
+                  e.preventDefault()
+                  handleSave()
+                }}
+                className="flex flex-col gap-2 sm:flex-row"
+              >
                 <input
                   type="text"
                   value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  className="flex-1 px-4 py-2 bg-gray-50 dark:bg-dark-bg-secondary border border-gray-300 dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-dark-accent focus:border-transparent text-gray-900 dark:text-dark-text placeholder-gray-500 dark:placeholder-dark-text-muted"
+                  autoFocus
+                  maxLength={32}
+                  onChange={e => setNickname(e.target.value)}
+                  onKeyDown={e => e.key === 'Escape' && setIsEditing(false)}
                   placeholder="Введіть нікнейм"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500"
                 />
-                <button
-                  onClick={handleSave}
-                  disabled={isLoading}
-                  className="px-4 py-2 bg-blue-500 dark:bg-dark-accent text-white rounded-lg hover:bg-blue-600 dark:hover:bg-dark-accent-hover transition-colors disabled:opacity-50"
-                >
-                  {isLoading ? 'Збереження...' : 'Зберегти'}
-                </button>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  disabled={isLoading}
-                  className="px-4 py-2 bg-gray-200 dark:bg-dark-bg-secondary text-gray-700 dark:text-dark-text-secondary rounded-lg hover:bg-gray-300 dark:hover:bg-dark-card-hover transition-colors disabled:opacity-50"
-                >
-                  Скасувати
-                </button>
-              </div>
+                <div className="flex gap-2">
+                  <button type="submit" disabled={isLoading} className={btnPrimary}>
+                    {isLoading ? 'Збереження…' : 'Зберегти'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEditing(false)
+                      setNickname(user.nickname || '')
+                    }}
+                    disabled={isLoading}
+                    className={btnSecondary}
+                  >
+                    Скасувати
+                  </button>
+                </div>
+              </form>
             ) : (
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text">{user.nickname || 'Встановіть нікнейм'}</h1>
+              <div className="flex items-center justify-center gap-2 sm:justify-start">
+                <h1 className="truncate text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+                  {user.nickname || 'Встановіть нікнейм'}
+                </h1>
                 <button
                   onClick={() => setIsEditing(true)}
                   disabled={isLoading}
-                  className="p-2 text-gray-500 dark:text-dark-text-secondary hover:text-gray-700 dark:hover:text-dark-text transition-colors disabled:opacity-50"
+                  aria-label="Редагувати нікнейм"
+                  className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
+                  <PencilSquareIcon className="h-5 w-5" />
                 </button>
               </div>
             )}
-            <p className="text-gray-600 dark:text-dark-text-secondary">{user.email}</p>
+            <p className="mt-1 truncate text-zinc-500 dark:text-zinc-400">{user.email}</p>
+          </div>
+
+          <div className="flex shrink-0 gap-2">
+            <button
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
+              className={`${btnSecondary} px-3`}
+            >
+              {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+            </button>
+            <button onClick={handleLogout} className={btnSecondary}>
+              <ArrowRightOnRectangleIcon className="h-5 w-5" />
+              Вийти
+            </button>
           </div>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gray-50 dark:bg-dark-bg-secondary rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-dark-text mb-4">Статистика</h2>
-            <Stats />
-          </div>
-
-          <div className="bg-gray-50 dark:bg-dark-bg-secondary rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-dark-text mb-4">Налаштування</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-dark-text">Темна тема</span>
+      <section>
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Мій прогрес</h2>
+          {languages.length > 0 && (
+            <div role="tablist" className="inline-flex self-start rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800/70">
+              {languages.map(l => (
                 <button
-                  type="button"
-                  role="switch"
-                  aria-checked={theme === 'dark'}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                    theme === 'dark' ? 'bg-dark-accent' : 'bg-gray-200'
+                  key={l.code}
+                  role="tab"
+                  aria-selected={lang === l.code}
+                  onClick={() => {
+                    setLang(l.code)
+                    setConfirmReset(false)
+                  }}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
+                    lang === l.code
+                      ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100'
+                      : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
                   }`}
-                  onClick={handleThemeToggle}
                 >
-                  <span className="sr-only">Увімкнути темну тему</span>
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                      theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
+                  <span aria-hidden>{l.flag}</span> {l.name}
+                  {progressMap[l.code]?.completedBlocks.length ? (
+                    <span className="text-xs tabular-nums text-zinc-400">{progressMap[l.code].completedBlocks.length}</span>
+                  ) : null}
                 </button>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-dark-text">Сповіщення</span>
-                <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 dark:bg-dark-border">
-                  <span className="sr-only">Увімкнути сповіщення</span>
-                  <span className="inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
-                </button>
-              </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {lang && <Stats lang={lang} />}
+        {currentLang && user.selectedLanguage !== currentLang.code && (
+          <button
+            onClick={() => {
+              void setSelectedLanguage(currentLang.code)
+              navigate(`/${currentLang.code}`)
+            }}
+            className={`${btnSecondary} mt-3`}
+          >
+            Вивчати {currentLang.flag} {currentLang.name}
+          </button>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-rose-500/30 bg-rose-500/5 p-5 sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex gap-3">
+            <ExclamationTriangleIcon className="h-6 w-6 shrink-0 text-rose-600 dark:text-rose-400" />
+            <div>
+              <h2 className="font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Небезпечна зона</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Скидання видалить усі пройдені блоки, вивчені слова та помилки для мови «{currentLang?.name ?? lang}». Цю дію неможливо скасувати.
+              </p>
             </div>
           </div>
-
-          <div className="bg-gray-50 dark:bg-dark-bg-secondary rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-dark-text mb-4">Досягнення</h2>
-            <div className="space-y-4">
-              <div className={`flex items-center space-x-3 ${hasFirstWord ? 'opacity-100' : 'opacity-50'}`}>
-                <div className={`w-8 h-8 rounded-full ${hasFirstWord ? 'bg-green-500' : 'bg-gray-200 dark:bg-dark-border'}`}>
-                  {hasFirstWord && (
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-dark-text">Перше слово</p>
-                  <p className="text-xs text-gray-500 dark:text-dark-text-muted">Вивчіть своє перше слово</p>
-                </div>
-              </div>
-              <div className={`flex items-center space-x-3 ${hasSevenDaysStreak ? 'opacity-100' : 'opacity-50'}`}>
-                <div className={`w-8 h-8 rounded-full ${hasSevenDaysStreak ? 'bg-green-500' : 'bg-gray-200 dark:bg-dark-border'}`}>
-                  {hasSevenDaysStreak && (
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-dark-text">7 днів поспіль</p>
-                  <p className="text-xs text-gray-500 dark:text-dark-text-muted">Тренуйтесь 7 днів поспіль</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          {!confirmReset && (
+            <button
+              onClick={() => setConfirmReset(true)}
+              disabled={isLoading || !lang}
+              className={`${btnBase} shrink-0 border border-rose-500/40 text-rose-600 hover:bg-rose-500/10 dark:text-rose-400`}
+            >
+              Скинути прогрес
+            </button>
+          )}
         </div>
-
-        <div className="flex justify-end mt-8 space-x-4">
-          <button
-            onClick={handleResetProgress}
-            disabled={isLoading}
-            className="px-6 py-3 bg-yellow-500 dark:bg-yellow-600 text-white rounded-lg text-lg font-semibold shadow hover:bg-yellow-600 dark:hover:bg-yellow-700 transition-colors"
-          >
-            Скинути свої досягнення
-          </button>
-          <button
-            onClick={handleLogout}
-            className="px-6 py-3 bg-red-500 dark:bg-red-600 text-white rounded-lg text-lg font-semibold shadow hover:bg-red-600 dark:hover:bg-red-700 transition-colors"
-          >
-            Вийти з акаунту
-          </button>
-        </div>
-      </div>
-    </div>
+        <AnimatePresence>
+          {confirmReset && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 flex flex-col gap-2 border-t border-rose-500/20 pt-4 sm:flex-row sm:items-center sm:justify-end">
+                <p className="text-sm font-medium text-rose-700 dark:text-rose-300 sm:mr-auto">Ви впевнені?</p>
+                <button onClick={() => setConfirmReset(false)} disabled={isLoading} className={btnSecondary}>
+                  Скасувати
+                </button>
+                <button
+                  onClick={handleResetProgress}
+                  disabled={isLoading}
+                  className={`${btnBase} bg-rose-600 text-white hover:bg-rose-500`}
+                >
+                  {isLoading ? 'Скидання…' : 'Так, скинути'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </section>
+    </motion.div>
   )
-} 
+}

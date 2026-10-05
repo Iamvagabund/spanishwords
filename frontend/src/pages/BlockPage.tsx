@@ -1,502 +1,508 @@
-import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { useStore } from '../store/useStore'
-import type { Block } from '../data/blocks'
-import { words } from '../data/words'
-import { blocks } from '../data/blocks'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowPathIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  HomeIcon,
+  AcademicCapIcon,
+  PencilSquareIcon,
+} from '@heroicons/react/24/outline'
+import { useStore, useLangProgress } from '../store/useStore'
+import { useLang } from '../context/LangContext'
+import { langAdverb } from '../utils/lang'
+import type { Word } from '../types'
 
-interface BlockTitle {
-  uk: string
-  es: string
+type Phase = 'list' | 'choice' | 'intro' | 'typing' | 'result'
+
+const primaryBtn =
+  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
+const secondaryBtn =
+  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 transition disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
+const card = 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl'
+
+const normalizeAnswer = (answer: string): string[] => {
+  const clean = answer
+    .toLowerCase()
+    .replace(/[.,/#!¡?¿$%^&*;:{}=\-_`~()"']/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  const withoutAccents = clean.normalize('NFD').replace(/[̀-ͯ]/g, '')
+  return [clean, withoutAccents]
 }
 
-const titles: Record<string, BlockTitle> = {
-  'Базові привітання 1': {
-    uk: 'Базові привітання 1',
-    es: 'Saludos básicos 1'
-  },
-  'Базові привітання 2': {
-    uk: 'Базові привітання 2',
-    es: 'Saludos básicos 2'
-  },
-  'Базові слова 1': {
-    uk: 'Базові слова 1',
-    es: 'Palabras básicas 1'
+const isAnswerCorrect = (answer: string, correct: string) => {
+  if (!answer.trim()) return false
+  const user = normalizeAnswer(answer)
+  const right = normalizeAnswer(correct)
+  return user.some(u => right.includes(u))
+}
+
+const shuffle = <T,>(arr: T[]): T[] => {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
   }
+  return a
 }
 
-export function getBlockTitle(title: string): BlockTitle {
-  return titles[title] || { uk: title, es: title }
+const buildOptions = (correct: string, allTerms: string[]): string[] => {
+  const pool = shuffle([...new Set(allTerms.filter(s => s !== correct))])
+  return shuffle([correct, ...pool.slice(0, 3)])
+}
+
+/** Converts a percentage to the 1..10 scale stored in completedBlocks. */
+const toTenScale = (percentage: number) =>
+  percentage >= 100 ? 10 : Math.max(1, Math.floor(percentage / 10))
+
+const PASS_PERCENT = 70
+
+function ProgressBar({ value, total }: { value: number; total: number }) {
+  const pct = total ? (value / total) * 100 : 0
+  return (
+    <div className="h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+      <motion.div
+        className="h-full rounded-full bg-indigo-600"
+        initial={false}
+        animate={{ width: `${pct}%` }}
+        transition={{ duration: 0.3 }}
+      />
+    </div>
+  )
 }
 
 export function BlockPage() {
-  const { blockId } = useParams()
+  const { order } = useParams()
   const navigate = useNavigate()
-  const { blocks: storeBlocks, userProgress, completeBlock } = useStore()
-  const [block, setBlock] = useState<Block | null>(null)
-  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const { code, language, blocks: storeBlocks } = useLang()
+  const userProgress = useLangProgress(code)
+  const completeBlock = useStore(s => s.completeBlock)
+  const addMistake = useStore(s => s.addMistake)
+  const removeMistake = useStore(s => s.removeMistake)
+  const adverb = langAdverb(language)
+
+  const numericOrder = Number(order)
+  const block = useMemo(() => storeBlocks.find(b => b.order === numericOrder) ?? null, [storeBlocks, numericOrder])
+  const blockWords = useMemo<Word[]>(() => block?.words ?? [], [block])
+  const allTerms = useMemo(() => storeBlocks.flatMap(b => b.words.map(w => w.term)), [storeBlocks])
+  const home = `/${code}`
+
+  const [phase, setPhase] = useState<Phase>('list')
+  const [index, setIndex] = useState(0)
   const [userInput, setUserInput] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [isLearningMode, setIsLearningMode] = useState(true)
-  const [isMultipleChoice, setIsMultipleChoice] = useState(false)
-  const [showWordList, setShowWordList] = useState(true)
-  const [score, setScore] = useState(0)
-  const [showCompletion, setShowCompletion] = useState(false)
-  const [answers, setAnswers] = useState<Record<number, string>>({})
-  const [feedback, setFeedback] = useState<Record<number, boolean>>({})
-  const { addMistake, removeMistake } = useStore()
+  const [checked, setChecked] = useState<boolean | null>(null)
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [results, setResults] = useState<Record<string, boolean>>({})
+  const [wrongChoice, setWrongChoice] = useState<string | null>(null)
+  const [options, setOptions] = useState<string[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
+  const nextRef = useRef<HTMLButtonElement>(null)
 
-  useEffect(() => {
-    if (!blockId) return
-    const found = blocks.find(b => b.id === parseInt(blockId))
-    setBlock(found ?? null)
-    setError(found ? null : 'Блок не знайдено')
-    setLoading(false)
-  }, [blockId])
-
-  useEffect(() => {
-    if (!blockId || !storeBlocks.length) return
-
-    const currentBlockIndex = storeBlocks.findIndex(b => b.id === parseInt(blockId))
-    if (currentBlockIndex === -1) return
-
-    if (currentBlockIndex > 0) {
-      const previousBlock = storeBlocks[currentBlockIndex - 1]
-      const isPreviousBlockCompleted = userProgress.completedBlocks.some(
-        block => block.id === previousBlock.id
-      )
-      if (!isPreviousBlockCompleted) {
-        navigate(`/block/${previousBlock.id}`)
-      }
-    }
-  }, [blockId, storeBlocks, userProgress.completedBlocks, navigate])
-
-  const normalizeAnswer = (answer: string): string[] => {
-    // Видаляємо всі знаки пунктуації та пробіли
-    const cleanAnswer = answer
-      .toLowerCase()
-      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-
-    // Нормалізуємо акценти
-    const normalized = cleanAnswer
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-
-    // Зберігаємо версію з акцентами
-    const withAccents = cleanAnswer
-      .replace(/[^a-z0-9áéíóúñü\s]/g, '')
-
-    return [normalized, withAccents]
+  const reset = () => {
+    setPhase('list')
+    setIndex(0)
+    setUserInput('')
+    setChecked(null)
+    setAnswers({})
+    setResults({})
+    setWrongChoice(null)
   }
 
-  const getRandomOptions = (correctWord: string, allWords: typeof words) => {
-    const options = [correctWord]
-    const otherWords = allWords.filter(w => w.spanish !== correctWord)
-    
-    while (options.length < 4) {
-      const randomWord = otherWords[Math.floor(Math.random() * otherWords.length)]
-      if (!options.includes(randomWord.spanish)) {
-        options.push(randomWord.spanish)
-      }
-    }
-    
-    return options.sort(() => Math.random() - 0.5)
-  }
+  // Reset all learning state when navigating to another block
+  useEffect(() => {
+    reset()
+  }, [code, numericOrder])
 
-  const handleMultipleChoice = (selectedAnswer: string) => {
+  // Locked-block redirect: previous block (by order) must be completed
+  useEffect(() => {
     if (!block) return
+    const done = new Set(userProgress.completedBlocks.map(b => b.blockId))
+    if (done.has(block.id)) return
+    const prev = [...storeBlocks].filter(b => b.order < block.order).sort((a, b) => b.order - a.order)[0]
+    if (prev && !done.has(prev.id)) navigate(`${home}/block/${prev.order}`, { replace: true })
+  }, [block, storeBlocks, userProgress.completedBlocks, navigate, home])
 
-    const currentWord = words.find(w => w.id === block.words[currentWordIndex])
-    if (!currentWord) return
+  const currentWord = blockWords[index]
 
-    const isCorrect = normalizeAnswer(selectedAnswer).some(user => 
-      normalizeAnswer(currentWord.spanish).some(correct => user === correct)
-    )
-
-    // Зберігаємо відповідь
-    const newAnswers = {
-      ...answers,
-      [currentWord.id]: selectedAnswer
+  // Stable multiple-choice options per word (previously reshuffled on every render)
+  useEffect(() => {
+    if (phase === 'choice' && currentWord) {
+      setOptions(buildOptions(currentWord.term, allTerms))
+      setWrongChoice(null)
     }
-    setAnswers(newAnswers)
+  }, [phase, currentWord, allTerms])
 
-    if (isCorrect) {
-      if (currentWordIndex < block.words.length - 1) {
-        setCurrentWordIndex(prev => prev + 1)
-      } else {
-        // Якщо всі відповіді правильні, переходимо до тесту з введенням
-        setIsLearningMode(false)
-        setCurrentWordIndex(0)
-        setUserInput('')
+  useEffect(() => {
+    if (phase !== 'typing') return
+    if (checked === null) inputRef.current?.focus()
+    else nextRef.current?.focus()
+  }, [phase, index, checked])
+
+  // Keyboard shortcuts for multiple choice (1-4)
+  useEffect(() => {
+    if (phase !== 'choice') return
+    const onKey = (e: KeyboardEvent) => {
+      const n = Number(e.key)
+      if (n >= 1 && n <= options.length) handleChoice(options[n - 1])
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  if (!block || blockWords.length === 0) {
+    return (
+      <div className={`${card} p-8 text-center mt-6`}>
+        <p className="text-rose-600 dark:text-rose-400 font-medium">Блок не знайдено</p>
+        <Link to={home} className={`${secondaryBtn} mt-4`}>
+          <HomeIcon className="h-5 w-5" /> На головну
+        </Link>
+      </div>
+    )
+  }
+
+  const total = blockWords.length
+
+  function handleChoice(option: string) {
+    if (!currentWord) return
+    if (isAnswerCorrect(option, currentWord.term)) {
+      setWrongChoice(null)
+      if (index < total - 1) setIndex(i => i + 1)
+      else {
+        setIndex(0)
+        setPhase('intro')
       }
     } else {
-      // Якщо неправильно, показуємо повідомлення і залишаємось на цьому слові
-      setFeedback({
-        ...feedback,
-        [currentWord.id]: false
-      })
+      setWrongChoice(option)
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const finish = (finalAnswers: Record<string, string>, finalResults: Record<string, boolean>) => {
+    const correctCount = blockWords.filter(w => finalResults[w.id]).length
+    const percentage = (correctCount / total) * 100
+    if (percentage >= PASS_PERCENT) completeBlock(code, block.id, toTenScale(percentage), blockWords.map(w => w.id))
+    setAnswers(finalAnswers)
+    setResults(finalResults)
+    setPhase('result')
+  }
+
+  const handleTypingSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!block) return
-
-    const currentWord = words.find(w => w.id === block.words[currentWordIndex])
     if (!currentWord) return
-
-    // Зберігаємо відповідь
-    const newAnswers = {
-      ...answers,
-      [currentWord.id]: userInput
+    if (checked === null) {
+      if (!userInput.trim()) return
+      const ok = isAnswerCorrect(userInput, currentWord.term)
+      if (ok) removeMistake(code, currentWord.id)
+      else addMistake(code, currentWord.id)
+      setAnswers(a => ({ ...a, [currentWord.id]: userInput }))
+      setResults(r => ({ ...r, [currentWord.id]: ok }))
+      setChecked(ok)
+      return
     }
-    setAnswers(newAnswers)
-
-    // Перевіряємо чи це останнє питання
-    if (currentWordIndex < block.words.length - 1) {
-      // Якщо не останнє - переходимо до наступного
-      setCurrentWordIndex(prev => prev + 1)
+    // second Enter: go next
+    if (index < total - 1) {
+      setIndex(i => i + 1)
       setUserInput('')
+      setChecked(null)
     } else {
-      // Якщо останнє - перевіряємо всі відповіді
-      let totalScore = 0
-      const newFeedback: Record<number, boolean> = {}
-
-      // Перевіряємо всі відповіді
-      block.words.forEach(wordId => {
-        const word = words.find(w => w.id === wordId)
-        if (!word) return
-
-        const answer = newAnswers[wordId] || ''
-        const normalizedUserInput = normalizeAnswer(answer)
-        const normalizedCorrectAnswer = normalizeAnswer(word.spanish)
-        
-        const isCorrect = normalizedUserInput.some(user => 
-          normalizedCorrectAnswer.some(correct => user === correct)
-        )
-
-        newFeedback[wordId] = isCorrect
-
-        if (isCorrect) {
-          removeMistake(word.id)
-          totalScore++
-        } else {
-          addMistake(word)
-        }
-      })
-
-      // Оновлюємо стан з результатами
-      setFeedback(newFeedback)
-      setScore(totalScore)
-      const percentage = (totalScore / block.words.length) * 100
-
-      // Перевіряємо чи блок пройдено
-      if (percentage >= 70) {
-        // Конвертуємо відсоток у 10-бальну шкалу
-        let finalScore = 0
-        if (percentage === 100) {
-          finalScore = 10
-        } else if (percentage >= 90) {
-          finalScore = 9
-        } else if (percentage >= 80) {
-          finalScore = 8
-        } else if (percentage >= 70) {
-          finalScore = 7
-        } else if (percentage >= 60) {
-          finalScore = 6
-        } else if (percentage >= 50) {
-          finalScore = 5
-        } else if (percentage >= 40) {
-          finalScore = 4
-        } else if (percentage >= 30) {
-          finalScore = 3
-        } else if (percentage >= 20) {
-          finalScore = 2
-        } else {
-          finalScore = 1
-        }
-        completeBlock(block.id, finalScore)
-      }
-      setShowCompletion(true)
+      finish(answers, results)
     }
   }
 
-  if (loading) {
-    return <div>Завантаження...</div>
-  }
-
-  if (error || !block) {
-    return <div className="text-red-500">{error || 'Блок не знайдено'}</div>
-  }
-
-  const currentWord = words.find(w => w.id === block.words[currentWordIndex])
-  if (!currentWord) {
-    return <div className="text-red-500">Слово не знайдено</div>
-  }
-
-  if (showCompletion) {
-    const percentage = (score / block.words.length) * 100
-    const currentBlockIndex = storeBlocks.findIndex(b => b.id === block.id)
-    const hasNextBlock = currentBlockIndex < storeBlocks.length - 1
-
-    // Конвертуємо відсоток у 10-бальну шкалу
-    let finalScore = 0
-    if (percentage === 100) {
-      finalScore = 10
-    } else if (percentage >= 90) {
-      finalScore = 9
-    } else if (percentage >= 80) {
-      finalScore = 8
-    } else if (percentage >= 70) {
-      finalScore = 7
-    } else if (percentage >= 60) {
-      finalScore = 6
-    } else if (percentage >= 50) {
-      finalScore = 5
-    } else if (percentage >= 40) {
-      finalScore = 4
-    } else if (percentage >= 30) {
-      finalScore = 3
-    } else if (percentage >= 20) {
-      finalScore = 2
-    } else {
-      finalScore = 1
-    }
-
-    const handleNextBlock = () => {
-      if (hasNextBlock) {
-        const nextBlockId = storeBlocks[currentBlockIndex + 1].id
-        setCurrentWordIndex(0)
-        setScore(0)
-        setShowCompletion(false)
-        setUserInput('')
-        setAnswers({})
-        setFeedback({})
-        setIsLearningMode(true)
-        setIsMultipleChoice(false)
-        setShowWordList(true)
-        navigate(`/block/${nextBlockId}`)
-      }
-    }
-
-    return (
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-          <h2 className="text-2xl font-bold mb-4">
-            {percentage >= 70 ? (
-              <>
-                <div>Чудово!</div>
-                <div className="text-sm text-gray-500">¡Excelente!</div>
-              </>
-            ) : (
-              <>
-                <div>Потрібно ще попрацювати</div>
-                <div className="text-sm text-gray-500">Necesitas practicar más</div>
-              </>
-            )}
-          </h2>
-          <p className="text-lg mb-4">Бал: {score}/{block.words.length} ({percentage.toFixed(1)}%)</p>
-          <p className="text-sm text-gray-500">Puntuación: {score}/{block.words.length} ({percentage.toFixed(1)}%)</p>
-          <p className="text-lg mb-4">Середній бал: {finalScore}</p>
-          <p className="text-sm text-gray-500">Nota media: {finalScore}</p>
-          
-          <div className="mt-6 space-y-4">
-            {block.words.map((wordId, index) => {
-              const word = words.find(w => w.id === wordId)
-              if (!word) return null
-              const answer = answers[wordId] || ''
-              const isCorrect = normalizeAnswer(answer).some(user => 
-                normalizeAnswer(word.spanish).some(correct => user === correct)
-              )
-              return (
-                <div key={`answer-${wordId}-${index}`} className={`p-4 rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
-                  <p className="font-medium">{word.ukrainian}</p>
-                  <p className="text-gray-600">Ваша відповідь: {answer}</p>
-                  {!isCorrect && <p className="text-green-600">Правильна відповідь: {word.spanish}</p>}
-                </div>
-              )
-            })}
-          </div>
-
-          <div className="mt-6 space-y-4">
-            {percentage >= 70 ? (
-              <>
-                <button
-                  onClick={() => navigate('/')}
-                  className="w-full px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                >
-                  <div>На головну</div>
-                  <div className="text-sm">Ir al inicio</div>
-                </button>
-                {hasNextBlock && (
-                  <button
-                    onClick={handleNextBlock}
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    <div>До наступного блоку</div>
-                    <div className="text-sm">Ir al siguiente bloque</div>
-                  </button>
-                )}
-              </>
-            ) : (
-              <button
-                onClick={() => {
-                  setCurrentWordIndex(0)
-                  setScore(0)
-                  setShowCompletion(false)
-                  setUserInput('')
-                  setAnswers({})
-                  setFeedback({})
-                  setIsLearningMode(true)
-                  setIsMultipleChoice(false)
-                  setShowWordList(true)
-                }}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                <div>Спробувати ще раз</div>
-                <div className="text-sm">Intentar de nuevo</div>
-              </button>
-            )}
-          </div>
-        </div>
+  const header = (progressValue: number, label?: string) => (
+    <div className="mb-6 space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          to={home}
+          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition"
+        >
+          <ArrowLeftIcon className="h-4 w-4" /> Назад
+        </Link>
+        {label && <span className="text-sm text-zinc-500 dark:text-zinc-400 tabular-nums">{label}</span>}
       </div>
-    )
-  }
-
-  if (isLearningMode) {
-    const blockTitle = getBlockTitle(block.title)
-    return (
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">
-          <div className="text-gray-900 dark:text-dark-text">{blockTitle.uk}</div>
-          <div className="text-sm text-gray-500 dark:text-dark-text-secondary">{blockTitle.es}</div>
-        </h1>
-        
-        <div className="bg-white dark:bg-dark-card p-6 rounded-lg shadow-sm">
-          {showWordList ? (
-            <>
-              <div className="space-y-6">
-                {block.words.map((wordId) => {
-                  const word = words.find(w => w.id === wordId)
-                  if (!word) return null
-                  return (
-                    <div key={word.id} className="border-b dark:border-dark-border pb-4 last:border-b-0">
-                      <p className="font-medium text-gray-900 dark:text-dark-text">{word.ukrainian}</p>
-                      <p className="text-gray-600 dark:text-dark-text-secondary">{word.spanish}</p>
-                    </div>
-                  )
-                })}
-              </div>
-
-              <button
-                onClick={() => {
-                  setShowWordList(false)
-                  setIsMultipleChoice(true)
-                  setCurrentWordIndex(0)
-                }}
-                className="w-full mt-6 bg-blue-500 dark:bg-dark-accent text-white py-2 rounded-md hover:bg-blue-600 dark:hover:bg-dark-accent-hover"
-              >
-                <div>Почати тест</div>
-                <div className="text-sm">Comenzar prueba</div>
-              </button>
-            </>
-          ) : isMultipleChoice ? (
-            <>
-              <div className="mb-6">
-                <div className="text-gray-600 mb-2">Українська:</div>
-                <div className="text-xl font-medium">{currentWord.ukrainian}</div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {getRandomOptions(currentWord.spanish, words).map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleMultipleChoice(option)}
-                    className="p-4 text-lg border-2 border-blue-500 rounded-lg hover:bg-blue-50 transition-colors text-gray-900 bg-white"
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-
-              {feedback[currentWord.id] === false && (
-                <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-lg">
-                  <div>Спробуйте ще раз</div>
-                  <div className="text-sm">Inténtalo de nuevo</div>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center p-6">
-              <h2 className="text-xl font-bold mb-4">
-                <div>Чудово! Тепер спробуємо написати слова самостійно</div>
-                <div className="text-sm text-gray-500">¡Excelente! Ahora intentemos escribir las palabras por nuestra cuenta</div>
-              </h2>
-              <button
-                onClick={() => {
-                  setIsLearningMode(false)
-                  setCurrentWordIndex(0)
-                  setUserInput('')
-                }}
-                className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                <div>Почати тест</div>
-                <div className="text-sm">Comenzar prueba</div>
-              </button>
-            </div>
-          )}
-        </div>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">{block.title}</h1>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400" lang={code}>{block.titleTarget}</p>
       </div>
-    )
-  }
-
-  const blockTitle = getBlockTitle(block.title)
-  return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">
-        <div className="text-gray-900 dark:text-dark-text">{blockTitle.uk}</div>
-        <div className="text-sm text-gray-500 dark:text-dark-text-secondary">{blockTitle.es}</div>
-      </h1>
-      
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <div className="mb-4">
-          <div className="text-gray-600 mb-2">Українська:</div>
-          <div className="text-xl font-medium">{currentWord.ukrainian}</div>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="answer" className="block text-gray-600 mb-2">
-              Іспанська:
-            </label>
-            <input
-              type="text"
-              id="answer"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400"
-              placeholder="Введіть відповідь..."
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-          >
-            <div>{currentWordIndex < block.words.length - 1 ? 'Наступне слово' : 'Завершити'}</div>
-            <div className="text-sm">{currentWordIndex < block.words.length - 1 ? 'Siguiente palabra' : 'Finalizar'}</div>
-          </button>
-        </form>
-
-        <div className="mt-4 text-center text-gray-600">
-          <div>Слово {currentWordIndex + 1} з {block.words.length}</div>
-          <div className="text-sm text-gray-500">Palabra {currentWordIndex + 1} de {block.words.length}</div>
-        </div>
-      </div>
+      <ProgressBar value={progressValue} total={total} />
     </div>
   )
-} 
+
+  const fade = {
+    initial: { opacity: 0, y: 8 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -8 },
+    transition: { duration: 0.2 },
+  }
+
+  // ---------- RESULT ----------
+  if (phase === 'result') {
+    const correctCount = blockWords.filter(w => results[w.id]).length
+    const percentage = (correctCount / total) * 100
+    const passed = percentage >= PASS_PERCENT
+    const nextBlock = [...storeBlocks].filter(b => b.order > block.order).sort((a, b) => a.order - b.order)[0]
+
+    return (
+      <div className="max-w-2xl mx-auto py-6">
+        <motion.div {...fade} className={`${card} p-6 sm:p-8 text-center`}>
+          <div className="text-5xl mb-3">{passed ? (percentage === 100 ? '🏆' : '🎉') : '💪'}</div>
+          <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+            {passed ? 'Чудово!' : 'Потрібно ще попрацювати'}
+          </h2>
+          <div className="mt-6 flex justify-center gap-8">
+            <div>
+              <div className="text-4xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
+                {correctCount}/{total}
+              </div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400">правильно · {Math.round(percentage)}%</div>
+            </div>
+            <div>
+              <div className={`text-4xl font-semibold tabular-nums ${passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                {toTenScale(percentage)}
+              </div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400">бал з 10</div>
+            </div>
+          </div>
+          {!passed && (
+            <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">
+              Для проходження блоку потрібно щонайменше {PASS_PERCENT}%
+            </p>
+          )}
+
+          <ul className="mt-6 space-y-2 text-left">
+            {blockWords.map(w => {
+              const ok = results[w.id]
+              return (
+                <li
+                  key={w.id}
+                  className={`flex items-start gap-3 rounded-xl p-3 ${ok ? 'bg-emerald-500/10' : 'bg-rose-500/10'}`}
+                >
+                  {ok ? (
+                    <CheckCircleIcon className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  ) : (
+                    <XCircleIcon className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
+                  )}
+                  <div className="min-w-0">
+                    <div className="font-medium text-zinc-900 dark:text-zinc-100">{w.translation}</div>
+                    <div className="text-sm text-zinc-500 dark:text-zinc-400 break-words">
+                      {ok ? w.term : (
+                        <>
+                          <span className="line-through">{answers[w.id] || '—'}</span>{' '}
+                          → <span className="text-emerald-600 dark:text-emerald-400 font-medium">{w.term}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            {passed && nextBlock && (
+              <button onClick={() => navigate(`${home}/block/${nextBlock.order}`)} className={primaryBtn} autoFocus>
+                Наступний блок <ArrowRightIcon className="h-5 w-5" />
+              </button>
+            )}
+            <button onClick={reset} className={passed ? secondaryBtn : primaryBtn} autoFocus={!passed}>
+              <ArrowPathIcon className="h-5 w-5" /> Пройти ще раз
+            </button>
+            <button onClick={() => navigate(home)} className={secondaryBtn}>
+              <HomeIcon className="h-5 w-5" /> На головну
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // ---------- WORD LIST ----------
+  if (phase === 'list') {
+    return (
+      <div className="max-w-2xl mx-auto py-6">
+        {header(0, `${total} слів`)}
+        <motion.div {...fade} className={`${card} divide-y divide-zinc-200 dark:divide-zinc-800`}>
+          {blockWords.map((w, i) => (
+            <div key={w.id} className="flex items-center gap-4 px-5 py-4">
+              <span className="w-6 text-sm text-zinc-400 dark:text-zinc-500 tabular-nums">{i + 1}</span>
+              <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                <span className="text-zinc-500 dark:text-zinc-400">{w.translation}</span>
+                <span className="font-medium text-zinc-900 dark:text-zinc-100" lang={code}>{w.term}</span>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+        <button
+          onClick={() => {
+            setIndex(0)
+            setPhase('choice')
+          }}
+          className={`${primaryBtn} w-full mt-6 py-3`}
+          autoFocus
+        >
+          <AcademicCapIcon className="h-5 w-5" /> Почати тренування
+        </button>
+      </div>
+    )
+  }
+
+  // ---------- INTRO TO TYPING ----------
+  if (phase === 'intro') {
+    return (
+      <div className="max-w-2xl mx-auto py-6">
+        {header(total, 'Етап 1 завершено')}
+        <motion.div {...fade} className={`${card} p-8 text-center`}>
+          <PencilSquareIcon className="h-12 w-12 mx-auto text-indigo-500" />
+          <h2 className="mt-4 text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+            Чудово! Тепер напишіть слова самостійно
+          </h2>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">Перекладайте з української {adverb}</p>
+          <button
+            onClick={() => {
+              setIndex(0)
+              setUserInput('')
+              setChecked(null)
+              setAnswers({})
+              setResults({})
+              setPhase('typing')
+            }}
+            className={`${primaryBtn} mt-6`}
+            autoFocus
+          >
+            Почати тест <ArrowRightIcon className="h-5 w-5" />
+          </button>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // ---------- MULTIPLE CHOICE ----------
+  if (phase === 'choice') {
+    return (
+      <div className="max-w-2xl mx-auto py-6">
+        {header(index, `Вибір · слово ${index + 1} з ${total}`)}
+        <AnimatePresence mode="wait">
+          <motion.div key={`c-${index}`} {...fade}>
+            <div className={`${card} p-8 sm:p-12 text-center`}>
+              <div className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Як {adverb}?</div>
+              <div className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 break-words">
+                {currentWord.translation}
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {options.map((opt, i) => {
+                const wrong = wrongChoice === opt
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => handleChoice(opt)}
+                    className={`flex items-center gap-3 rounded-xl border px-4 py-4 text-left text-lg font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
+                      wrong
+                        ? 'border-rose-500/60 bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                        : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:border-indigo-500 hover:bg-indigo-500/5'
+                    }`}
+                  >
+                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800 text-sm text-zinc-500 dark:text-zinc-400">
+                      {i + 1}
+                    </span>
+                    <span className="break-words">{opt}</span>
+                  </button>
+                )
+              })}
+            </div>
+            {wrongChoice && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-4 flex items-center gap-2 rounded-xl bg-rose-500/10 p-3 text-rose-600 dark:text-rose-400"
+              >
+                <XCircleIcon className="h-5 w-5" /> Неправильно, спробуйте ще раз
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    )
+  }
+
+  // ---------- TYPING TEST ----------
+  const isLast = index === total - 1
+  return (
+    <div className="max-w-2xl mx-auto py-6">
+      {header(index + (checked !== null ? 1 : 0), `Слово ${index + 1} з ${total}`)}
+      <AnimatePresence mode="wait">
+        <motion.div key={`t-${index}`} {...fade}>
+          <div className={`${card} p-8 sm:p-12 text-center`}>
+            <div className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Перекладіть {adverb}</div>
+            <div className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 break-words">
+              {currentWord.translation}
+            </div>
+          </div>
+
+          <form onSubmit={handleTypingSubmit} className="mt-4 space-y-3">
+            <input
+              ref={inputRef}
+              type="text"
+              value={userInput}
+              onChange={e => setUserInput(e.target.value)}
+              readOnly={checked !== null}
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
+              aria-label={`Відповідь ${adverb}`}
+              lang={code}
+              placeholder={`Введіть слово ${adverb}…`}
+              className={`w-full rounded-xl px-4 py-3 text-lg bg-white dark:bg-zinc-900 border text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 ${
+                checked === true
+                  ? 'border-emerald-500 focus:ring-emerald-500/60'
+                  : checked === false
+                    ? 'border-rose-500 focus:ring-rose-500/60'
+                    : 'border-zinc-300 dark:border-zinc-700 focus:ring-indigo-500/60'
+              }`}
+            />
+
+            {checked !== null && (
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`flex items-start gap-3 rounded-xl p-4 ${
+                  checked ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                }`}
+              >
+                {checked ? <CheckCircleIcon className="h-6 w-6 shrink-0" /> : <XCircleIcon className="h-6 w-6 shrink-0" />}
+                <div>
+                  <div className="font-medium">{checked ? 'Правильно!' : 'Неправильно'}</div>
+                  <div className="text-sm">
+                    Правильна відповідь: <span className="font-semibold" lang={code}>{currentWord.term}</span>
+                  </div>
+                  {currentWord.example && (
+                    <div className="mt-2 border-t border-current/10 pt-2 text-sm text-zinc-600 dark:text-zinc-300">
+                      <p className="italic" lang={code}>{currentWord.example}</p>
+                      {currentWord.exampleTranslation && (
+                        <p className="text-zinc-500 dark:text-zinc-400">{currentWord.exampleTranslation}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {checked === null ? (
+              <button type="submit" disabled={!userInput.trim()} className={`${primaryBtn} w-full py-3`}>
+                Перевірити <span className="text-xs opacity-70">Enter</span>
+              </button>
+            ) : (
+              <button ref={nextRef} type="submit" className={`${primaryBtn} w-full py-3`}>
+                {isLast ? 'Завершити' : 'Далі'} <ArrowRightIcon className="h-5 w-5" />
+              </button>
+            )}
+          </form>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  )
+}

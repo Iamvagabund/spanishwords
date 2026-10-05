@@ -9,46 +9,36 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  console.log('ThemeProvider: Initializing')
-  
-  // Ініціалізуємо тему з localStorage
-  const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme
-    console.log('ThemeProvider: Initial theme from localStorage:', savedTheme || 'light')
-    return savedTheme || 'light'
-  })
-
-  // Функція для перемикання теми
-  const toggleTheme = () => {
-    console.log('ThemeProvider: Toggle theme called, current theme:', theme)
-    setTheme(prevTheme => {
-      const newTheme = prevTheme === 'light' ? 'dark' : 'light'
-      console.log('ThemeProvider: Setting new theme to:', newTheme)
-      return newTheme
-    })
+function readSavedTheme(): Theme {
+  try {
+    const saved = localStorage.getItem('theme')
+    if (saved === 'light' || saved === 'dark') return saved
+  } catch {
+    // storage unavailable
   }
+  return 'dark'
+}
 
-  // Ефект для застосування теми
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(readSavedTheme)
+
+  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+
   useEffect(() => {
-    console.log('ThemeProvider: Theme effect triggered, applying theme:', theme)
-    document.documentElement.classList.remove('light', 'dark')
-    document.documentElement.classList.add(theme)
-    localStorage.setItem('theme', theme)
+    const root = document.documentElement
+    root.classList.remove('light', 'dark')
+    root.classList.add(theme)
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'dark' ? '#09090b' : '#fafafa')
+    try {
+      localStorage.setItem('theme', theme)
+    } catch {
+      // storage unavailable
+    }
   }, [theme])
 
-  const value = {
-    theme,
-    toggleTheme
-  }
-
-  console.log('ThemeProvider: Rendering with theme:', theme)
-
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  )
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {
@@ -57,4 +47,4 @@ export function useTheme() {
     throw new Error('useTheme must be used within a ThemeProvider')
   }
   return context
-} 
+}

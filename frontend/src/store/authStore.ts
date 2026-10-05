@@ -1,8 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import axios from 'axios'
 import type { User } from '../types'
-import { login as loginApi } from '../services/authApi'
-import { useStore } from './useStore'
+import * as authApi from '../services/authApi'
+import { errorMessage } from '../services/http'
+import { useStore, flushAll } from './useStore'
+
+type ProfilePatch = Partial<Pick<User, 'nickname' | 'avatar' | 'selectedLanguage'>>
 
 interface AuthState {
   user: User | null
@@ -14,187 +18,91 @@ interface AuthState {
   register: (email: string, password: string) => Promise<void>
   logout: () => void
   checkAuth: () => Promise<void>
-  updateProfile: (data: Partial<User>) => Promise<void>
+  updateProfile: (data: ProfilePatch) => Promise<void>
+  setSelectedLanguage: (code: string) => Promise<void>
   setUser: (user: User | null) => void
-}
-
-import { API_URL } from '../config'
-
-const handleApiError = (error: unknown): string => {
-  if (error instanceof TypeError && error.message === 'Failed to fetch') {
-    return 'Сервер недоступний. Перевірте, чи запущений бекенд.'
-  }
-  return 'Сталася помилка. Спробуйте ще раз.'
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
-      setUser: (user) => set({ user }),
-
-      login: async (email: string, password: string) => {
+    (set, get) => {
+      const authenticate = async (fn: () => Promise<authApi.AuthResponse>, fallback: string) => {
         set({ isLoading: true, error: null })
         try {
-          const response = await loginApi(email, password)
-          
-          if (!response || !response.token) {
-            throw new Error('Invalid response from server')
-          }
-
-          const { user, token } = response
-          
-
-          set({ 
-            user: { ...user, role: 'user' }, 
-            token, 
-            isAuthenticated: true,
-            isLoading: false,
-            error: null 
-          })
-          
-          // Оновлюємо прогрес для нового користувача
-          if (user?.id) {
-            useStore.getState().updateUserProgress(user.id)
-          }
+          const { user, token } = await fn()
+          if (!token || !user) throw new Error(fallback)
+          set({ user, token, isAuthenticated: true, isLoading: false, error: null })
+          await useStore.getState().loadProgress()
         } catch (error) {
-          console.error('Login failed:', error)
-          set({ 
-            isLoading: false,
-            error: error instanceof Error ? error.message : 'Помилка входу'
-          })
+          set({ isLoading: false, error: errorMessage(error, fallback) })
           throw error
         }
-      },
+      }
 
-      register: async (email: string, password: string) => {
-        set({ isLoading: true, error: null })
-        try {
-          const response = await fetch(`${API_URL}/auth/register`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-          })
+      return {
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+        setUser: user => set({ user }),
 
-          if (!response.ok) {
-            const error = await response.json().catch(() => ({ message: 'Помилка реєстрації' }))
-            throw new Error(error.message || 'Помилка реєстрації')
+        login: (email, password) => authenticate(() => authApi.login(email, password), 'Помилка входу'),
+        register: (email, password) => authenticate(() => authApi.register(email, password), 'Помилка реєстрації'),
+
+        logout: () => {
+          flushAll()
+          useStore.getState().clear()
+          set({ user: null, token: null, isAuthenticated: false, error: null, isLoading: false })
+        },
+
+        checkAuth: async () => {
+          const token = get().token
+          if (!token) {
+            set({ user: null, isAuthenticated: false })
+            return
           }
-
-          const data = await response.json()
-          set({
-            user: { ...data.user, role: 'user' },
-            token: data.token,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null
-          })
-        } catch (error) {
-          console.error('Registration error:', error)
-          set({ 
-            error: handleApiError(error), 
-            isLoading: false 
-          })
-          throw error
-        }
-      },
-
-      logout: () => {
-        console.log('Logout called')
-        set({
-          user: null,
-          token: null,
-          isAuthenticated: false,
-          error: null,
-          isLoading: false
-        })
-        // Скидаємо прогрес при виході
-        useStore.getState().resetProgress()
-      },
-
-      checkAuth: async () => {
-        const token = get().token
-        if (!token) {
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-            error: null,
-          })
-          return
-        }
-
-        try {
-          const response = await fetch(`${API_URL}/user/profile`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-
-          if (!response.ok) {
-            throw new Error('Помилка перевірки авторизації')
+          // Cached progress shows immediately; server progress refreshes in parallel.
+          const progressPromise = useStore.getState().loadProgress()
+          try {
+            const user = await authApi.getProfile(token)
+            set({ user: { ...get().user, ...user }, isAuthenticated: true, error: null })
+          } catch (error) {
+            // Only drop the session on a real auth failure, not when the server is asleep/offline.
+            const status = axios.isAxiosError(error) ? error.response?.status : undefined
+            if (status === 401 || status === 403) get().logout()
           }
+          await progressPromise
+        },
 
-          const user = await response.json()
-          set({
-            user: { ...user, role: 'user' },
-            token,
-            isAuthenticated: true,
-            error: null,
-          })
-        } catch (error) {
-          console.error('Auth check error:', error)
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-            error: handleApiError(error),
-          })
-        }
-      },
+        updateProfile: async data => {
+          const token = get().token
+          if (!token) throw new Error('Не авторизовано')
+          const updated = await authApi.updateProfile(token, data)
+          const current = get().user
+          if (current) set({ user: { ...current, ...updated } })
+        },
 
-      updateProfile: async (data) => {
-        const token = get().token
-        if (!token) {
-          throw new Error('No token found')
-        }
-
-        try {
-          const response = await fetch(`${API_URL}/user/profile`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(data),
-          })
-
-          if (!response.ok) {
-            const error = await response.json()
-            throw new Error(error.message || 'Failed to update profile')
+        setSelectedLanguage: async code => {
+          const { user, token } = get()
+          if (!user || user.selectedLanguage === code) return
+          set({ user: { ...user, selectedLanguage: code } })
+          if (!token) return
+          try {
+            await authApi.updateProfile(token, { selectedLanguage: code })
+          } catch {
+            /* non-critical: kept locally */
           }
-
-          const updatedUser = await response.json()
-          set({ user: { ...updatedUser, role: 'user' } })
-        } catch (error) {
-          console.error('Error updating profile:', error)
-          throw error
-        }
-      },
-    }),
+        },
+      }
+    },
     {
       name: 'auth-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         token: state.token,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
     }
   )
-) 
+)

@@ -28,7 +28,19 @@ export const errorHandler = (
     })
   }
 
-  console.error('ERROR 💥', err)
+  // body-parser errors (invalid JSON, payload too large)
+  const status = (err as any).status ?? (err as any).statusCode
+  if (typeof status === 'number' && status >= 400 && status < 500) {
+    return res.status(status).json({
+      status: 'fail',
+      message: status === 413 ? 'Request body too large' : 'Invalid request',
+    })
+  }
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    return res.status(400).json({ status: 'fail', message: err.message })
+  }
+
+  console.error('ERROR', err.message)
 
   return res.status(500).json({
     status: 'error',

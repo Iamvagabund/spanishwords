@@ -15,60 +15,32 @@ declare global {
   }
 }
 
-const authenticateToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const authenticateToken = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization
-    console.log('Auth header:', authHeader)
-    
-    if (!authHeader) {
-      throw new AppError('No token provided', 401)
-    }
+    if (!authHeader) throw new AppError('No token provided', 401)
+    const [scheme, token] = authHeader.split(' ')
+    if (scheme !== 'Bearer' || !token) throw new AppError('Invalid token format', 401)
 
-    const token = authHeader.split(' ')[1]
-    console.log('Token:', token)
-    
-    if (!token) {
-      throw new AppError('Invalid token format', 401)
-    }
-
+    let decoded: JwtPayload
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
-      console.log('Decoded token:', decoded)
-      
-      const user = await User.findById(decoded.userId).select('-password')
-      console.log('Found user:', user)
-      
-      if (!user) {
-        throw new AppError('User not found', 404)
-      }
-
-      req.user = user
-      next()
-    } catch (error) {
-      console.error('JWT verification error:', error)
-      if (error instanceof jwt.JsonWebTokenError) {
-        throw new AppError('Invalid token', 401)
-      }
-      throw error
+      decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
+    } catch {
+      throw new AppError('Invalid token', 401)
     }
+
+    const user = await User.findById(decoded.userId).select('-password')
+    if (!user) throw new AppError('User not found', 401)
+    req.user = user
+    next()
   } catch (error) {
     next(error)
   }
 }
 
-const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  console.log('Checking admin role...')
-  console.log('User role:', req.user?.role)
-  if (req.user?.role !== 'admin') {
-    console.log('Admin access denied')
-    return res.status(403).json({ message: 'Admin access required' })
-  }
-  console.log('Admin access granted')
+const adminMiddleware = (req: Request, _res: Response, next: NextFunction) => {
+  if (req.user?.role !== 'admin') return next(new AppError('Admin access required', 403))
   next()
 }
 
-export { authenticateToken, adminMiddleware } 
+export { authenticateToken, adminMiddleware }

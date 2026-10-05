@@ -1,27 +1,13 @@
 import { Outlet } from 'react-router-dom'
 import { Navbar } from './Navbar'
-import { useEffect, useState } from 'react'
 
 export const Layout = () => {
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-    return () => {
-      setIsMounted(false)
-    }
-  }, [])
-
-  if (!isMounted) {
-    return null
-  }
-
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-dark-bg">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-28 pt-6 sm:pb-12 sm:pt-10">
         <Outlet />
       </main>
     </div>
   )
-} 
+}

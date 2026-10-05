@@ -1,0 +1,1390 @@
+{
+  "language": {
+    "code": "es",
+    "name": "Іспанська",
+    "nativeName": "Español",
+    "flag": "🇪🇸"
+  },
+  "blocks": [
+    {
+      "order": 1,
+      "title": "Привітання",
+      "titleTarget": "Saludos",
+      "description": "Базові привітання та прощання",
+      "level": "A1",
+      "words": [
+        {
+          "term": "hola",
+          "translation": "привіт",
+          "example": "¡Hola! ¿Qué tal?",
+          "exampleTranslation": "Привіт! Як справи?"
+        },
+        {
+          "term": "buenos días",
+          "translation": "доброго ранку",
+          "example": "Buenos días, señora.",
+          "exampleTranslation": "Доброго ранку, пані."
+        },
+        {
+          "term": "buenas tardes",
+          "translation": "добрий день",
+          "example": "Buenas tardes a todos.",
+          "exampleTranslation": "Добрий день усім."
+        },
+        {
+          "term": "buenas noches",
+          "translation": "добраніч",
+          "example": "Buenas noches, mamá.",
+          "exampleTranslation": "Добраніч, мамо."
+        },
+        {
+          "term": "adiós",
+          "translation": "до побачення",
+          "example": "Adiós, hasta mañana.",
+          "exampleTranslation": "До побачення, до завтра."
+        },
+        {
+          "term": "hasta luego",
+          "translation": "до зустрічі",
+          "example": "Hasta luego, amigo.",
+          "exampleTranslation": "До зустрічі, друже."
+        },
+        {
+          "term": "¿qué tal?",
+          "translation": "як справи?",
+          "example": "Hola, Ana, ¿qué tal?",
+          "exampleTranslation": "Привіт, Ано, як справи?"
+        },
+        {
+          "term": "bien",
+          "translation": "добре",
+          "example": "Estoy bien, gracias.",
+          "exampleTranslation": "У мене все добре, дякую."
+        },
+        {
+          "term": "me llamo",
+          "translation": "мене звати",
+          "example": "Me llamo Olena.",
+          "exampleTranslation": "Мене звати Олена."
+        },
+        {
+          "term": "mucho gusto",
+          "translation": "приємно познайомитися",
+          "example": "Mucho gusto, soy Pedro.",
+          "exampleTranslation": "Приємно познайомитися, я Педро."
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Ввічливі фрази",
+      "titleTarget": "Frases de cortesía",
+      "description": "Слова, які роблять розмову ввічливою",
+      "level": "A1",
+      "words": [
+        {
+          "term": "por favor",
+          "translation": "будь ласка (прохання)",
+          "example": "Un café, por favor.",
+          "exampleTranslation": "Каву, будь ласка."
+        },
+        {
+          "term": "gracias",
+          "translation": "дякую",
+          "example": "Gracias por tu ayuda.",
+          "exampleTranslation": "Дякую за допомогу."
+        },
+        {
+          "term": "de nada",
+          "translation": "нема за що",
+          "example": "—Gracias. —De nada.",
+          "exampleTranslation": "— Дякую. — Нема за що."
+        },
+        {
+          "term": "perdón",
+          "translation": "вибачте",
+          "example": "Perdón, ¿dónde está el baño?",
+          "exampleTranslation": "Вибачте, де туалет?"
+        },
+        {
+          "term": "lo siento",
+          "translation": "мені шкода",
+          "example": "Lo siento mucho.",
+          "exampleTranslation": "Мені дуже шкода."
+        },
+        {
+          "term": "con permiso",
+          "translation": "дозвольте пройти",
+          "example": "Con permiso, voy a salir.",
+          "exampleTranslation": "Дозвольте, я вийду."
+        },
+        {
+          "term": "sí",
+          "translation": "так",
+          "example": "Sí, quiero ir.",
+          "exampleTranslation": "Так, я хочу піти."
+        },
+        {
+          "term": "no",
+          "translation": "ні",
+          "example": "No, gracias.",
+          "exampleTranslation": "Ні, дякую."
+        },
+        {
+          "term": "disculpe",
+          "translation": "перепрошую",
+          "example": "Disculpe, ¿qué hora es?",
+          "exampleTranslation": "Перепрошую, котра година?"
+        },
+        {
+          "term": "bienvenido",
+          "translation": "ласкаво просимо",
+          "example": "Bienvenido a España.",
+          "exampleTranslation": "Ласкаво просимо до Іспанії."
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Числа 1-10",
+      "titleTarget": "Números del 1 al 10",
+      "description": "Перші числа для рахунку",
+      "level": "A1",
+      "words": [
+        {
+          "term": "uno",
+          "translation": "один",
+          "example": "Solo tengo uno.",
+          "exampleTranslation": "У мене тільки один."
+        },
+        {
+          "term": "dos",
+          "translation": "два",
+          "example": "Tengo dos gatos.",
+          "exampleTranslation": "У мене два коти."
+        },
+        {
+          "term": "tres",
+          "translation": "три",
+          "example": "Son las tres.",
+          "exampleTranslation": "Зараз третя година."
+        },
+        {
+          "term": "cuatro",
+          "translation": "чотири",
+          "example": "La mesa tiene cuatro patas.",
+          "exampleTranslation": "Стіл має чотири ніжки."
+        },
+        {
+          "term": "cinco",
+          "translation": "п'ять",
+          "example": "Tengo cinco dedos en la mano.",
+          "exampleTranslation": "У мене п'ять пальців на руці."
+        },
+        {
+          "term": "seis",
+          "translation": "шість",
+          "example": "Trabajo seis horas.",
+          "exampleTranslation": "Я працюю шість годин."
+        },
+        {
+          "term": "siete",
+          "translation": "сім",
+          "example": "La semana tiene siete días.",
+          "exampleTranslation": "Тиждень має сім днів."
+        },
+        {
+          "term": "ocho",
+          "translation": "вісім",
+          "example": "Me levanto a las ocho.",
+          "exampleTranslation": "Я встаю о восьмій."
+        },
+        {
+          "term": "nueve",
+          "translation": "дев'ять",
+          "example": "Mi hijo tiene nueve años.",
+          "exampleTranslation": "Моєму синові дев'ять років."
+        },
+        {
+          "term": "diez",
+          "translation": "десять",
+          "example": "Cuesta diez euros.",
+          "exampleTranslation": "Це коштує десять євро."
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "title": "Числа 11-100",
+      "titleTarget": "Números del 11 al 100",
+      "description": "Більші числа: десятки та сотня",
+      "level": "A1",
+      "words": [
+        {
+          "term": "once",
+          "translation": "одинадцять",
+          "example": "Hay once jugadores.",
+          "exampleTranslation": "Там одинадцять гравців."
+        },
+        {
+          "term": "doce",
+          "translation": "дванадцять",
+          "example": "Un año tiene doce meses.",
+          "exampleTranslation": "Рік має дванадцять місяців."
+        },
+        {
+          "term": "quince",
+          "translation": "п'ятнадцять",
+          "example": "Tengo quince minutos.",
+          "exampleTranslation": "У мене п'ятнадцять хвилин."
+        },
+        {
+          "term": "veinte",
+          "translation": "двадцять",
+          "example": "Tengo veinte años.",
+          "exampleTranslation": "Мені двадцять років."
+        },
+        {
+          "term": "treinta",
+          "translation": "тридцять",
+          "example": "Abril tiene treinta días.",
+          "exampleTranslation": "Квітень має тридцять днів."
+        },
+        {
+          "term": "cuarenta",
+          "translation": "сорок",
+          "example": "Mi padre tiene cuarenta años.",
+          "exampleTranslation": "Моєму батькові сорок років."
+        },
+        {
+          "term": "cincuenta",
+          "translation": "п'ятдесят",
+          "example": "Cuesta cincuenta euros.",
+          "exampleTranslation": "Це коштує п'ятдесят євро."
+        },
+        {
+          "term": "sesenta",
+          "translation": "шістдесят",
+          "example": "Una hora tiene sesenta minutos.",
+          "exampleTranslation": "Година має шістдесят хвилин."
+        },
+        {
+          "term": "noventa",
+          "translation": "дев'яносто",
+          "example": "Mi abuela tiene noventa años.",
+          "exampleTranslation": "Моїй бабусі дев'яносто років."
+        },
+        {
+          "term": "cien",
+          "translation": "сто",
+          "example": "Hay cien personas aquí.",
+          "exampleTranslation": "Тут сто людей."
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "title": "Кольори",
+      "titleTarget": "Colores",
+      "description": "Основні кольори",
+      "level": "A1",
+      "words": [
+        {
+          "term": "rojo",
+          "translation": "червоний",
+          "example": "El tomate es rojo.",
+          "exampleTranslation": "Помідор червоний."
+        },
+        {
+          "term": "azul",
+          "translation": "синій",
+          "example": "El cielo es azul.",
+          "exampleTranslation": "Небо синє."
+        },
+        {
+          "term": "verde",
+          "translation": "зелений",
+          "example": "La hierba es verde.",
+          "exampleTranslation": "Трава зелена."
+        },
+        {
+          "term": "amarillo",
+          "translation": "жовтий",
+          "example": "El sol es amarillo.",
+          "exampleTranslation": "Сонце жовте."
+        },
+        {
+          "term": "negro",
+          "translation": "чорний",
+          "example": "Mi gato es negro.",
+          "exampleTranslation": "Мій кіт чорний."
+        },
+        {
+          "term": "blanco",
+          "translation": "білий",
+          "example": "La nieve es blanca.",
+          "exampleTranslation": "Сніг білий."
+        },
+        {
+          "term": "gris",
+          "translation": "сірий",
+          "example": "El día está gris.",
+          "exampleTranslation": "День сірий."
+        },
+        {
+          "term": "naranja",
+          "translation": "помаранчевий",
+          "example": "Tengo una camiseta naranja.",
+          "exampleTranslation": "У мене помаранчева футболка."
+        },
+        {
+          "term": "rosa",
+          "translation": "рожевий",
+          "example": "Le gusta el color rosa.",
+          "exampleTranslation": "Їй подобається рожевий колір."
+        },
+        {
+          "term": "marrón",
+          "translation": "коричневий",
+          "example": "Mis zapatos son marrones.",
+          "exampleTranslation": "Мої черевики коричневі."
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Сім'я",
+      "titleTarget": "La familia",
+      "description": "Члени родини",
+      "level": "A1",
+      "words": [
+        {
+          "term": "la madre",
+          "translation": "мати",
+          "example": "Mi madre es profesora.",
+          "exampleTranslation": "Моя мати вчителька."
+        },
+        {
+          "term": "el padre",
+          "translation": "батько",
+          "example": "Mi padre trabaja mucho.",
+          "exampleTranslation": "Мій батько багато працює."
+        },
+        {
+          "term": "el hermano",
+          "translation": "брат",
+          "example": "Mi hermano es alto.",
+          "exampleTranslation": "Мій брат високий."
+        },
+        {
+          "term": "la hermana",
+          "translation": "сестра",
+          "example": "Tengo una hermana menor.",
+          "exampleTranslation": "У мене є молодша сестра."
+        },
+        {
+          "term": "el hijo",
+          "translation": "син",
+          "example": "Su hijo tiene cinco años.",
+          "exampleTranslation": "Її синові п'ять років."
+        },
+        {
+          "term": "la hija",
+          "translation": "донька",
+          "example": "Mi hija estudia mucho.",
+          "exampleTranslation": "Моя донька багато вчиться."
+        },
+        {
+          "term": "el abuelo",
+          "translation": "дідусь",
+          "example": "Mi abuelo vive en el pueblo.",
+          "exampleTranslation": "Мій дідусь живе в селі."
+        },
+        {
+          "term": "la abuela",
+          "translation": "бабуся",
+          "example": "La abuela cocina muy bien.",
+          "exampleTranslation": "Бабуся дуже добре готує."
+        },
+        {
+          "term": "el marido",
+          "translation": "чоловік (у шлюбі)",
+          "example": "Mi marido se llama Juan.",
+          "exampleTranslation": "Мого чоловіка звати Хуан."
+        },
+        {
+          "term": "la esposa",
+          "translation": "дружина",
+          "example": "Su esposa es médica.",
+          "exampleTranslation": "Його дружина лікарка."
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Тіло",
+      "titleTarget": "El cuerpo",
+      "description": "Частини тіла",
+      "level": "A1",
+      "words": [
+        {
+          "term": "la cabeza",
+          "translation": "голова",
+          "example": "Me duele la cabeza.",
+          "exampleTranslation": "У мене болить голова."
+        },
+        {
+          "term": "la mano",
+          "translation": "рука (кисть)",
+          "example": "Dame la mano.",
+          "exampleTranslation": "Дай мені руку."
+        },
+        {
+          "term": "el pie",
+          "translation": "ступня",
+          "example": "Me duele el pie.",
+          "exampleTranslation": "У мене болить ступня."
+        },
+        {
+          "term": "el ojo",
+          "translation": "око",
+          "example": "Tiene un ojo azul.",
+          "exampleTranslation": "У нього одне око блакитне."
+        },
+        {
+          "term": "la boca",
+          "translation": "рот",
+          "example": "Abre la boca, por favor.",
+          "exampleTranslation": "Відкрий рот, будь ласка."
+        },
+        {
+          "term": "la nariz",
+          "translation": "ніс",
+          "example": "Tengo la nariz fría.",
+          "exampleTranslation": "У мене холодний ніс."
+        },
+        {
+          "term": "la oreja",
+          "translation": "вухо",
+          "example": "Me duele la oreja.",
+          "exampleTranslation": "У мене болить вухо."
+        },
+        {
+          "term": "el pelo",
+          "translation": "волосся",
+          "example": "Ella tiene el pelo largo.",
+          "exampleTranslation": "У неї довге волосся."
+        },
+        {
+          "term": "la pierna",
+          "translation": "нога",
+          "example": "Me rompí la pierna.",
+          "exampleTranslation": "Я зламав ногу."
+        },
+        {
+          "term": "el corazón",
+          "translation": "серце",
+          "example": "El corazón late rápido.",
+          "exampleTranslation": "Серце б'ється швидко."
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Їжа",
+      "titleTarget": "La comida",
+      "description": "Основні продукти харчування",
+      "level": "A1",
+      "words": [
+        {
+          "term": "el pan",
+          "translation": "хліб",
+          "example": "Compro pan cada día.",
+          "exampleTranslation": "Я купую хліб щодня."
+        },
+        {
+          "term": "el queso",
+          "translation": "сир",
+          "example": "Me gusta el queso.",
+          "exampleTranslation": "Мені подобається сир."
+        },
+        {
+          "term": "la carne",
+          "translation": "м'ясо",
+          "example": "No como carne.",
+          "exampleTranslation": "Я не їм м'яса."
+        },
+        {
+          "term": "el pollo",
+          "translation": "курка (м'ясо)",
+          "example": "Hoy cenamos pollo.",
+          "exampleTranslation": "Сьогодні на вечерю курка."
+        },
+        {
+          "term": "el pescado",
+          "translation": "риба (страва)",
+          "example": "El pescado está fresco.",
+          "exampleTranslation": "Риба свіжа."
+        },
+        {
+          "term": "el huevo",
+          "translation": "яйце",
+          "example": "Quiero un huevo frito.",
+          "exampleTranslation": "Я хочу смажене яйце."
+        },
+        {
+          "term": "el arroz",
+          "translation": "рис",
+          "example": "La paella lleva arroz.",
+          "exampleTranslation": "У паелью додають рис."
+        },
+        {
+          "term": "la manzana",
+          "translation": "яблуко",
+          "example": "Como una manzana.",
+          "exampleTranslation": "Я їм яблуко."
+        },
+        {
+          "term": "la sopa",
+          "translation": "суп",
+          "example": "La sopa está caliente.",
+          "exampleTranslation": "Суп гарячий."
+        },
+        {
+          "term": "la ensalada",
+          "translation": "салат",
+          "example": "Una ensalada, por favor.",
+          "exampleTranslation": "Салат, будь ласка."
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Напої",
+      "titleTarget": "Las bebidas",
+      "description": "Що ми п'ємо",
+      "level": "A1",
+      "words": [
+        {
+          "term": "el agua",
+          "translation": "вода",
+          "example": "Un vaso de agua, por favor.",
+          "exampleTranslation": "Склянку води, будь ласка."
+        },
+        {
+          "term": "el café",
+          "translation": "кава",
+          "example": "Tomo café por la mañana.",
+          "exampleTranslation": "Я п'ю каву зранку."
+        },
+        {
+          "term": "el té",
+          "translation": "чай",
+          "example": "¿Quieres un té?",
+          "exampleTranslation": "Хочеш чаю?"
+        },
+        {
+          "term": "la leche",
+          "translation": "молоко",
+          "example": "La leche está fría.",
+          "exampleTranslation": "Молоко холодне."
+        },
+        {
+          "term": "el zumo",
+          "translation": "сік",
+          "example": "Un zumo de naranja, por favor.",
+          "exampleTranslation": "Апельсиновий сік, будь ласка."
+        },
+        {
+          "term": "el vino",
+          "translation": "вино",
+          "example": "Este vino es muy bueno.",
+          "exampleTranslation": "Це вино дуже добре."
+        },
+        {
+          "term": "la cerveza",
+          "translation": "пиво",
+          "example": "Dos cervezas, por favor.",
+          "exampleTranslation": "Два пива, будь ласка."
+        },
+        {
+          "term": "el refresco",
+          "translation": "газований напій",
+          "example": "Los niños beben refresco.",
+          "exampleTranslation": "Діти п'ють газовану воду."
+        },
+        {
+          "term": "el vaso",
+          "translation": "склянка",
+          "example": "El vaso está vacío.",
+          "exampleTranslation": "Склянка порожня."
+        },
+        {
+          "term": "la botella",
+          "translation": "пляшка",
+          "example": "Compro una botella de agua.",
+          "exampleTranslation": "Я купую пляшку води."
+        }
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Дім",
+      "titleTarget": "La casa",
+      "description": "Кімнати та речі вдома",
+      "level": "A1",
+      "words": [
+        {
+          "term": "la casa",
+          "translation": "будинок",
+          "example": "Mi casa es pequeña.",
+          "exampleTranslation": "Мій будинок маленький."
+        },
+        {
+          "term": "la cocina",
+          "translation": "кухня",
+          "example": "Mamá está en la cocina.",
+          "exampleTranslation": "Мама на кухні."
+        },
+        {
+          "term": "el dormitorio",
+          "translation": "спальня",
+          "example": "El dormitorio es grande.",
+          "exampleTranslation": "Спальня велика."
+        },
+        {
+          "term": "el baño",
+          "translation": "ванна кімната",
+          "example": "El baño está a la derecha.",
+          "exampleTranslation": "Ванна кімната праворуч."
+        },
+        {
+          "term": "la puerta",
+          "translation": "двері",
+          "example": "Cierra la puerta, por favor.",
+          "exampleTranslation": "Зачини двері, будь ласка."
+        },
+        {
+          "term": "la ventana",
+          "translation": "вікно",
+          "example": "Abre la ventana.",
+          "exampleTranslation": "Відчини вікно."
+        },
+        {
+          "term": "la mesa",
+          "translation": "стіл",
+          "example": "La comida está en la mesa.",
+          "exampleTranslation": "Їжа на столі."
+        },
+        {
+          "term": "la silla",
+          "translation": "стілець",
+          "example": "Siéntate en la silla.",
+          "exampleTranslation": "Сідай на стілець."
+        },
+        {
+          "term": "la cama",
+          "translation": "ліжко",
+          "example": "Mi cama es cómoda.",
+          "exampleTranslation": "Моє ліжко зручне."
+        },
+        {
+          "term": "el piso",
+          "translation": "квартира",
+          "example": "Vivo en un piso en Madrid.",
+          "exampleTranslation": "Я живу в квартирі в Мадриді."
+        }
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Одяг",
+      "titleTarget": "La ropa",
+      "description": "Що ми носимо",
+      "level": "A1",
+      "words": [
+        {
+          "term": "la camisa",
+          "translation": "сорочка",
+          "example": "Llevo una camisa blanca.",
+          "exampleTranslation": "Я в білій сорочці."
+        },
+        {
+          "term": "la camiseta",
+          "translation": "футболка",
+          "example": "Esta camiseta es nueva.",
+          "exampleTranslation": "Ця футболка нова."
+        },
+        {
+          "term": "los pantalones",
+          "translation": "штани",
+          "example": "Necesito pantalones nuevos.",
+          "exampleTranslation": "Мені потрібні нові штани."
+        },
+        {
+          "term": "el vestido",
+          "translation": "сукня",
+          "example": "Ella lleva un vestido rojo.",
+          "exampleTranslation": "Вона в червоній сукні."
+        },
+        {
+          "term": "la falda",
+          "translation": "спідниця",
+          "example": "La falda es corta.",
+          "exampleTranslation": "Спідниця коротка."
+        },
+        {
+          "term": "los zapatos",
+          "translation": "взуття",
+          "example": "Mis zapatos son negros.",
+          "exampleTranslation": "Моє взуття чорне."
+        },
+        {
+          "term": "el abrigo",
+          "translation": "пальто",
+          "example": "Hace frío, ponte el abrigo.",
+          "exampleTranslation": "Холодно, вдягни пальто."
+        },
+        {
+          "term": "el sombrero",
+          "translation": "капелюх",
+          "example": "Mi abuelo lleva sombrero.",
+          "exampleTranslation": "Мій дідусь носить капелюх."
+        },
+        {
+          "term": "los calcetines",
+          "translation": "шкарпетки",
+          "example": "Busco mis calcetines.",
+          "exampleTranslation": "Я шукаю свої шкарпетки."
+        },
+        {
+          "term": "la chaqueta",
+          "translation": "куртка",
+          "example": "Llevo una chaqueta azul.",
+          "exampleTranslation": "Я в синій куртці."
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Дні та місяці",
+      "titleTarget": "Días y meses",
+      "description": "Дні тижня та місяці року",
+      "level": "A1",
+      "words": [
+        {
+          "term": "el lunes",
+          "translation": "понеділок",
+          "example": "El lunes trabajo.",
+          "exampleTranslation": "У понеділок я працюю."
+        },
+        {
+          "term": "el martes",
+          "translation": "вівторок",
+          "example": "Nos vemos el martes.",
+          "exampleTranslation": "Побачимося у вівторок."
+        },
+        {
+          "term": "el miércoles",
+          "translation": "середа",
+          "example": "El miércoles tengo clase.",
+          "exampleTranslation": "У середу в мене заняття."
+        },
+        {
+          "term": "el jueves",
+          "translation": "четвер",
+          "example": "El jueves voy al cine.",
+          "exampleTranslation": "У четвер я йду в кіно."
+        },
+        {
+          "term": "el viernes",
+          "translation": "п'ятниця",
+          "example": "¡Por fin es viernes!",
+          "exampleTranslation": "Нарешті п'ятниця!"
+        },
+        {
+          "term": "el sábado",
+          "translation": "субота",
+          "example": "El sábado descanso.",
+          "exampleTranslation": "У суботу я відпочиваю."
+        },
+        {
+          "term": "el domingo",
+          "translation": "неділя",
+          "example": "El domingo como con mi familia.",
+          "exampleTranslation": "У неділю я обідаю з родиною."
+        },
+        {
+          "term": "enero",
+          "translation": "січень",
+          "example": "En enero hace frío.",
+          "exampleTranslation": "У січні холодно."
+        },
+        {
+          "term": "mayo",
+          "translation": "травень",
+          "example": "Mi cumpleaños es en mayo.",
+          "exampleTranslation": "Мій день народження в травні."
+        },
+        {
+          "term": "agosto",
+          "translation": "серпень",
+          "example": "En agosto vamos a la playa.",
+          "exampleTranslation": "У серпні ми їдемо на пляж."
+        }
+      ]
+    },
+    {
+      "order": 13,
+      "title": "Час і погода",
+      "titleTarget": "El tiempo",
+      "description": "Як говорити про час і погоду",
+      "level": "A2",
+      "words": [
+        {
+          "term": "hoy",
+          "translation": "сьогодні",
+          "example": "Hoy hace sol.",
+          "exampleTranslation": "Сьогодні сонячно."
+        },
+        {
+          "term": "mañana",
+          "translation": "завтра",
+          "example": "Mañana voy a Madrid.",
+          "exampleTranslation": "Завтра я їду до Мадрида."
+        },
+        {
+          "term": "ayer",
+          "translation": "учора",
+          "example": "Ayer llovió mucho.",
+          "exampleTranslation": "Учора йшов сильний дощ."
+        },
+        {
+          "term": "la hora",
+          "translation": "година",
+          "example": "¿Qué hora es?",
+          "exampleTranslation": "Котра година?"
+        },
+        {
+          "term": "el sol",
+          "translation": "сонце",
+          "example": "El sol brilla.",
+          "exampleTranslation": "Сонце світить."
+        },
+        {
+          "term": "la lluvia",
+          "translation": "дощ",
+          "example": "No me gusta la lluvia.",
+          "exampleTranslation": "Я не люблю дощ."
+        },
+        {
+          "term": "la nieve",
+          "translation": "сніг",
+          "example": "Hay nieve en la montaña.",
+          "exampleTranslation": "У горах сніг."
+        },
+        {
+          "term": "el viento",
+          "translation": "вітер",
+          "example": "Hace mucho viento.",
+          "exampleTranslation": "Дуже вітряно."
+        },
+        {
+          "term": "hace calor",
+          "translation": "спекотно",
+          "example": "En verano hace calor.",
+          "exampleTranslation": "Влітку спекотно."
+        },
+        {
+          "term": "hace frío",
+          "translation": "холодно",
+          "example": "En invierno hace frío.",
+          "exampleTranslation": "Взимку холодно."
+        }
+      ]
+    },
+    {
+      "order": 14,
+      "title": "Місто",
+      "titleTarget": "La ciudad",
+      "description": "Місця в місті",
+      "level": "A2",
+      "words": [
+        {
+          "term": "la calle",
+          "translation": "вулиця",
+          "example": "Vivo en esta calle.",
+          "exampleTranslation": "Я живу на цій вулиці."
+        },
+        {
+          "term": "la plaza",
+          "translation": "площа",
+          "example": "Nos vemos en la plaza.",
+          "exampleTranslation": "Зустрінемося на площі."
+        },
+        {
+          "term": "el banco",
+          "translation": "банк",
+          "example": "El banco cierra a las dos.",
+          "exampleTranslation": "Банк зачиняється о другій."
+        },
+        {
+          "term": "el hospital",
+          "translation": "лікарня",
+          "example": "El hospital está cerca.",
+          "exampleTranslation": "Лікарня поруч."
+        },
+        {
+          "term": "la farmacia",
+          "translation": "аптека",
+          "example": "¿Dónde hay una farmacia?",
+          "exampleTranslation": "Де тут аптека?"
+        },
+        {
+          "term": "el supermercado",
+          "translation": "супермаркет",
+          "example": "Voy al supermercado.",
+          "exampleTranslation": "Я йду до супермаркету."
+        },
+        {
+          "term": "el restaurante",
+          "translation": "ресторан",
+          "example": "Cenamos en un restaurante.",
+          "exampleTranslation": "Ми вечеряємо в ресторані."
+        },
+        {
+          "term": "el parque",
+          "translation": "парк",
+          "example": "Los niños juegan en el parque.",
+          "exampleTranslation": "Діти граються в парку."
+        },
+        {
+          "term": "la iglesia",
+          "translation": "церква",
+          "example": "La iglesia es muy antigua.",
+          "exampleTranslation": "Церква дуже стара."
+        },
+        {
+          "term": "la tienda",
+          "translation": "магазин",
+          "example": "La tienda abre a las diez.",
+          "exampleTranslation": "Магазин відчиняється о десятій."
+        }
+      ]
+    },
+    {
+      "order": 15,
+      "title": "Транспорт",
+      "titleTarget": "El transporte",
+      "description": "Як пересуватися",
+      "level": "A2",
+      "words": [
+        {
+          "term": "el coche",
+          "translation": "автомобіль",
+          "example": "Mi coche es rojo.",
+          "exampleTranslation": "Мій автомобіль червоний."
+        },
+        {
+          "term": "el autobús",
+          "translation": "автобус",
+          "example": "Tomo el autobús cada día.",
+          "exampleTranslation": "Я щодня їжджу автобусом."
+        },
+        {
+          "term": "el tren",
+          "translation": "потяг",
+          "example": "El tren sale a las nueve.",
+          "exampleTranslation": "Потяг відправляється о дев'ятій."
+        },
+        {
+          "term": "el avión",
+          "translation": "літак",
+          "example": "El avión llega tarde.",
+          "exampleTranslation": "Літак прилітає із запізненням."
+        },
+        {
+          "term": "el metro",
+          "translation": "метро",
+          "example": "Voy al trabajo en metro.",
+          "exampleTranslation": "Я їду на роботу на метро."
+        },
+        {
+          "term": "la bicicleta",
+          "translation": "велосипед",
+          "example": "Voy en bicicleta al parque.",
+          "exampleTranslation": "Я їду до парку на велосипеді."
+        },
+        {
+          "term": "el taxi",
+          "translation": "таксі",
+          "example": "Llamamos un taxi.",
+          "exampleTranslation": "Ми викликаємо таксі."
+        },
+        {
+          "term": "el barco",
+          "translation": "корабель",
+          "example": "El barco sale del puerto.",
+          "exampleTranslation": "Корабель виходить з порту."
+        },
+        {
+          "term": "la estación",
+          "translation": "вокзал",
+          "example": "La estación está lejos.",
+          "exampleTranslation": "Вокзал далеко."
+        },
+        {
+          "term": "el billete",
+          "translation": "квиток",
+          "example": "Necesito un billete de ida.",
+          "exampleTranslation": "Мені потрібен квиток в один бік."
+        }
+      ]
+    },
+    {
+      "order": 16,
+      "title": "Професії",
+      "titleTarget": "Las profesiones",
+      "description": "Хто ким працює",
+      "level": "A2",
+      "words": [
+        {
+          "term": "el médico",
+          "translation": "лікар",
+          "example": "El médico me ayuda.",
+          "exampleTranslation": "Лікар мені допомагає."
+        },
+        {
+          "term": "el profesor",
+          "translation": "вчитель",
+          "example": "El profesor explica bien.",
+          "exampleTranslation": "Вчитель добре пояснює."
+        },
+        {
+          "term": "el estudiante",
+          "translation": "студент",
+          "example": "Soy estudiante de español.",
+          "exampleTranslation": "Я студент іспанської."
+        },
+        {
+          "term": "el cocinero",
+          "translation": "кухар",
+          "example": "El cocinero prepara la cena.",
+          "exampleTranslation": "Кухар готує вечерю."
+        },
+        {
+          "term": "el abogado",
+          "translation": "юрист",
+          "example": "Necesito un abogado.",
+          "exampleTranslation": "Мені потрібен юрист."
+        },
+        {
+          "term": "el ingeniero",
+          "translation": "інженер",
+          "example": "Mi hermano es ingeniero.",
+          "exampleTranslation": "Мій брат інженер."
+        },
+        {
+          "term": "el camarero",
+          "translation": "офіціант",
+          "example": "El camarero trae la cuenta.",
+          "exampleTranslation": "Офіціант приносить рахунок."
+        },
+        {
+          "term": "el policía",
+          "translation": "поліцейський",
+          "example": "El policía está en la calle.",
+          "exampleTranslation": "Поліцейський на вулиці."
+        },
+        {
+          "term": "el enfermero",
+          "translation": "медбрат",
+          "example": "El enfermero es muy amable.",
+          "exampleTranslation": "Медбрат дуже привітний."
+        },
+        {
+          "term": "el conductor",
+          "translation": "водій",
+          "example": "El conductor para el autobús.",
+          "exampleTranslation": "Водій зупиняє автобус."
+        }
+      ]
+    },
+    {
+      "order": 17,
+      "title": "Дієслова руху",
+      "titleTarget": "Verbos de movimiento",
+      "description": "Як описати рух",
+      "level": "A2",
+      "words": [
+        {
+          "term": "ir",
+          "translation": "іти",
+          "example": "Quiero ir al cine.",
+          "exampleTranslation": "Я хочу піти в кіно."
+        },
+        {
+          "term": "venir",
+          "translation": "приходити",
+          "example": "¿Puedes venir mañana?",
+          "exampleTranslation": "Можеш прийти завтра?"
+        },
+        {
+          "term": "llegar",
+          "translation": "прибувати",
+          "example": "Vamos a llegar tarde.",
+          "exampleTranslation": "Ми прибудемо пізно."
+        },
+        {
+          "term": "salir",
+          "translation": "виходити",
+          "example": "Voy a salir a las ocho.",
+          "exampleTranslation": "Я вийду о восьмій."
+        },
+        {
+          "term": "entrar",
+          "translation": "заходити",
+          "example": "Puedes entrar.",
+          "exampleTranslation": "Можеш заходити."
+        },
+        {
+          "term": "correr",
+          "translation": "бігати",
+          "example": "Me gusta correr en el parque.",
+          "exampleTranslation": "Я люблю бігати в парку."
+        },
+        {
+          "term": "caminar",
+          "translation": "ходити пішки",
+          "example": "Camino al trabajo.",
+          "exampleTranslation": "Я ходжу на роботу пішки."
+        },
+        {
+          "term": "volver",
+          "translation": "повертатися",
+          "example": "Quiero volver a casa.",
+          "exampleTranslation": "Я хочу повернутися додому."
+        },
+        {
+          "term": "subir",
+          "translation": "підніматися",
+          "example": "Hay que subir la escalera.",
+          "exampleTranslation": "Треба піднятися сходами."
+        },
+        {
+          "term": "bajar",
+          "translation": "спускатися",
+          "example": "Vamos a bajar ahora.",
+          "exampleTranslation": "Ми зараз спустимося."
+        }
+      ]
+    },
+    {
+      "order": 18,
+      "title": "Повсякденні дієслова",
+      "titleTarget": "Verbos cotidianos",
+      "description": "Дії кожного дня",
+      "level": "A2",
+      "words": [
+        {
+          "term": "comer",
+          "translation": "їсти",
+          "example": "Vamos a comer juntos.",
+          "exampleTranslation": "Давай поїмо разом."
+        },
+        {
+          "term": "beber",
+          "translation": "пити",
+          "example": "Hay que beber agua.",
+          "exampleTranslation": "Треба пити воду."
+        },
+        {
+          "term": "dormir",
+          "translation": "спати",
+          "example": "Necesito dormir más.",
+          "exampleTranslation": "Мені треба більше спати."
+        },
+        {
+          "term": "trabajar",
+          "translation": "працювати",
+          "example": "Me gusta trabajar aquí.",
+          "exampleTranslation": "Мені подобається тут працювати."
+        },
+        {
+          "term": "hablar",
+          "translation": "розмовляти",
+          "example": "Quiero hablar español.",
+          "exampleTranslation": "Я хочу розмовляти іспанською."
+        },
+        {
+          "term": "leer",
+          "translation": "читати",
+          "example": "Me gusta leer libros.",
+          "exampleTranslation": "Я люблю читати книжки."
+        },
+        {
+          "term": "escribir",
+          "translation": "писати",
+          "example": "Voy a escribir una carta.",
+          "exampleTranslation": "Я напишу листа."
+        },
+        {
+          "term": "comprar",
+          "translation": "купувати",
+          "example": "Necesito comprar pan.",
+          "exampleTranslation": "Мені треба купити хліб."
+        },
+        {
+          "term": "estudiar",
+          "translation": "навчатися",
+          "example": "Tengo que estudiar hoy.",
+          "exampleTranslation": "Сьогодні мені треба вчитися."
+        },
+        {
+          "term": "cocinar",
+          "translation": "готувати їжу",
+          "example": "Sé cocinar muy bien.",
+          "exampleTranslation": "Я вмію дуже добре готувати."
+        }
+      ]
+    },
+    {
+      "order": 19,
+      "title": "Емоції",
+      "titleTarget": "Las emociones",
+      "description": "Почуття та настрій",
+      "level": "A2",
+      "words": [
+        {
+          "term": "feliz",
+          "translation": "щасливий",
+          "example": "Hoy estoy muy feliz.",
+          "exampleTranslation": "Сьогодні я дуже щасливий."
+        },
+        {
+          "term": "triste",
+          "translation": "сумний",
+          "example": "¿Por qué estás triste?",
+          "exampleTranslation": "Чому ти сумний?"
+        },
+        {
+          "term": "cansado",
+          "translation": "втомлений",
+          "example": "Estoy cansado después del trabajo.",
+          "exampleTranslation": "Я втомлений після роботи."
+        },
+        {
+          "term": "enfadado",
+          "translation": "сердитий",
+          "example": "Mi padre está enfadado.",
+          "exampleTranslation": "Мій батько сердитий."
+        },
+        {
+          "term": "contento",
+          "translation": "задоволений",
+          "example": "Estoy contento con el resultado.",
+          "exampleTranslation": "Я задоволений результатом."
+        },
+        {
+          "term": "nervioso",
+          "translation": "знервований",
+          "example": "Estoy nervioso antes del examen.",
+          "exampleTranslation": "Я нервую перед іспитом."
+        },
+        {
+          "term": "tranquilo",
+          "translation": "спокійний",
+          "example": "El mar está tranquilo.",
+          "exampleTranslation": "Море спокійне."
+        },
+        {
+          "term": "el miedo",
+          "translation": "страх",
+          "example": "Tengo miedo de los perros.",
+          "exampleTranslation": "Я боюся собак."
+        },
+        {
+          "term": "el amor",
+          "translation": "кохання",
+          "example": "El amor es importante.",
+          "exampleTranslation": "Кохання важливе."
+        },
+        {
+          "term": "sorprendido",
+          "translation": "здивований",
+          "example": "Estoy sorprendido.",
+          "exampleTranslation": "Я здивований."
+        }
+      ]
+    },
+    {
+      "order": 20,
+      "title": "Подорожі",
+      "titleTarget": "Los viajes",
+      "description": "Слова для мандрівника",
+      "level": "A2",
+      "words": [
+        {
+          "term": "el viaje",
+          "translation": "подорож",
+          "example": "¡Buen viaje!",
+          "exampleTranslation": "Щасливої дороги!"
+        },
+        {
+          "term": "el pasaporte",
+          "translation": "паспорт",
+          "example": "Necesito mi pasaporte.",
+          "exampleTranslation": "Мені потрібен мій паспорт."
+        },
+        {
+          "term": "la maleta",
+          "translation": "валіза",
+          "example": "Mi maleta es muy pesada.",
+          "exampleTranslation": "Моя валіза дуже важка."
+        },
+        {
+          "term": "el hotel",
+          "translation": "готель",
+          "example": "El hotel está en el centro.",
+          "exampleTranslation": "Готель у центрі."
+        },
+        {
+          "term": "el aeropuerto",
+          "translation": "аеропорт",
+          "example": "Vamos al aeropuerto.",
+          "exampleTranslation": "Ми їдемо в аеропорт."
+        },
+        {
+          "term": "la playa",
+          "translation": "пляж",
+          "example": "Vamos a la playa.",
+          "exampleTranslation": "Ходімо на пляж."
+        },
+        {
+          "term": "el mapa",
+          "translation": "мапа",
+          "example": "¿Tienes un mapa de la ciudad?",
+          "exampleTranslation": "У тебе є мапа міста?"
+        },
+        {
+          "term": "la reserva",
+          "translation": "бронювання",
+          "example": "Tengo una reserva para dos.",
+          "exampleTranslation": "У мене бронювання на двох."
+        },
+        {
+          "term": "el turista",
+          "translation": "турист",
+          "example": "Hay muchos turistas aquí.",
+          "exampleTranslation": "Тут багато туристів."
+        },
+        {
+          "term": "las vacaciones",
+          "translation": "відпустка",
+          "example": "Estoy de vacaciones.",
+          "exampleTranslation": "Я у відпустці."
+        }
+      ]
+    }
+  ]
+}

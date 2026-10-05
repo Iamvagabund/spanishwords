@@ -7,8 +7,10 @@
     "start": "node build/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "create-admin": "ts-node src/scripts/createAdmin.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "create-admin": "node build/scripts/createAdmin.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node build/scripts/seed.js",
+    "seed:dev": "ts-node-dev --transpile-only src/scripts/seed.ts"
   },
   "keywords": [],
   "author": "",

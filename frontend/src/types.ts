@@ -1,24 +1,46 @@
+export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
+
+export interface Language {
+  code: string
+  name: string
+  nativeName: string
+  flag: string
+  blockCount: number
+}
+
 export interface Word {
-  id: number
-  spanish: string
-  ukrainian: string
-  level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
+  id: string
+  term: string
+  translation: string
+  example?: string
+  exampleTranslation?: string
+}
+
+export interface Block {
+  id: string
+  order: number
+  title: string
+  titleTarget: string
+  description: string
+  level: Level
+  words: Word[]
 }
 
 export interface CompletedBlock {
-  id: number
-  score: number
+  blockId: string
+  score: number // 1-10
   completedAt: string
-  words: number[] // Додаємо масив ID слів
 }
 
-export interface RepetitionProgress {
-  wordId: number
-  nextReview: Date
-  interval: number // в днях
-  easeFactor: number // множник для інтервалу
-  repetitions: number // кількість успішних повторень
+export interface LangProgress {
+  completedBlocks: CompletedBlock[]
+  mistakes: Record<string, number>
+  learnedWords: string[]
+  currentLevel: number
+  averageScore: number
 }
+
+export type ProgressMap = Record<string, LangProgress>
 
 export interface User {
   id: string
@@ -26,4 +48,5 @@ export interface User {
   role: 'user' | 'admin'
   nickname?: string
   avatar?: string
-} 
+  selectedLanguage?: string
+}

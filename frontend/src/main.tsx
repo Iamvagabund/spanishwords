@@ -7,83 +7,59 @@ import { BlockPage } from './pages/BlockPage'
 import { BlockCompletionPage } from './pages/BlockCompletionPage'
 import Repeat from './pages/Repeat'
 import StatsPage from './pages/StatsPage'
+import LanguagePicker from './pages/LanguagePicker'
 import { Auth } from './components/Auth'
 import { ProfilePage } from './pages/ProfilePage'
+import { LangGuard } from './context/LangContext'
 import { useAuthStore } from './store/authStore'
 import { ThemeProvider } from './context/ThemeContext'
+import { adminRoute } from './pages/admin'
 import './index.css'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuthStore()
-  return user ? <>{children}</> : <Navigate to="/auth" />
+  const user = useAuthStore(s => s.user)
+  return user ? <>{children}</> : <Navigate to="/auth" replace />
+}
+
+function RootRedirect() {
+  const selected = useAuthStore(s => s.user?.selectedLanguage)
+  return selected ? <Navigate to={`/${selected}`} replace /> : <LanguagePicker />
 }
 
 const router = createBrowserRouter([
-  {
-    path: '/auth',
-    element: <Auth />
-  },
+  { path: '/auth', element: <Auth /> },
   {
     path: '/',
-    element: <Layout />,
+    element: (
+      <PrivateRoute>
+        <Layout />
+      </PrivateRoute>
+    ),
     children: [
+      { index: true, element: <RootRedirect /> },
+      { path: 'languages', element: <LanguagePicker /> },
+      { path: 'profile', element: <ProfilePage /> },
+      adminRoute,
       {
-        index: true,
-        element: (
-          <PrivateRoute>
-            <Home />
-          </PrivateRoute>
-        )
+        path: ':lang',
+        element: <LangGuard />,
+        children: [
+          { index: true, element: <Home /> },
+          { path: 'block/:order', element: <BlockPage /> },
+          { path: 'block/:order/completion', element: <BlockCompletionPage /> },
+          { path: 'review', element: <Repeat /> },
+          { path: 'stats', element: <StatsPage /> },
+        ],
       },
-      {
-        path: 'profile',
-        element: (
-          <PrivateRoute>
-            <ProfilePage />
-          </PrivateRoute>
-        )
-      },
-      {
-        path: 'block/:blockId',
-        element: (
-          <PrivateRoute>
-            <BlockPage />
-          </PrivateRoute>
-        )
-      },
-      {
-        path: 'block/:blockId/completion',
-        element: (
-          <PrivateRoute>
-            <BlockCompletionPage />
-          </PrivateRoute>
-        )
-      },
-      {
-        path: 'review',
-        element: (
-          <PrivateRoute>
-            <Repeat />
-          </PrivateRoute>
-        )
-      },
-      {
-        path: 'stats',
-        element: (
-          <PrivateRoute>
-            <StatsPage />
-          </PrivateRoute>
-        )
-      }
-    ]
-  }
+      { path: '*', element: <LanguagePicker /> },
+    ],
+  },
 ])
 
-// Створюємо корінь додатку
-const root = ReactDOM.createRoot(document.getElementById('root')!)
+// Validate the persisted session and pull server progress (cached progress shows instantly).
+void useAuthStore.getState().checkAuth()
 
-// Обгортаємо додаток в ThemeProvider
-root.render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider>
       <RouterProvider router={router} />
