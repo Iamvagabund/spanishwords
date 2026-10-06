@@ -1,22 +1,31 @@
 import { type ReactNode, useCallback, useEffect, useState } from 'react'
 
-export const card =
-  'rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900'
-export const input =
-  'w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100'
-export const btn =
-  'inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50'
-export const btnPrimary = `${btn} bg-indigo-600 text-white hover:bg-indigo-500`
-export const btnGhost = `${btn} border border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800`
-export const btnDanger = `${btn} bg-red-600 text-white hover:bg-red-500`
-export const iconBtn =
-  'rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-30 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+export const card = 'card p-4 sm:p-6'
+export const input = 'input !py-2.5 text-sm'
+export const btn = 'btn !px-4 !py-2.5 text-sm'
+export const btnPrimary = `${btn} btn-primary`
+export const btnGhost = `${btn} btn-secondary`
+export const btnDanger = `${btn} btn-danger`
+export const iconBtn = 'btn-icon h-10 w-10 disabled:pointer-events-none disabled:opacity-30'
+export const label = 'mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-3'
+export const chip = 'chip bg-surface-2 text-ink-2'
 
-export function Spinner({ label = 'Завантаження…' }: { label?: string }) {
+export function Skeleton({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse rounded-2xl bg-surface-2 ${className}`} />
+}
+
+export function Spinner({ label = 'Завантаження…', rows = 4 }: { label?: string; rows?: number }) {
   return (
-    <div className="flex items-center justify-center gap-3 py-10 text-sm text-zinc-500">
-      <span className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
-      {label}
+    <div className="space-y-3 p-4" role="status" aria-label={label}>
+      {Array.from({ length: rows }, (_, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <Skeleton className="h-12 w-12 shrink-0" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-3.5 w-2/3" />
+            <Skeleton className="h-3 w-1/3" />
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -30,17 +39,17 @@ export function Message({
   children: ReactNode
   onClose?: () => void
 }) {
-  const cls = {
-    error: 'border-red-300 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300',
-    success:
-      'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300',
-    info: 'border-zinc-300 bg-zinc-50 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300',
+  const [cls, icon] = {
+    error: ['border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-300', '⚠️'],
+    success: ['border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300', '✅'],
+    info: ['border-line bg-surface-2 text-ink-2', 'ℹ️'],
   }[kind]
   return (
-    <div className={`flex items-start justify-between gap-3 rounded-xl border px-4 py-3 text-sm ${cls}`}>
-      <div className="min-w-0 break-words">{children}</div>
+    <div className={`flex animate-pop-in items-start gap-3 rounded-2xl border px-4 py-3 text-sm font-medium ${cls}`}>
+      <span className="shrink-0">{icon}</span>
+      <div className="min-w-0 flex-1 break-words">{children}</div>
       {onClose && (
-        <button onClick={onClose} className="shrink-0 opacity-60 hover:opacity-100" aria-label="Закрити">
+        <button onClick={onClose} className="-my-1 shrink-0 rounded-lg px-1.5 opacity-60 hover:opacity-100" aria-label="Закрити">
           ✕
         </button>
       )}
@@ -48,8 +57,84 @@ export function Message({
   )
 }
 
-export function Empty({ children }: { children: ReactNode }) {
-  return <div className="py-10 text-center text-sm text-zinc-500">{children}</div>
+export function Empty({ children, emoji = '🗂️' }: { children: ReactNode; emoji?: string }) {
+  return (
+    <div className="flex flex-col items-center gap-3 px-4 py-12 text-center text-sm text-ink-2">
+      <div className="bg-brand-gradient flex h-16 w-16 items-center justify-center rounded-3xl text-3xl shadow-glow">
+        {emoji}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+/** Centered dialog on desktop, bottom sheet on mobile. */
+export function Dialog({ open, onClose, children }: { open: boolean; onClose: () => void; children: ReactNode }) {
+  useEffect(() => {
+    if (!open) return
+    const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', k)
+    return () => window.removeEventListener('keydown', k)
+  }, [open, onClose])
+  if (!open) return null
+  return (
+    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="pb-safe relative w-full animate-pop-in rounded-t-4xl border border-line bg-surface shadow-lift sm:max-w-md sm:rounded-4xl">
+        <div className="mx-auto mt-3 h-1.5 w-10 rounded-full bg-line sm:hidden" />
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+interface ConfirmOpts {
+  title: string
+  text?: ReactNode
+  confirm?: string
+  danger?: boolean
+  emoji?: string
+}
+
+/** Promise-based confirmation dialog, replacement for window.confirm. */
+export function useConfirm() {
+  const [state, setState] = useState<(ConfirmOpts & { resolve: (v: boolean) => void }) | null>(null)
+  const ask = useCallback((o: ConfirmOpts) => new Promise<boolean>((resolve) => setState({ ...o, resolve })), [])
+  const close = useCallback(
+    (v: boolean) =>
+      setState((s) => {
+        s?.resolve(v)
+        return null
+      }),
+    [],
+  )
+  const cancel = useCallback(() => close(false), [close])
+  const node = (
+    <Dialog open={!!state} onClose={cancel}>
+      {state && (
+        <div className="text-center">
+          <div
+            className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${
+              state.danger ? 'bg-rose-500/15' : 'bg-brand-500/15'
+            }`}
+          >
+            {state.emoji ?? (state.danger ? '🗑️' : '❓')}
+          </div>
+          <h3 className="text-lg font-bold text-ink">{state.title}</h3>
+          {state.text && <p className="mt-2 text-sm text-ink-2">{state.text}</p>}
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
+            <button className="btn btn-secondary flex-1" onClick={cancel}>
+              Скасувати
+            </button>
+            <button className={`btn flex-1 ${state.danger ? 'btn-danger' : 'btn-primary'}`} onClick={() => close(true)} autoFocus>
+              {state.confirm ?? 'Підтвердити'}
+            </button>
+          </div>
+        </div>
+      )}
+    </Dialog>
+  )
+  return { ask, node }
 }
 
 export const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Невідома помилка')

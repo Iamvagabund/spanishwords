@@ -1,11 +1,14 @@
 import { adminApi } from '../../services/adminApi'
-import { card, Empty, Message, Spinner, useLoad, btnGhost } from './ui'
+import { languageTone } from '../../theme/palette'
+import { btnGhost, Empty, Message, Skeleton, useLoad } from './ui'
 
-function Tile({ label, value }: { label: string; value: string | number }) {
+function Tile({ label, value, emoji }: { label: string; value: string | number; emoji: string }) {
   return (
-    <div className="rounded-xl bg-zinc-50 p-3 dark:bg-zinc-950">
-      <div className="text-xs text-zinc-500">{label}</div>
-      <div className="mt-1 text-xl font-semibold text-zinc-900 dark:text-zinc-100">{value}</div>
+    <div className="rounded-2xl bg-white/15 p-3 backdrop-blur-sm">
+      <div className="text-xs font-semibold text-white/80">
+        {emoji} {label}
+      </div>
+      <div className="mt-1 font-display text-2xl font-extrabold text-white">{value}</div>
     </div>
   )
 }
@@ -14,7 +17,19 @@ export default function AdminOverview() {
   const stats = useLoad(() => adminApi.getStatistics(), [])
   const langs = useLoad(() => adminApi.getLanguages(), [])
 
-  if (stats.loading) return <Spinner />
+  if (stats.loading)
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-28 !rounded-3xl" />
+          <Skeleton className="h-28 !rounded-3xl" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Skeleton className="h-56 !rounded-3xl" />
+          <Skeleton className="h-56 !rounded-3xl" />
+        </div>
+      </div>
+    )
   if (stats.error)
     return (
       <div className="space-y-3">
@@ -29,40 +44,49 @@ export default function AdminOverview() {
   const langOf = (code: string) => langs.data?.find((l) => l.code === code)
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
-        <div className={card}>
-          <div className="text-sm text-zinc-500">Усього користувачів</div>
-          <div className="mt-1 text-3xl font-bold text-zinc-900 dark:text-zinc-100">{s.totalUsers}</div>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="card p-4 sm:p-6">
+          <div className="flex items-center gap-2 text-sm font-semibold text-ink-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500/15">👥</span>
+            <span className="truncate">Користувачів</span>
+          </div>
+          <div className="mt-3 font-display text-3xl font-extrabold text-ink sm:text-4xl">{s.totalUsers}</div>
         </div>
-        <div className={card}>
-          <div className="text-sm text-zinc-500">Адміністраторів</div>
-          <div className="mt-1 text-3xl font-bold text-indigo-600 dark:text-indigo-400">{s.totalAdmins}</div>
+        <div className="card p-4 sm:p-6">
+          <div className="flex items-center gap-2 text-sm font-semibold text-ink-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-fuchsia-500/15">🛡️</span>
+            <span className="truncate">Адмінів</span>
+          </div>
+          <div className="text-gradient mt-3 font-display text-3xl font-extrabold sm:text-4xl">{s.totalAdmins}</div>
         </div>
       </div>
       {s.perLanguage.length === 0 ? (
-        <Empty>Мов ще немає</Empty>
+        <Empty emoji="🌐">Мов ще немає</Empty>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {s.perLanguage.map((p) => {
             const l = langOf(p.code)
+            const tone = languageTone(p.code)
             return (
-              <div key={p.code} className={card}>
-                <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                  <span className="text-2xl">{l?.flag ?? '🌐'}</span>
+              <div
+                key={p.code}
+                className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${tone.gradient} p-5 shadow-lift sm:p-6`}
+              >
+                <div className="pointer-events-none absolute -right-6 -top-8 select-none text-[7rem] opacity-20">
+                  {l?.flag ?? '🌐'}
+                </div>
+                <h2 className="relative mb-4 flex flex-wrap items-center gap-2 text-xl font-bold text-white">
+                  <span className="text-3xl">{l?.flag ?? '🌐'}</span>
                   {l?.name ?? p.code.toUpperCase()}
-                  {l && !l.isActive && (
-                    <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                      неактивна
-                    </span>
-                  )}
+                  {l && !l.isActive && <span className="chip bg-black/25 text-white">неактивна</span>}
                 </h2>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  <Tile label="Учнів" value={p.learners} />
-                  <Tile label="Блоків" value={p.blocks} />
-                  <Tile label="Слів" value={p.words} />
-                  <Tile label="Середній бал" value={Number(p.avgScore || 0).toFixed(1)} />
-                  <Tile label="Пройдено блоків" value={p.completedBlocks} />
+                <div className="relative grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                  <Tile emoji="🎓" label="Учнів" value={p.learners} />
+                  <Tile emoji="📦" label="Блоків" value={p.blocks} />
+                  <Tile emoji="🔤" label="Слів" value={p.words} />
+                  <Tile emoji="⭐" label="Сер. бал" value={Number(p.avgScore || 0).toFixed(1)} />
+                  <Tile emoji="🏁" label="Пройдено" value={p.completedBlocks} />
                 </div>
               </div>
             )

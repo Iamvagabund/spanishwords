@@ -6,9 +6,9 @@ import AdminContent from './Content'
 import AdminUsers from './Users'
 
 const tabs = [
-  { to: '/admin', label: 'Огляд', end: true },
-  { to: '/admin/content', label: 'Контент', end: false },
-  { to: '/admin/users', label: 'Користувачі', end: false },
+  { to: '/admin', label: 'Огляд', icon: '📊', end: true },
+  { to: '/admin/content', label: 'Контент', icon: '📚', end: false },
+  { to: '/admin/users', label: 'Користувачі', icon: '👥', end: false },
 ]
 
 function AdminLayout() {
@@ -19,33 +19,42 @@ function AdminLayout() {
     return (
       <div className="mx-auto max-w-md px-4 py-16">
         <div className={`${card} text-center`}>
-          <div className="mb-2 text-4xl">🔒</div>
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Доступ заборонено</h1>
-          <p className="mt-2 text-sm text-zinc-500">Ця сторінка доступна лише адміністраторам.</p>
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-rose-500/15 text-3xl">🔒</div>
+          <h1 className="text-xl font-bold text-ink">Доступ заборонено</h1>
+          <p className="mt-2 text-sm text-ink-2">Ця сторінка доступна лише адміністраторам.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Адмін-панель</h1>
-        <nav className="flex gap-1 overflow-x-auto rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900">
+    <div className="mx-auto max-w-6xl px-4 pb-28 pt-4 sm:pb-10 sm:pt-8">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="bg-brand-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-glow">
+            🛠️
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-extrabold text-ink sm:text-3xl">
+              Адмін-<span className="text-gradient">панель</span>
+            </h1>
+            <p className="text-sm text-ink-3">Керування мовами, блоками та учнями</p>
+          </div>
+        </div>
+        <nav className="grid grid-cols-3 gap-1 rounded-2xl border border-line/70 bg-surface-2 p-1 lg:w-auto">
           {tabs.map((t) => (
             <NavLink
               key={t.to}
               to={t.to}
               end={t.end}
               className={({ isActive }) =>
-                `whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? 'bg-white text-indigo-600 shadow-sm dark:bg-zinc-800 dark:text-indigo-400'
-                    : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
+                `flex min-h-[44px] items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 text-sm font-bold transition active:scale-95 sm:px-4 ${
+                  isActive ? 'bg-surface text-brand-600 shadow-soft dark:text-brand-300' : 'text-ink-2 hover:text-ink'
                 }`
               }
             >
-              {t.label}
+              <span className="hidden min-[400px]:inline">{t.icon}</span>
+              <span className="truncate">{t.label}</span>
             </NavLink>
           ))}
         </nav>

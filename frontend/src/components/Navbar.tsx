@@ -1,94 +1,103 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { HomeIcon, ArrowPathIcon, ChartBarIcon, Cog6ToothIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import {
-  HomeIcon,
-  ArrowPathIcon,
-  ChartBarIcon,
-  SunIcon,
-  MoonIcon,
-  ArrowRightOnRectangleIcon,
-  Cog6ToothIcon,
-} from '@heroicons/react/24/outline'
+  HomeIcon as HomeIconSolid,
+  ArrowPathIcon as ArrowPathIconSolid,
+  ChartBarIcon as ChartBarIconSolid,
+  Cog6ToothIcon as Cog6ToothIconSolid,
+  UserCircleIcon as UserCircleIconSolid,
+} from '@heroicons/react/24/solid'
 import { useAuthStore } from '../store/authStore'
-import { useTheme } from '../context/ThemeContext'
-import { Profile } from './Profile'
+import { Profile, Avatar } from './Profile'
 import { LanguageSwitcher, useCurrentLanguage } from './LanguageSwitcher'
+import { ThemeToggle } from './ThemeToggle'
 
-const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
+export function Logo({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className="flex min-w-0 items-center gap-2.5">
+      <img src="/icon.svg" alt="" className="h-9 w-9 shrink-0 rounded-xl shadow-glow" />
+      {!compact && <span className="font-display text-xl font-extrabold tracking-tight text-gradient">Слова</span>}
+    </span>
+  )
+}
+
+function pageTitle(pathname: string, langName?: string) {
+  if (pathname.startsWith('/profile')) return 'Профіль'
+  if (pathname.startsWith('/admin')) return 'Адмінка'
+  if (pathname.startsWith('/languages') || pathname === '/') return 'Мови'
+  if (pathname.endsWith('/stats')) return 'Статистика'
+  if (pathname.endsWith('/completion')) return 'Результат'
+  return langName ?? 'Слова'
+}
 
 export function Navbar() {
-  const { user } = useAuthStore()
+  const user = useAuthStore(s => s.user)
   const { language } = useCurrentLanguage()
+  const { pathname } = useLocation()
   const base = language ? `/${language.code}` : '/'
+
   const links = [
-    { to: base, label: 'Головна', icon: HomeIcon, end: true },
+    { to: base, label: 'Головна', icon: HomeIcon, solid: HomeIconSolid, end: true },
     ...(language
       ? [
-          { to: `${base}/review`, label: 'Повторення', icon: ArrowPathIcon, end: false },
-          { to: `${base}/stats`, label: 'Статистика', icon: ChartBarIcon, end: false },
+          { to: `${base}/review`, label: 'Повторення', icon: ArrowPathIcon, solid: ArrowPathIconSolid, end: false },
+          { to: `${base}/stats`, label: 'Статистика', icon: ChartBarIcon, solid: ChartBarIconSolid, end: false },
         ]
       : []),
-    ...(user?.role === 'admin' ? [{ to: '/admin', label: 'Адмінка', icon: Cog6ToothIcon, end: false }] : []),
   ]
-  const { theme, toggleTheme } = useTheme()
-  const themeLabel = theme === 'dark' ? 'Світла тема' : 'Темна тема'
+  const desktopLinks =
+    user?.role === 'admin'
+      ? [...links, { to: '/admin', label: 'Адмінка', icon: Cog6ToothIcon, solid: Cog6ToothIconSolid, end: false }]
+      : links
+  const tabs = [...links, { to: '/profile', label: 'Профіль', icon: UserCircleIcon, solid: UserCircleIconSolid, end: false }]
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/70 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/70">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4">
-          <Link to={base} className={`flex min-w-0 items-center gap-2.5 rounded-xl ${focusRing}`}>
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
-              {language?.flag ?? 'W'}
-            </span>
-            <span className="min-w-0 leading-tight">
-              <span className="block truncate font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-                {language ? `${language.name}: слова` : 'Вивчаємо слова'}
-              </span>
-              <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
-                {language?.nativeName ?? 'Оберіть мову'}
-              </span>
-            </span>
+      {/* Desktop: floating glass navbar */}
+      <header className="sticky top-0 z-40 hidden px-4 pt-4 sm:block">
+        <div className="glass mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 rounded-3xl px-3 shadow-soft">
+          <Link to={base} className="rounded-2xl px-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30">
+            <Logo />
           </Link>
-
-          <nav className="hidden items-center gap-1 sm:flex" aria-label="Основна навігація">
-            {links.map(({ to, label, icon: Icon, end }) => (
+          <nav className="flex items-center gap-1" aria-label="Основна навігація">
+            {desktopLinks.map(({ to, label, icon: Icon, solid: Solid, end }) => (
               <NavLink
                 key={to}
                 to={to}
                 end={end}
+                title={label}
                 className={({ isActive }) =>
-                  `inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${focusRing} ${
-                    isActive
-                      ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
-                      : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                  `relative inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-bold transition active:scale-95 ${
+                    isActive ? 'text-white' : 'text-ink-2 hover:bg-surface-2 hover:text-ink'
                   }`
                 }
               >
-                <Icon className="h-5 w-5" />
-                {label}
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-pill"
+                        className="absolute inset-0 rounded-full bg-brand-gradient shadow-glow"
+                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                      />
+                    )}
+                    <span className="relative flex items-center gap-2">
+                      {isActive ? <Solid className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+                      <span className="hidden md:inline">{label}</span>
+                    </span>
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
-
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1">
             {user && <LanguageSwitcher />}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={themeLabel}
-              title={themeLabel}
-              className={`grid h-10 w-10 place-items-center rounded-xl text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 ${focusRing}`}
-            >
-              {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
-            </button>
+            <ThemeToggle />
             {user ? (
               <Profile />
             ) : (
-              <Link
-                to="/auth"
-                className={`inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 sm:px-4 ${focusRing}`}
-              >
-                <ArrowRightOnRectangleIcon className="h-5 w-5" />
+              <Link to="/auth" className="btn btn-primary py-2">
                 Увійти
               </Link>
             )}
@@ -96,25 +105,49 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Mobile bottom tab bar */}
-      <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-200 bg-white/80 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80 sm:hidden"
-        aria-label="Мобільна навігація"
-      >
-        <div className="grid" style={{ gridTemplateColumns: `repeat(${links.length}, minmax(0, 1fr))` }}>
-          {links.map(({ to, label, icon: Icon, end }) => (
+      {/* Mobile: compact top app bar */}
+      <header className="glass pt-safe sticky top-0 z-40 border-x-0 border-t-0 sm:hidden">
+        <div className="flex h-14 items-center gap-2 px-3">
+          {user && language ? <LanguageSwitcher compact /> : <Logo compact />}
+          <h1 className="min-w-0 flex-1 truncate text-lg font-extrabold">{pageTitle(pathname, language?.name)}</h1>
+          <ThemeToggle />
+          {user && (
+            <Link to="/profile" aria-label="Профіль" className="rounded-full transition active:scale-90">
+              <Avatar className="h-9 w-9" />
+            </Link>
+          )}
+        </div>
+      </header>
+
+      {/* Mobile: bottom tab bar */}
+      <nav className="glass pb-safe fixed inset-x-0 bottom-0 z-40 border-x-0 border-b-0 sm:hidden" aria-label="Мобільна навігація">
+        <div className="grid h-16" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
+          {tabs.map(({ to, label, icon: Icon, solid: Solid, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition ${focusRing} ${
-                  isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-500 dark:text-zinc-400'
+                `flex min-w-0 flex-col items-center justify-center gap-0.5 text-[11px] font-bold transition-transform active:scale-90 ${
+                  isActive ? 'text-brand-500 dark:text-brand-300' : 'text-ink-3'
                 }`
               }
             >
-              <Icon className="h-6 w-6" />
-              {label}
+              {({ isActive }) => (
+                <>
+                  <span className="relative grid h-8 w-14 place-items-center">
+                    {isActive && (
+                      <motion.span
+                        layoutId="tab-pill"
+                        className="absolute inset-0 rounded-full bg-brand-500/15"
+                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                      />
+                    )}
+                    {isActive ? <Solid className="relative h-6 w-6" /> : <Icon className="relative h-6 w-6" />}
+                  </span>
+                  <span className="max-w-full truncate px-1">{label}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </div>

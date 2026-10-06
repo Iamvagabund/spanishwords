@@ -2,21 +2,30 @@
 <html lang="uk" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Вивчайте іспанські слова з інтервальним повторенням — тренажер словника для україномовних." />
-    <meta name="theme-color" content="#09090b" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='700' fill='white' text-anchor='middle'%3E%C3%91%3C/text%3E%3C/svg%3E" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Вивчайте іспанські та англійські слова — тренажер словника для україномовних." />
+    <meta name="theme-color" content="#0b0a18" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Слова" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/icon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <title>Іспанські слова — Palabras en español</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>Слова — іспанська та англійська</title>
     <script>
       try {
-        if (localStorage.getItem('theme') === 'light') document.documentElement.classList.replace('dark', 'light')
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.replace('dark', 'light')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f5fb')
+        }
       } catch (e) {}
     </script>
   </head>
-  <body>
+  <body class="app-bg">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

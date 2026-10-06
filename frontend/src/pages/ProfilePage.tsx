@@ -11,17 +11,17 @@ import {
   ExclamationTriangleIcon,
   MoonIcon,
   SunIcon,
+  ChevronRightIcon,
+  GlobeAltIcon,
+  ShieldCheckIcon,
+  CheckIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { languageTone } from '../theme/palette'
 import { useAuthStore } from '../store/authStore'
 import { useStore } from '../store/useStore'
 import Stats from '../components/Stats'
 import { useTheme } from '../context/ThemeContext'
-
-const card = 'rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 sm:p-6'
-const btnBase =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium transition disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
-const btnPrimary = `${btnBase} bg-indigo-600 hover:bg-indigo-500 text-white`
-const btnSecondary = `${btnBase} bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100`
 
 const resizeImage = (file: File, maxSize = 200): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -141,28 +141,38 @@ export function ProfilePage() {
 
   const avatarSrc =
     user.avatar ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.email)}&background=6366f1&color=fff`
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.email)}&background=7c4dff&color=fff`
+  const progressCount = (code: string) => progressMap[code]?.completedBlocks.length ?? 0
+  const totalCompleted = languages.reduce((n, l) => n + progressCount(l.code), 0)
+  const studying = languages.find(l => l.code === user.selectedLanguage)
+
+  const rowClass =
+    'flex min-h-[56px] w-full items-center gap-3 px-4 py-3 text-left transition active:bg-surface-2 sm:hover:bg-surface-2/60'
+  const rowIcon = (bg: string) => `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white ${bg}`
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 py-6 sm:py-10">
-      <section className={card}>
-        <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
-          <div className="relative shrink-0">
-            <img
-              src={avatarSrc}
-              alt="Аватар"
-              className="h-24 w-24 rounded-full object-cover ring-4 ring-zinc-100 dark:ring-zinc-800"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading}
-              aria-label="Змінити аватар"
-              className="absolute -bottom-1 -right-1 rounded-full bg-indigo-600 p-2 text-white transition hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 disabled:opacity-50"
-            >
-              <CameraIcon className="h-4 w-4" />
-            </button>
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
-          </div>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 py-4 sm:py-8">
+      {/* HEADER */}
+      <section className="relative overflow-hidden rounded-4xl bg-brand-gradient px-5 pb-6 pt-8 text-white shadow-lift sm:px-8">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/15 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-black/10 blur-2xl" />
+        <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
+            aria-label="Змінити аватар"
+            className="group relative shrink-0 rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60 active:scale-95 disabled:opacity-60"
+          >
+            <img src={avatarSrc} alt="Аватар" className="h-28 w-28 rounded-full object-cover ring-4 ring-white/70 shadow-lift" />
+            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition group-hover:opacity-100">
+              <CameraIcon className="h-8 w-8" />
+            </span>
+            <span className="absolute bottom-0 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand-600 shadow-soft">
+              <CameraIcon className="h-5 w-5" />
+            </span>
+          </button>
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
 
           <div className="w-full min-w-0 flex-1">
             {isEditing ? (
@@ -171,7 +181,7 @@ export function ProfilePage() {
                   e.preventDefault()
                   handleSave()
                 }}
-                className="flex flex-col gap-2 sm:flex-row"
+                className="flex items-center gap-2"
               >
                 <input
                   type="text"
@@ -181,148 +191,235 @@ export function ProfilePage() {
                   onChange={e => setNickname(e.target.value)}
                   onKeyDown={e => e.key === 'Escape' && setIsEditing(false)}
                   placeholder="Введіть нікнейм"
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500"
+                  aria-label="Нікнейм"
+                  className="min-w-0 flex-1 rounded-2xl border-2 border-white/40 bg-white/20 px-4 py-3 font-bold text-white placeholder-white/70 backdrop-blur focus:border-white focus:outline-none"
                 />
-                <div className="flex gap-2">
-                  <button type="submit" disabled={isLoading} className={btnPrimary}>
-                    {isLoading ? 'Збереження…' : 'Зберегти'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditing(false)
-                      setNickname(user.nickname || '')
-                    }}
-                    disabled={isLoading}
-                    className={btnSecondary}
-                  >
-                    Скасувати
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  aria-label="Зберегти"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-600 shadow-soft active:scale-95 disabled:opacity-60"
+                >
+                  <CheckIcon className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Скасувати"
+                  disabled={isLoading}
+                  onClick={() => {
+                    setIsEditing(false)
+                    setNickname(user.nickname || '')
+                  }}
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 active:scale-95"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
               </form>
             ) : (
-              <div className="flex items-center justify-center gap-2 sm:justify-start">
-                <h1 className="truncate text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-                  {user.nickname || 'Встановіть нікнейм'}
-                </h1>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  disabled={isLoading}
-                  aria-label="Редагувати нікнейм"
-                  className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
-                >
-                  <PencilSquareIcon className="h-5 w-5" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                disabled={isLoading}
+                className="inline-flex max-w-full items-center gap-2 rounded-2xl px-2 py-1 transition active:bg-white/15 sm:-ml-2"
+                aria-label="Редагувати нікнейм"
+              >
+                <span className="truncate font-display text-3xl font-extrabold">{user.nickname || 'Встановіть нікнейм'}</span>
+                <PencilSquareIcon className="h-5 w-5 shrink-0 opacity-80" />
+              </button>
             )}
-            <p className="mt-1 truncate text-zinc-500 dark:text-zinc-400">{user.email}</p>
-          </div>
-
-          <div className="flex shrink-0 gap-2">
-            <button
-              onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
-              className={`${btnSecondary} px-3`}
-            >
-              {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
-            </button>
-            <button onClick={handleLogout} className={btnSecondary}>
-              <ArrowRightOnRectangleIcon className="h-5 w-5" />
-              Вийти
-            </button>
+            <p className="mt-1 truncate text-sm text-white/85">{user.email}</p>
+            <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
+              {studying && (
+                <span className="chip bg-white/20 text-white">
+                  {studying.flag} Вивчаю: {studying.name}
+                </span>
+              )}
+              <span className="chip bg-white/20 text-white">🏆 {totalCompleted} блоків</span>
+              {user.role === 'admin' && (
+                <span className="chip bg-amber-300 text-amber-900">
+                  <ShieldCheckIcon className="h-3.5 w-3.5" /> Адмін
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-      <section>
-        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Мій прогрес</h2>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+        {/* PROGRESS */}
+        <section className="space-y-3">
+          <h2 className="px-1 text-lg font-extrabold text-ink">Мій прогрес</h2>
           {languages.length > 0 && (
-            <div role="tablist" className="inline-flex self-start rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800/70">
+            <div role="tablist" className="flex w-full rounded-2xl bg-surface-2 p-1">
+              {languages.map(l => {
+                const active = lang === l.code
+                return (
+                  <button
+                    key={l.code}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => {
+                      setLang(l.code)
+                      setConfirmReset(false)
+                    }}
+                    className={`relative flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-bold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60 ${
+                      active ? 'text-white' : 'text-ink-2'
+                    }`}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="profile-lang-tab"
+                        className={`absolute inset-0 rounded-xl bg-gradient-to-br ${languageTone(l.code).gradient} shadow-soft`}
+                        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                      />
+                    )}
+                    <span className="relative" aria-hidden>
+                      {l.flag}
+                    </span>
+                    <span className="relative truncate">{l.name}</span>
+                    {progressCount(l.code) > 0 && (
+                      <span className={`relative chip px-1.5 py-0 ${active ? 'bg-white/25' : 'bg-surface text-ink-2'}`}>
+                        {progressCount(l.code)}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+          {lang && <Stats key={lang} lang={lang} />}
+          {currentLang && user.selectedLanguage !== currentLang.code && (
+            <button
+              onClick={() => {
+                void setSelectedLanguage(currentLang.code)
+                navigate(`/${currentLang.code}`)
+              }}
+              className="btn btn-primary w-full sm:w-auto"
+            >
+              Вивчати {currentLang.flag} {currentLang.name}
+            </button>
+          )}
+        </section>
+
+        {/* SETTINGS */}
+        <div className="space-y-6">
+          <section>
+            <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wider text-ink-3">Налаштування</h2>
+            <div className="card divide-y divide-line overflow-hidden rounded-3xl p-0">
+              <button type="button" onClick={toggleTheme} className={rowClass} role="switch" aria-checked={theme === 'dark'}>
+                <span className={rowIcon('bg-gradient-to-br from-indigo-500 to-violet-600')}>
+                  {theme === 'dark' ? <MoonIcon className="h-5 w-5" /> : <SunIcon className="h-5 w-5" />}
+                </span>
+                <span className="flex-1 font-semibold text-ink">Темна тема</span>
+                <span
+                  className={`relative h-7 w-12 shrink-0 rounded-full transition ${theme === 'dark' ? 'bg-emerald-500' : 'bg-line'}`}
+                >
+                  <span
+                    className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all ${theme === 'dark' ? 'left-[1.375rem]' : 'left-0.5'}`}
+                  />
+                </span>
+              </button>
               {languages.map(l => (
                 <button
                   key={l.code}
-                  role="tab"
-                  aria-selected={lang === l.code}
+                  type="button"
                   onClick={() => {
-                    setLang(l.code)
-                    setConfirmReset(false)
+                    void setSelectedLanguage(l.code)
+                    navigate(`/${l.code}`)
                   }}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                    lang === l.code
-                      ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100'
-                      : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
-                  }`}
+                  className={rowClass}
                 >
-                  <span aria-hidden>{l.flag}</span> {l.name}
-                  {progressMap[l.code]?.completedBlocks.length ? (
-                    <span className="text-xs tabular-nums text-zinc-400">{progressMap[l.code].completedBlocks.length}</span>
-                  ) : null}
+                  <span className={rowIcon(`bg-gradient-to-br ${languageTone(l.code).gradient}`)}>
+                    <GlobeAltIcon className="h-5 w-5" />
+                  </span>
+                  <span className="flex-1 font-semibold text-ink">
+                    {l.flag} {l.name}
+                  </span>
+                  {user.selectedLanguage === l.code ? (
+                    <CheckIcon className="h-5 w-5 text-brand-500" />
+                  ) : (
+                    <ChevronRightIcon className="h-5 w-5 text-ink-3" />
+                  )}
                 </button>
               ))}
+              <button type="button" onClick={handleLogout} className={rowClass}>
+                <span className={rowIcon('bg-gradient-to-br from-zinc-400 to-zinc-600')}>
+                  <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                </span>
+                <span className="flex-1 font-semibold text-rose-600 dark:text-rose-400">Вийти</span>
+                <ChevronRightIcon className="h-5 w-5 text-ink-3" />
+              </button>
             </div>
-          )}
-        </div>
-        {lang && <Stats lang={lang} />}
-        {currentLang && user.selectedLanguage !== currentLang.code && (
-          <button
-            onClick={() => {
-              void setSelectedLanguage(currentLang.code)
-              navigate(`/${currentLang.code}`)
-            }}
-            className={`${btnSecondary} mt-3`}
-          >
-            Вивчати {currentLang.flag} {currentLang.name}
-          </button>
-        )}
-      </section>
+          </section>
 
-      <section className="rounded-2xl border border-rose-500/30 bg-rose-500/5 p-5 sm:p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex gap-3">
-            <ExclamationTriangleIcon className="h-6 w-6 shrink-0 text-rose-600 dark:text-rose-400" />
-            <div>
-              <h2 className="font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Небезпечна зона</h2>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Скидання видалить усі пройдені блоки, вивчені слова та помилки для мови «{currentLang?.name ?? lang}». Цю дію неможливо скасувати.
-              </p>
+          <section>
+            <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wider text-rose-500">Небезпечна зона</h2>
+            <div className="card overflow-hidden rounded-3xl border-rose-500/30 p-0">
+              <button
+                type="button"
+                onClick={() => setConfirmReset(true)}
+                disabled={isLoading || !lang}
+                className={`${rowClass} disabled:opacity-50`}
+              >
+                <span className={rowIcon('bg-gradient-to-br from-pink-400 to-rose-500')}>
+                  <ExclamationTriangleIcon className="h-5 w-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold text-rose-600 dark:text-rose-400">Скинути прогрес</span>
+                  <span className="block truncate text-xs text-ink-2">
+                    {currentLang ? `${currentLang.flag} ${currentLang.name}` : lang}
+                  </span>
+                </span>
+                <ChevronRightIcon className="h-5 w-5 text-ink-3" />
+              </button>
             </div>
-          </div>
-          {!confirmReset && (
-            <button
-              onClick={() => setConfirmReset(true)}
-              disabled={isLoading || !lang}
-              className={`${btnBase} shrink-0 border border-rose-500/40 text-rose-600 hover:bg-rose-500/10 dark:text-rose-400`}
-            >
-              Скинути прогрес
-            </button>
-          )}
+          </section>
         </div>
-        <AnimatePresence>
-          {confirmReset && (
+      </div>
+
+      {/* CONFIRM SHEET */}
+      <AnimatePresence>
+        {confirmReset && (
+          <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4">
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden"
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !isLoading && setConfirmReset(false)}
+            />
+            <motion.div
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="reset-title"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+              className="relative w-full max-w-md rounded-t-4xl bg-surface p-6 pb-safe text-center shadow-lift sm:rounded-4xl"
             >
-              <div className="mt-4 flex flex-col gap-2 border-t border-rose-500/20 pt-4 sm:flex-row sm:items-center sm:justify-end">
-                <p className="text-sm font-medium text-rose-700 dark:text-rose-300 sm:mr-auto">Ви впевнені?</p>
-                <button onClick={() => setConfirmReset(false)} disabled={isLoading} className={btnSecondary}>
-                  Скасувати
-                </button>
-                <button
-                  onClick={handleResetProgress}
-                  disabled={isLoading}
-                  className={`${btnBase} bg-rose-600 text-white hover:bg-rose-500`}
-                >
+              <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-line sm:hidden" />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-pink-400 to-rose-500 text-white shadow-soft animate-shake">
+                <ExclamationTriangleIcon className="h-8 w-8" />
+              </div>
+              <h2 id="reset-title" className="text-xl font-extrabold text-ink">
+                Скинути прогрес?
+              </h2>
+              <p className="mx-auto mt-2 max-w-xs text-sm text-ink-2">
+                Усі пройдені блоки, вивчені слова та помилки для мови «{currentLang?.name ?? lang}» буде видалено. Цю дію неможливо скасувати.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 pb-2">
+                <button onClick={handleResetProgress} disabled={isLoading} className="btn btn-danger btn-lg w-full">
                   {isLoading ? 'Скидання…' : 'Так, скинути'}
+                </button>
+                <button onClick={() => setConfirmReset(false)} disabled={isLoading} className="btn btn-secondary btn-lg w-full">
+                  Скасувати
                 </button>
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </section>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }

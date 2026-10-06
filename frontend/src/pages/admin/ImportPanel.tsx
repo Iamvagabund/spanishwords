@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { adminApi, type ImportBlock, LEVELS, type Level } from '../../services/adminApi'
-import { btnGhost, btnPrimary, card, errMsg, input, Message } from './ui'
+import { blockEmoji, blockTone } from '../../theme/palette'
+import { btnGhost, btnPrimary, card, chip, errMsg, iconBtn, input, Message } from './ui'
 
 interface Parsed {
   blocks: ImportBlock[]
@@ -99,24 +100,29 @@ export default function ImportPanel({
 
   return (
     <div className={`${card} space-y-4`}>
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-          Імпорт блоків ({language.toUpperCase()})
-        </h2>
-        <button className={btnGhost} onClick={onCancel}>
-          ← Назад
+      <div className="flex items-center gap-3">
+        <button className={iconBtn} onClick={onCancel} aria-label="Назад" title="Назад">
+          ←
         </button>
+        <span className="bg-brand-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-glow">
+          📥
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold text-ink">Імпорт блоків</h2>
+          <p className="text-xs font-semibold text-ink-3">Мова: {language.toUpperCase()}</p>
+        </div>
       </div>
-      <p className="text-sm text-zinc-500">
+      <p className="text-sm text-ink-2">
         Вставте JSON-масив блоків (формат seed: title, titleTarget, description, level, words[]) або завантажте файл.
         Блоки буде додано після останнього.
       </p>
-      <label className={`${btnGhost} cursor-pointer`}>
+      <label className="flex min-h-[88px] cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-line bg-surface-2/60 p-4 text-center text-sm font-bold text-ink-2 transition hover:border-brand-500 hover:text-brand-600 active:scale-[.99]">
+        <span className="text-2xl">📄</span>
         Завантажити .json
         <input type="file" accept=".json,application/json" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
       </label>
       <textarea
-        className={`${input} h-56 font-mono text-xs`}
+        className={`${input} h-56 font-mono !text-xs`}
         placeholder='[{ "title": "Привітання", "titleTarget": "Saludos", "level": "A1", "words": [{ "term": "hola", "translation": "привіт" }] }]'
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -135,27 +141,39 @@ export default function ImportPanel({
 
       {parsed.blocks.length > 0 && (
         <div>
-          <h3 className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Попередній перегляд: {parsed.blocks.length} блоків,{' '}
-            {parsed.blocks.reduce((s, b) => s + b.words.length, 0)} слів
+          <h3 className="mb-2 flex flex-wrap items-center gap-2 text-sm font-bold text-ink">
+            Попередній перегляд
+            <span className={chip}>{parsed.blocks.length} блоків</span>
+            <span className={chip}>{parsed.blocks.reduce((s, b) => s + b.words.length, 0)} слів</span>
           </h3>
-          <div className="max-h-64 divide-y divide-zinc-200 overflow-y-auto rounded-xl border border-zinc-200 text-sm dark:divide-zinc-800 dark:border-zinc-800">
-            {parsed.blocks.map((b, i) => (
-              <div key={i} className="flex items-center gap-3 px-3 py-2 text-zinc-800 dark:text-zinc-200">
-                <span className="w-6 text-zinc-400">{i + 1}</span>
-                <span className="flex-1 truncate">
-                  {b.title} <span className="text-zinc-500">/ {b.titleTarget}</span>
-                </span>
-                <span className="rounded bg-zinc-100 px-1.5 text-xs dark:bg-zinc-800">{b.level}</span>
-                <span className="w-16 text-right text-zinc-500">{b.words.length} сл.</span>
-              </div>
-            ))}
+          <div className="max-h-72 divide-y divide-line/70 overflow-y-auto rounded-2xl border border-line/70 text-sm">
+            {parsed.blocks.map((b, i) => {
+              const tone = blockTone(i + 1)
+              return (
+                <div key={i} className="flex items-center gap-3 px-3 py-2.5">
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${tone.gradient} text-lg`}
+                  >
+                    {blockEmoji(b.title)}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-bold text-ink">{b.title}</span>
+                    <span className="block truncate text-xs text-ink-3">{b.titleTarget}</span>
+                  </span>
+                  <span className={`chip ${tone.soft} ${tone.text}`}>{b.level}</span>
+                  <span className="shrink-0 text-xs font-semibold text-ink-3">{b.words.length} сл.</span>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
 
       {error && <Message onClose={() => setError(null)}>{error}</Message>}
-      <div className="flex justify-end">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <button className={btnGhost} onClick={onCancel}>
+          Скасувати
+        </button>
         <button className={btnPrimary} disabled={!canImport || busy} onClick={submit}>
           {busy ? 'Імпорт…' : `Імпортувати ${parsed.blocks.length || ''}`}
         </button>

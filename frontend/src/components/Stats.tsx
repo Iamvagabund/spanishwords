@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import {
   TrophyIcon,
   Squares2X2Icon,
@@ -7,34 +8,89 @@ import {
 } from '@heroicons/react/24/outline'
 import { useLangProgress } from '../store/useStore'
 
-type Tone = 'indigo' | 'emerald' | 'amber' | 'rose' | 'zinc'
+type Tone = 'violet' | 'emerald' | 'amber' | 'rose' | 'sky'
 
-const toneClasses: Record<Tone, string> = {
-  indigo: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-  emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-  amber: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  rose: 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
-  zinc: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400',
+const toneGradient: Record<Tone, string> = {
+  violet: 'from-violet-500 to-fuchsia-500',
+  emerald: 'from-emerald-400 to-teal-500',
+  amber: 'from-amber-300 to-orange-500',
+  rose: 'from-pink-400 to-rose-500',
+  sky: 'from-sky-400 to-indigo-500',
 }
 
 export function StatTile({
   label,
   value,
   icon: Icon,
-  tone = 'indigo',
+  tone = 'violet',
+  index = 0,
 }: {
   label: string
   value: string | number
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   tone?: Tone
+  index?: number
 }) {
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-      <div className={`mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl ${toneClasses[tone]}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="card relative overflow-hidden rounded-3xl p-4"
+    >
+      <div
+        className={`pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gradient-to-br ${toneGradient[tone]} opacity-20 blur-xl`}
+      />
+      <div
+        className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br ${toneGradient[tone]} text-white shadow-soft`}
+      >
         <Icon className="h-5 w-5" />
       </div>
-      <p className="text-2xl font-semibold tracking-tight tabular-nums text-zinc-900 dark:text-zinc-100">{value}</p>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">{label}</p>
+      <p className="font-display text-2xl font-extrabold tabular-nums text-ink">{value}</p>
+      <p className="text-sm font-medium text-ink-2">{label}</p>
+    </motion.div>
+  )
+}
+
+/** Circular progress ring. `value` 0..1. Colour comes from `className` (currentColor). */
+export function ProgressRing({
+  value,
+  size = 96,
+  stroke = 10,
+  className = 'text-white',
+  trackClassName = 'text-white/25',
+  children,
+}: {
+  value: number
+  size?: number
+  stroke?: number
+  className?: string
+  trackClassName?: string
+  children?: React.ReactNode
+}) {
+  const r = (size - stroke) / 2
+  const c = 2 * Math.PI * r
+  const v = Math.max(0, Math.min(1, value || 0))
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} stroke="currentColor" className={trackClassName} />
+        <motion.circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          strokeWidth={stroke}
+          stroke="currentColor"
+          strokeLinecap="round"
+          className={className}
+          strokeDasharray={c}
+          initial={{ strokeDashoffset: c }}
+          animate={{ strokeDashoffset: c * (1 - v) }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">{children}</div>
     </div>
   )
 }
@@ -54,14 +110,13 @@ export function useProgressSummary(lang: string) {
 
 export default function Stats({ lang }: { lang: string }) {
   const s = useProgressSummary(lang)
-
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-      <StatTile label="Рівень" value={s.level} icon={TrophyIcon} tone="amber" />
-      <StatTile label="Блоків пройдено" value={s.completedBlocks} icon={Squares2X2Icon} tone="indigo" />
-      <StatTile label="Середній бал" value={`${s.averageScore}/10`} icon={ChartBarIcon} tone="emerald" />
-      <StatTile label="Вивчено слів" value={s.learnedWords} icon={BookOpenIcon} tone="zinc" />
-      <StatTile label="Слів з помилками" value={s.mistakes} icon={ExclamationCircleIcon} tone="rose" />
+      <StatTile index={0} label="Рівень" value={s.level} icon={TrophyIcon} tone="amber" />
+      <StatTile index={1} label="Блоків пройдено" value={s.completedBlocks} icon={Squares2X2Icon} tone="violet" />
+      <StatTile index={2} label="Середній бал" value={`${s.averageScore}/10`} icon={ChartBarIcon} tone="emerald" />
+      <StatTile index={3} label="Вивчено слів" value={s.learnedWords} icon={BookOpenIcon} tone="sky" />
+      <StatTile index={4} label="Слів з помилками" value={s.mistakes} icon={ExclamationCircleIcon} tone="rose" />
     </div>
   )
 }

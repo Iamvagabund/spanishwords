@@ -1,28 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ArrowPathIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  HomeIcon,
-  AcademicCapIcon,
-  PencilSquareIcon,
-} from '@heroicons/react/24/outline'
+import { HomeIcon } from '@heroicons/react/24/outline'
 import { useStore, useLangProgress } from '../store/useStore'
 import { useLang } from '../context/LangContext'
 import { langAdverb } from '../utils/lang'
+import { blockEmoji, blockTone } from '../theme/palette'
+import { ActionBar, ExitSheet, LessonHeader, LessonShell, ResultScreen, formatTime, haptic, type Feedback } from '../components/LessonKit'
 import type { Word } from '../types'
 
 type Phase = 'list' | 'choice' | 'intro' | 'typing' | 'result'
-
-const primaryBtn =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
-const secondaryBtn =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 transition disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
-const card = 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl'
 
 const normalizeAnswer = (answer: string): string[] => {
   const clean = answer
@@ -56,22 +43,44 @@ const buildOptions = (correct: string, allTerms: string[]): string[] => {
 }
 
 /** Converts a percentage to the 1..10 scale stored in completedBlocks. */
-const toTenScale = (percentage: number) =>
-  percentage >= 100 ? 10 : Math.max(1, Math.floor(percentage / 10))
+const toTenScale = (percentage: number) => (percentage >= 100 ? 10 : Math.max(1, Math.floor(percentage / 10)))
 
 const PASS_PERCENT = 70
 
-function ProgressBar({ value, total }: { value: number; total: number }) {
-  const pct = total ? (value / total) * 100 : 0
+const isTypingTarget = (t: EventTarget | null) =>
+  t instanceof HTMLElement && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'BUTTON' || t.tagName === 'A')
+
+function FlashCard({ word, index, lang, gradient }: { word: Word; index: number; lang: string; gradient: string }) {
+  const [flipped, setFlipped] = useState(false)
+  const face = 'absolute inset-0 flex flex-col items-center justify-center rounded-3xl p-5 text-center [backface-visibility:hidden] [-webkit-backface-visibility:hidden]'
   return (
-    <div className="h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+    <motion.button
+      type="button"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: Math.min(index * 0.04, 0.4) }}
+      onClick={() => setFlipped(f => !f)}
+      className="relative h-44 w-full [perspective:1000px] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30 rounded-3xl"
+      aria-label={`${word.term} — ${word.translation}. Натисніть, щоб перевернути`}
+    >
       <motion.div
-        className="h-full rounded-full bg-indigo-600"
-        initial={false}
-        animate={{ width: `${pct}%` }}
-        transition={{ duration: 0.3 }}
-      />
-    </div>
+        className="relative h-full w-full [transform-style:preserve-3d]"
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+      >
+        <div className={`${face} bg-gradient-to-br ${gradient} text-white shadow-lift`}>
+          <span className="absolute left-4 top-3 text-xs font-bold opacity-70">{index + 1}</span>
+          <span className="absolute right-4 top-3 text-xs font-bold opacity-70">↻</span>
+          <span className="font-display text-3xl font-extrabold break-words" lang={lang}>{word.term}</span>
+          {word.example && <span className="mt-2 line-clamp-2 text-sm italic opacity-90" lang={lang}>{word.example}</span>}
+        </div>
+        <div className={`${face} border-2 border-line bg-surface shadow-soft [transform:rotateY(180deg)]`}>
+          <span className="absolute left-4 top-3 text-xs font-bold text-ink-3">🇺🇦</span>
+          <span className="font-display text-3xl font-extrabold break-words text-ink">{word.translation}</span>
+          {word.exampleTranslation && <span className="mt-2 line-clamp-2 text-sm text-ink-2">{word.exampleTranslation}</span>}
+        </div>
+      </motion.div>
+    </motion.button>
   )
 }
 
@@ -97,10 +106,14 @@ export function BlockPage() {
   const [checked, setChecked] = useState<boolean | null>(null)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [results, setResults] = useState<Record<string, boolean>>({})
-  const [wrongChoice, setWrongChoice] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string | null>(null)
   const [options, setOptions] = useState<string[]>([])
+  const [combo, setCombo] = useState(0)
+  const [shake, setShake] = useState(0)
+  const [confirmExit, setConfirmExit] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
+  const startRef = useRef(0)
   const inputRef = useRef<HTMLInputElement>(null)
-  const nextRef = useRef<HTMLButtonElement>(null)
 
   const reset = () => {
     setPhase('list')
@@ -109,12 +122,15 @@ export function BlockPage() {
     setChecked(null)
     setAnswers({})
     setResults({})
-    setWrongChoice(null)
+    setSelected(null)
+    setCombo(0)
+    setConfirmExit(false)
   }
 
   // Reset all learning state when navigating to another block
   useEffect(() => {
     reset()
+    window.scrollTo(0, 0)
   }, [code, numericOrder])
 
   // Locked-block redirect: previous block (by order) must be completed
@@ -128,81 +144,86 @@ export function BlockPage() {
 
   const currentWord = blockWords[index]
 
-  // Stable multiple-choice options per word (previously reshuffled on every render)
+  // Stable multiple-choice options per word
   useEffect(() => {
     if (phase === 'choice' && currentWord) {
       setOptions(buildOptions(currentWord.term, allTerms))
-      setWrongChoice(null)
+      setSelected(null)
+      setChecked(null)
     }
   }, [phase, currentWord, allTerms])
 
   useEffect(() => {
-    if (phase !== 'typing') return
-    if (checked === null) inputRef.current?.focus()
-    else nextRef.current?.focus()
-  }, [phase, index, checked])
-
-  // Keyboard shortcuts for multiple choice (1-4)
-  useEffect(() => {
-    if (phase !== 'choice') return
-    const onKey = (e: KeyboardEvent) => {
-      const n = Number(e.key)
-      if (n >= 1 && n <= options.length) handleChoice(options[n - 1])
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  })
-
-  if (!block || blockWords.length === 0) {
-    return (
-      <div className={`${card} p-8 text-center mt-6`}>
-        <p className="text-rose-600 dark:text-rose-400 font-medium">Блок не знайдено</p>
-        <Link to={home} className={`${secondaryBtn} mt-4`}>
-          <HomeIcon className="h-5 w-5" /> На головну
-        </Link>
-      </div>
-    )
-  }
+    if (phase === 'typing') inputRef.current?.focus()
+  }, [phase, index])
 
   const total = blockWords.length
 
-  function handleChoice(option: string) {
-    if (!currentWord) return
-    if (isAnswerCorrect(option, currentWord.term)) {
-      setWrongChoice(null)
-      if (index < total - 1) setIndex(i => i + 1)
-      else {
-        setIndex(0)
-        setPhase('intro')
-      }
-    } else {
-      setWrongChoice(option)
-    }
+  const startTraining = () => {
+    startRef.current = Date.now()
+    setIndex(0)
+    setCombo(0)
+    setPhase('choice')
+    window.scrollTo(0, 0)
   }
 
   const finish = (finalAnswers: Record<string, string>, finalResults: Record<string, boolean>) => {
+    if (!block) return
     const correctCount = blockWords.filter(w => finalResults[w.id]).length
     const percentage = (correctCount / total) * 100
     if (percentage >= PASS_PERCENT) completeBlock(code, block.id, toTenScale(percentage), blockWords.map(w => w.id))
     setAnswers(finalAnswers)
     setResults(finalResults)
+    setElapsed(Date.now() - startRef.current)
     setPhase('result')
+    window.scrollTo(0, 0)
   }
 
-  const handleTypingSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!currentWord) return
-    if (checked === null) {
-      if (!userInput.trim()) return
-      const ok = isAnswerCorrect(userInput, currentWord.term)
-      if (ok) removeMistake(code, currentWord.id)
-      else addMistake(code, currentWord.id)
-      setAnswers(a => ({ ...a, [currentWord.id]: userInput }))
-      setResults(r => ({ ...r, [currentWord.id]: ok }))
-      setChecked(ok)
+  const registerResult = (ok: boolean) => {
+    haptic(ok)
+    setCombo(c => (ok ? c + 1 : 0))
+    if (!ok) setShake(s => s + 1)
+  }
+
+  // ----- multiple choice (practice, not graded) -----
+  const checkChoice = useCallback(() => {
+    if (!currentWord || !selected || checked !== null) return
+    const ok = isAnswerCorrect(selected, currentWord.term)
+    setChecked(ok)
+    registerResult(ok)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentWord, selected, checked])
+
+  const nextChoice = useCallback(() => {
+    if (checked === null) return
+    if (!checked) {
+      // wrong: try the same word again with reshuffled options
+      setOptions(o => shuffle(o))
+      setSelected(null)
+      setChecked(null)
       return
     }
-    // second Enter: go next
+    if (index < total - 1) setIndex(i => i + 1)
+    else {
+      setIndex(0)
+      setChecked(null)
+      setPhase('intro')
+    }
+  }, [checked, index, total])
+
+  // ----- typing test (graded) -----
+  const checkTyping = () => {
+    if (!currentWord || checked !== null || !userInput.trim()) return
+    const ok = isAnswerCorrect(userInput, currentWord.term)
+    if (ok) removeMistake(code, currentWord.id)
+    else addMistake(code, currentWord.id)
+    setAnswers(a => ({ ...a, [currentWord.id]: userInput }))
+    setResults(r => ({ ...r, [currentWord.id]: ok }))
+    setChecked(ok)
+    registerResult(ok)
+  }
+
+  const nextTyping = () => {
     if (index < total - 1) {
       setIndex(i => i + 1)
       setUserInput('')
@@ -212,31 +233,63 @@ export function BlockPage() {
     }
   }
 
-  const header = (progressValue: number, label?: string) => (
-    <div className="mb-6 space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <Link
-          to={home}
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition"
-        >
-          <ArrowLeftIcon className="h-4 w-4" /> Назад
-        </Link>
-        {label && <span className="text-sm text-zinc-500 dark:text-zinc-400 tabular-nums">{label}</span>}
-      </div>
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">{block.title}</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400" lang={code}>{block.titleTarget}</p>
-      </div>
-      <ProgressBar value={progressValue} total={total} />
-    </div>
-  )
-
-  const fade = {
-    initial: { opacity: 0, y: 8 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -8 },
-    transition: { duration: 0.2 },
+  const startTyping = () => {
+    setIndex(0)
+    setUserInput('')
+    setChecked(null)
+    setAnswers({})
+    setResults({})
+    setPhase('typing')
   }
+
+  // Keyboard: 1-4 choose, Enter check/next (outside inputs/buttons, which handle Enter natively)
+  useEffect(() => {
+    if (confirmExit) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      if (phase === 'choice') {
+        const n = Number(e.key)
+        if (checked === null && n >= 1 && n <= options.length) {
+          setSelected(options[n - 1])
+          return
+        }
+        if (e.key === 'Enter' && !isTypingTarget(e.target)) {
+          e.preventDefault()
+          if (checked === null) checkChoice()
+          else nextChoice()
+        }
+      } else if (phase === 'intro' && e.key === 'Enter' && !isTypingTarget(e.target)) {
+        e.preventDefault()
+        startTyping()
+      } else if (phase === 'list' && e.key === 'Enter' && !isTypingTarget(e.target)) {
+        e.preventDefault()
+        startTraining()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  if (!block || blockWords.length === 0) {
+    return (
+      <div className="flex min-h-[100dvh] items-center justify-center px-4 pt-safe pb-safe">
+        <div className="card max-w-sm p-8 text-center">
+          <div className="text-5xl">🔍</div>
+          <p className="mt-3 font-display text-xl font-extrabold">Блок не знайдено</p>
+          <Link to={home} className="btn btn-primary mt-6">
+            <HomeIcon className="h-5 w-5" /> На головну
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const tone = blockTone(block.order)
+  const emoji = blockEmoji(block.title)
+  const inLesson = phase === 'choice' || phase === 'intro' || phase === 'typing'
+  const requestClose = () => (inLesson ? setConfirmExit(true) : navigate(home))
+
+  const exitSheet = <ExitSheet open={confirmExit} onStay={() => setConfirmExit(false)} onLeave={() => navigate(home)} />
 
   // ---------- RESULT ----------
   if (phase === 'result') {
@@ -244,265 +297,217 @@ export function BlockPage() {
     const percentage = (correctCount / total) * 100
     const passed = percentage >= PASS_PERCENT
     const nextBlock = [...storeBlocks].filter(b => b.order > block.order).sort((a, b) => a.order - b.order)[0]
-
     return (
-      <div className="max-w-2xl mx-auto py-6">
-        <motion.div {...fade} className={`${card} p-6 sm:p-8 text-center`}>
-          <div className="text-5xl mb-3">{passed ? (percentage === 100 ? '🏆' : '🎉') : '💪'}</div>
-          <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-            {passed ? 'Чудово!' : 'Потрібно ще попрацювати'}
-          </h2>
-          <div className="mt-6 flex justify-center gap-8">
-            <div>
-              <div className="text-4xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
-                {correctCount}/{total}
-              </div>
-              <div className="text-xs text-zinc-500 dark:text-zinc-400">правильно · {Math.round(percentage)}%</div>
-            </div>
-            <div>
-              <div className={`text-4xl font-semibold tabular-nums ${passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                {toTenScale(percentage)}
-              </div>
-              <div className="text-xs text-zinc-500 dark:text-zinc-400">бал з 10</div>
-            </div>
-          </div>
-          {!passed && (
-            <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">
-              Для проходження блоку потрібно щонайменше {PASS_PERCENT}%
-            </p>
-          )}
-
-          <ul className="mt-6 space-y-2 text-left">
-            {blockWords.map(w => {
-              const ok = results[w.id]
-              return (
-                <li
-                  key={w.id}
-                  className={`flex items-start gap-3 rounded-xl p-3 ${ok ? 'bg-emerald-500/10' : 'bg-rose-500/10'}`}
-                >
-                  {ok ? (
-                    <CheckCircleIcon className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  ) : (
-                    <XCircleIcon className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
-                  )}
-                  <div className="min-w-0">
-                    <div className="font-medium text-zinc-900 dark:text-zinc-100">{w.translation}</div>
-                    <div className="text-sm text-zinc-500 dark:text-zinc-400 break-words">
-                      {ok ? w.term : (
-                        <>
-                          <span className="line-through">{answers[w.id] || '—'}</span>{' '}
-                          → <span className="text-emerald-600 dark:text-emerald-400 font-medium">{w.term}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            {passed && nextBlock && (
-              <button onClick={() => navigate(`${home}/block/${nextBlock.order}`)} className={primaryBtn} autoFocus>
-                Наступний блок <ArrowRightIcon className="h-5 w-5" />
-              </button>
-            )}
-            <button onClick={reset} className={passed ? secondaryBtn : primaryBtn} autoFocus={!passed}>
-              <ArrowPathIcon className="h-5 w-5" /> Пройти ще раз
-            </button>
-            <button onClick={() => navigate(home)} className={secondaryBtn}>
-              <HomeIcon className="h-5 w-5" /> На головну
-            </button>
-          </div>
-        </motion.div>
-      </div>
+      <ResultScreen
+        percent={percentage}
+        score10={toTenScale(percentage)}
+        passed={passed}
+        title={block.title}
+        subtitle={block.titleTarget}
+        emoji={emoji}
+        gradient={tone.gradient}
+        lang={code}
+        chips={[
+          { icon: '🎯', label: 'Точність', value: `${Math.round(percentage)}%` },
+          { icon: '⏱️', label: 'Час', value: formatTime(elapsed) },
+          { icon: '📚', label: 'Слова', value: `${correctCount}/${total}` },
+        ]}
+        mistakes={blockWords
+          .filter(w => !results[w.id])
+          .map(w => ({ id: w.id, translation: w.translation, term: w.term, answer: answers[w.id] }))}
+        note={passed ? undefined : `Для проходження блоку потрібно щонайменше ${PASS_PERCENT}%`}
+        onNext={nextBlock ? () => navigate(`${home}/block/${nextBlock.order}`) : undefined}
+        onRetry={reset}
+        onHome={() => navigate(home)}
+      />
     )
   }
 
   // ---------- WORD LIST ----------
   if (phase === 'list') {
     return (
-      <div className="max-w-2xl mx-auto py-6">
-        {header(0, `${total} слів`)}
-        <motion.div {...fade} className={`${card} divide-y divide-zinc-200 dark:divide-zinc-800`}>
+      <LessonShell
+        header={<LessonHeader progress={0} onClose={requestClose} combo={0} />}
+        bottom={<ActionBar feedback={null} label="Почати тренування" onClick={startTraining} hint="Enter — почати" />}
+      >
+        <div className={`relative mt-2 overflow-hidden rounded-4xl bg-gradient-to-br ${tone.gradient} p-6 text-white shadow-glow`}>
+          <div className="absolute -right-6 -top-6 text-[7rem] opacity-20" aria-hidden>{emoji}</div>
+          <div className="text-4xl">{emoji}</div>
+          <h1 className="mt-2 text-3xl font-extrabold">{block.title}</h1>
+          <p className="opacity-90" lang={code}>{block.titleTarget}</p>
+          <div className="mt-3 inline-flex rounded-full bg-white/20 px-3 py-1 text-sm font-bold backdrop-blur">{total} слів · торкніться картки, щоб перевернути</div>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {blockWords.map((w, i) => (
-            <div key={w.id} className="flex items-center gap-4 px-5 py-4">
-              <span className="w-6 text-sm text-zinc-400 dark:text-zinc-500 tabular-nums">{i + 1}</span>
-              <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-                <span className="text-zinc-500 dark:text-zinc-400">{w.translation}</span>
-                <span className="font-medium text-zinc-900 dark:text-zinc-100" lang={code}>{w.term}</span>
-              </div>
-            </div>
+            <FlashCard key={w.id} word={w} index={i} lang={code} gradient={tone.gradient} />
           ))}
-        </motion.div>
-        <button
-          onClick={() => {
-            setIndex(0)
-            setPhase('choice')
-          }}
-          className={`${primaryBtn} w-full mt-6 py-3`}
-          autoFocus
-        >
-          <AcademicCapIcon className="h-5 w-5" /> Почати тренування
-        </button>
-      </div>
+        </div>
+      </LessonShell>
     )
   }
+
+  const progress =
+    phase === 'choice'
+      ? (index + (checked ? 1 : 0)) / (total * 2)
+      : phase === 'intro'
+        ? 0.5
+        : (total + index + (checked !== null ? 1 : 0)) / (total * 2)
+
+  const header = <LessonHeader progress={progress} onClose={requestClose} combo={combo} />
+
+  const prompt = (label: string) => (
+    <div className="pt-4 text-center">
+      <div className={`mx-auto inline-flex items-center gap-2 rounded-full ${tone.soft} ${tone.text} px-3 py-1 text-sm font-bold`}>
+        <span>{emoji}</span> {label}
+      </div>
+      <h1 className="mt-5 break-words text-4xl font-extrabold sm:text-5xl">{currentWord?.translation}</h1>
+      <p className="mt-2 text-sm font-semibold text-ink-3 tabular-nums">
+        {index + 1} / {total}
+      </p>
+    </div>
+  )
+
+  const feedback: Feedback =
+    checked === null || !currentWord
+      ? null
+      : checked
+        ? { ok: true, answer: phase === 'typing' ? currentWord.term : undefined, lang: code }
+        : {
+            ok: false,
+            title: 'Правильно:',
+            answer: currentWord.term,
+            example: currentWord.example,
+            exampleTranslation: currentWord.exampleTranslation,
+            lang: code,
+          }
 
   // ---------- INTRO TO TYPING ----------
   if (phase === 'intro') {
     return (
-      <div className="max-w-2xl mx-auto py-6">
-        {header(total, 'Етап 1 завершено')}
-        <motion.div {...fade} className={`${card} p-8 text-center`}>
-          <PencilSquareIcon className="h-12 w-12 mx-auto text-indigo-500" />
-          <h2 className="mt-4 text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-            Чудово! Тепер напишіть слова самостійно
-          </h2>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Перекладайте з української {adverb}</p>
-          <button
-            onClick={() => {
-              setIndex(0)
-              setUserInput('')
-              setChecked(null)
-              setAnswers({})
-              setResults({})
-              setPhase('typing')
-            }}
-            className={`${primaryBtn} mt-6`}
-            autoFocus
-          >
-            Почати тест <ArrowRightIcon className="h-5 w-5" />
-          </button>
+      <LessonShell header={header} bottom={<ActionBar feedback={null} label="Почати тест" onClick={startTyping} hint="Enter — почати" />}>
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="my-auto py-10 text-center">
+          <div className={`mx-auto flex h-28 w-28 animate-float items-center justify-center rounded-[2.25rem] bg-gradient-to-br ${tone.gradient} text-6xl shadow-glow`}>✍️</div>
+          <h1 className="mt-6 text-3xl font-extrabold">Етап 1 пройдено!</h1>
+          <p className="mt-2 text-ink-2">Тепер напишіть слова самостійно — перекладайте з української {adverb}.</p>
         </motion.div>
-      </div>
+        {exitSheet}
+      </LessonShell>
     )
   }
 
   // ---------- MULTIPLE CHOICE ----------
   if (phase === 'choice') {
     return (
-      <div className="max-w-2xl mx-auto py-6">
-        {header(index, `Вибір · слово ${index + 1} з ${total}`)}
+      <LessonShell
+        header={header}
+        bottom={
+          <ActionBar
+            feedback={feedback}
+            label={checked === null ? 'Перевірити' : checked ? 'Далі' : 'Спробувати ще'}
+            onClick={checked === null ? checkChoice : nextChoice}
+            disabled={checked === null && !selected}
+            hint="1–4 — вибрати · Enter — перевірити"
+          />
+        }
+      >
         <AnimatePresence mode="wait">
-          <motion.div key={`c-${index}`} {...fade}>
-            <div className={`${card} p-8 sm:p-12 text-center`}>
-              <div className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Як {adverb}?</div>
-              <div className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 break-words">
-                {currentWord.translation}
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <motion.div key={`c-${index}`} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.22 }}>
+            {prompt('Як перекласти?')}
+            <div key={shake} className={`mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 ${checked === false ? 'animate-shake' : ''}`}>
               {options.map((opt, i) => {
-                const wrong = wrongChoice === opt
+                const isSel = selected === opt
+                const isRight = checked !== null && currentWord && opt === currentWord.term && checked
+                const isWrong = checked === false && isSel
+                const cls = isRight
+                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 shadow-[0_4px_0_0_theme(colors.emerald.500)]'
+                  : isWrong
+                    ? 'border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300 shadow-[0_4px_0_0_theme(colors.rose.500)]'
+                    : isSel
+                      ? 'border-brand-500 bg-brand-500/10 text-brand-700 dark:text-brand-200 shadow-[0_4px_0_0_theme(colors.brand.500)]'
+                      : 'border-line bg-surface text-ink shadow-[0_4px_0_0_rgb(var(--line))] hover:bg-surface-2'
                 return (
-                  <button
+                  <motion.button
                     key={opt}
-                    onClick={() => handleChoice(opt)}
-                    className={`flex items-center gap-3 rounded-xl border px-4 py-4 text-left text-lg font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                      wrong
-                        ? 'border-rose-500/60 bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                        : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:border-indigo-500 hover:bg-indigo-500/5'
-                    }`}
+                    type="button"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    disabled={checked !== null}
+                    onClick={() => setSelected(opt)}
+                    aria-pressed={isSel}
+                    className={`flex min-h-[64px] items-center gap-3 rounded-2xl border-2 px-4 py-4 text-left text-lg font-bold transition-all active:translate-y-[3px] active:shadow-none disabled:active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30 ${cls}`}
+                    lang={code}
                   >
-                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800 text-sm text-zinc-500 dark:text-zinc-400">
+                    <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border-2 text-sm ${isSel ? 'border-current' : 'border-line text-ink-3'}`}>
                       {i + 1}
                     </span>
                     <span className="break-words">{opt}</span>
-                  </button>
+                  </motion.button>
                 )
               })}
             </div>
-            {wrongChoice && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-4 flex items-center gap-2 rounded-xl bg-rose-500/10 p-3 text-rose-600 dark:text-rose-400"
-              >
-                <XCircleIcon className="h-5 w-5" /> Неправильно, спробуйте ще раз
-              </motion.div>
-            )}
           </motion.div>
         </AnimatePresence>
-      </div>
+        {exitSheet}
+      </LessonShell>
     )
   }
 
   // ---------- TYPING TEST ----------
   const isLast = index === total - 1
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (checked === null) checkTyping()
+    else nextTyping()
+  }
   return (
-    <div className="max-w-2xl mx-auto py-6">
-      {header(index + (checked !== null ? 1 : 0), `Слово ${index + 1} з ${total}`)}
+    <LessonShell
+      header={header}
+      bottom={
+        <ActionBar
+          feedback={feedback}
+          label={checked === null ? 'Перевірити' : isLast ? 'Завершити' : 'Далі'}
+          onClick={() => (checked === null ? checkTyping() : nextTyping())}
+          disabled={checked === null && !userInput.trim()}
+          hint="Enter — перевірити"
+        />
+      }
+    >
       <AnimatePresence mode="wait">
-        <motion.div key={`t-${index}`} {...fade}>
-          <div className={`${card} p-8 sm:p-12 text-center`}>
-            <div className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Перекладіть {adverb}</div>
-            <div className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 break-words">
-              {currentWord.translation}
-            </div>
-          </div>
-
-          <form onSubmit={handleTypingSubmit} className="mt-4 space-y-3">
-            <input
-              ref={inputRef}
-              type="text"
-              value={userInput}
-              onChange={e => setUserInput(e.target.value)}
-              readOnly={checked !== null}
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              spellCheck={false}
-              aria-label={`Відповідь ${adverb}`}
-              lang={code}
-              placeholder={`Введіть слово ${adverb}…`}
-              className={`w-full rounded-xl px-4 py-3 text-lg bg-white dark:bg-zinc-900 border text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 ${
-                checked === true
-                  ? 'border-emerald-500 focus:ring-emerald-500/60'
-                  : checked === false
-                    ? 'border-rose-500 focus:ring-rose-500/60'
-                    : 'border-zinc-300 dark:border-zinc-700 focus:ring-indigo-500/60'
-              }`}
-            />
-
-            {checked !== null && (
-              <motion.div
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`flex items-start gap-3 rounded-xl p-4 ${
-                  checked ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+        <motion.div key={`t-${index}`} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.22 }}>
+          {prompt(`Напишіть ${adverb}`)}
+          <form onSubmit={onSubmit} className="mt-8">
+            <div key={shake} className={checked === false ? 'animate-shake' : ''}>
+              <input
+                ref={inputRef}
+                type="text"
+                value={userInput}
+                onChange={e => setUserInput(e.target.value)}
+                readOnly={checked !== null}
+                autoFocus
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                enterKeyHint={checked === null ? 'done' : 'next'}
+                aria-label={`Відповідь ${adverb}`}
+                lang={code}
+                placeholder="Ваша відповідь…"
+                className={`input py-5 text-center font-display text-2xl font-bold sm:text-3xl ${
+                  checked === true
+                    ? '!border-emerald-500 !ring-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                    : checked === false
+                      ? '!border-rose-500 !ring-rose-500/20 text-rose-600 dark:text-rose-400'
+                      : ''
                 }`}
-              >
-                {checked ? <CheckCircleIcon className="h-6 w-6 shrink-0" /> : <XCircleIcon className="h-6 w-6 shrink-0" />}
-                <div>
-                  <div className="font-medium">{checked ? 'Правильно!' : 'Неправильно'}</div>
-                  <div className="text-sm">
-                    Правильна відповідь: <span className="font-semibold" lang={code}>{currentWord.term}</span>
-                  </div>
-                  {currentWord.example && (
-                    <div className="mt-2 border-t border-current/10 pt-2 text-sm text-zinc-600 dark:text-zinc-300">
-                      <p className="italic" lang={code}>{currentWord.example}</p>
-                      {currentWord.exampleTranslation && (
-                        <p className="text-zinc-500 dark:text-zinc-400">{currentWord.exampleTranslation}</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {checked === null ? (
-              <button type="submit" disabled={!userInput.trim()} className={`${primaryBtn} w-full py-3`}>
-                Перевірити <span className="text-xs opacity-70">Enter</span>
-              </button>
-            ) : (
-              <button ref={nextRef} type="submit" className={`${primaryBtn} w-full py-3`}>
-                {isLast ? 'Завершити' : 'Далі'} <ArrowRightIcon className="h-5 w-5" />
-              </button>
-            )}
+              />
+            </div>
+            <p className="mt-3 hidden text-center text-xs text-ink-3 sm:block">Enter — {checked === null ? 'перевірити' : 'далі'}</p>
           </form>
         </motion.div>
       </AnimatePresence>
-    </div>
+      {exitSheet}
+    </LessonShell>
   )
 }
+

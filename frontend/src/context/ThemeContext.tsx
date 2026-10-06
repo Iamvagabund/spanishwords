@@ -30,7 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.add(theme)
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', theme === 'dark' ? '#09090b' : '#fafafa')
+      ?.setAttribute('content', theme === 'dark' ? '#0b0a18' : '#f6f5fb')
     try {
       localStorage.setItem('theme', theme)
     } catch {

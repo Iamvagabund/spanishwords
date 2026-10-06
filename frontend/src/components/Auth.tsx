@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { EyeIcon, EyeSlashIcon, ExclamationCircleIcon, LanguageIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, EyeSlashIcon, ExclamationCircleIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 import { useAuthStore } from '../store/authStore'
+import { ThemeToggle } from './ThemeToggle'
 
 function friendlyError(raw: string | null, isLogin: boolean): string | null {
   if (!raw) return null
@@ -18,8 +19,16 @@ function friendlyError(raw: string | null, isLogin: boolean): string | null {
   return isLogin ? 'Не вдалося увійти. Спробуйте ще раз.' : 'Не вдалося зареєструватися. Спробуйте ще раз.'
 }
 
-const inputCls =
-  'w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60'
+// Floating word bubbles in the hero (positions in %, kept inside to avoid horizontal scroll)
+const bubbles = [
+  { t: '🇪🇸 ¡Hola!', x: 6, y: 14, d: 0 },
+  { t: '🇬🇧 Hello', x: 66, y: 8, d: 0.6 },
+  { t: 'Gracias 🙏', x: 58, y: 84, d: 1.2 },
+  { t: '🇬🇧 Friend', x: 6, y: 80, d: 0.3 },
+  { t: 'Amigo 🤝', x: 34, y: 2, d: 0.9 },
+  { t: 'Thanks ✨', x: 72, y: 36, d: 1.5 },
+  { t: 'Café ☕', x: 2, y: 40, d: 1.8 },
+]
 
 export function Auth() {
   const [isLogin, setIsLogin] = useState(true)
@@ -52,23 +61,70 @@ export function Auth() {
   const message = friendlyError(error, isLogin)
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-zinc-50 dark:bg-zinc-950 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.15),transparent_60%)]">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="w-full max-w-md"
-      >
-        <div className="flex flex-col items-center mb-8 text-center">
-          <div className="h-12 w-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-600/30">
-            <LanguageIcon className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Вивчаємо слова</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Іспанська · English · та інші</p>
+    <div className="app-bg relative flex min-h-[100dvh] flex-col overflow-hidden text-ink sm:items-center sm:justify-center sm:px-4 sm:py-10">
+      <div className="pt-safe absolute right-3 top-3 z-20">
+        <div className="mt-1">
+          <ThemeToggle className="bg-surface/60 backdrop-blur" />
         </div>
+      </div>
 
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xl shadow-zinc-900/5">
-          <div role="tablist" className="grid grid-cols-2 gap-1 p-1 mb-6 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+      {/* Hero */}
+      <div className="pt-safe relative flex flex-1 flex-col items-center justify-center px-6 pb-8 text-center sm:mb-8 sm:flex-none sm:pb-0">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-gradient opacity-30 blur-3xl" />
+          {bubbles.map(b => (
+            <motion.span
+              key={b.t}
+              className="glass absolute whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold text-ink-2 shadow-soft sm:text-sm"
+              style={{ left: `${b.x}%`, top: `${b.y}%` }}
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 0.9, scale: 1, y: [0, -10, 0] }}
+              transition={{
+                opacity: { delay: b.d * 0.3, duration: 0.4 },
+                scale: { delay: b.d * 0.3, type: 'spring' },
+                y: { delay: b.d, duration: 4 + b.d, repeat: Infinity, ease: 'easeInOut' },
+              }}
+            >
+              {b.t}
+            </motion.span>
+          ))}
+        </div>
+        <motion.img
+          src="/icon.svg"
+          alt=""
+          initial={{ scale: 0.5, rotate: -12, opacity: 0 }}
+          animate={{ scale: 1, rotate: 0, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 16 }}
+          className="relative h-24 w-24 rounded-[1.75rem] shadow-glow sm:h-20 sm:w-20"
+        />
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="relative mt-5 text-4xl font-extrabold sm:text-5xl"
+        >
+          <span className="text-gradient">Слова</span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="relative mt-2 max-w-xs text-base font-semibold text-ink-2"
+        >
+          Іспанська та англійська — по 5 хвилин на день 🚀
+        </motion.p>
+      </div>
+
+      {/* Sheet / card */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.15 }}
+        className="glass pb-safe relative z-10 w-full rounded-t-4xl border-b-0 shadow-lift sm:max-w-md sm:rounded-4xl sm:border-b"
+      >
+        <div className="px-5 pb-6 pt-3 sm:p-8">
+          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-line sm:hidden" />
+          <div role="tablist" className="relative mb-6 grid grid-cols-2 rounded-2xl bg-surface-2 p-1">
             {[
               { v: true, label: 'Вхід' },
               { v: false, label: 'Реєстрація' },
@@ -79,45 +135,50 @@ export function Auth() {
                 role="tab"
                 aria-selected={isLogin === t.v}
                 onClick={() => setIsLogin(t.v)}
-                className={`rounded-lg py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                  isLogin === t.v
-                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm'
-                    : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                className={`relative min-h-[44px] rounded-xl text-sm font-bold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30 ${
+                  isLogin === t.v ? 'text-ink' : 'text-ink-3 hover:text-ink'
                 }`}
               >
-                {t.label}
+                {isLogin === t.v && (
+                  <motion.span layoutId="auth-tab" className="absolute inset-0 rounded-xl bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
+                )}
+                <span className="relative">{t.label}</span>
               </button>
             ))}
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-bold text-ink-2">
                 Email
               </label>
-              <input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                className={inputCls}
-                placeholder="you@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
+              <div className="relative">
+                <EnvelopeIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-3" />
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  className="input pl-12"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+              </div>
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+              <label htmlFor="password" className="mb-1.5 block text-sm font-bold text-ink-2">
                 Пароль
               </label>
               <div className="relative">
+                <LockClosedIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-3" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   minLength={isLogin ? undefined : 6}
                   autoComplete={isLogin ? 'current-password' : 'new-password'}
-                  className={`${inputCls} pr-12`}
+                  className="input pl-12 pr-14"
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
@@ -126,14 +187,12 @@ export function Auth() {
                   type="button"
                   onClick={() => setShowPassword(s => !s)}
                   aria-label={showPassword ? 'Сховати пароль' : 'Показати пароль'}
-                  className="absolute inset-y-0 right-0 px-3 flex items-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-r-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60"
+                  className="btn-icon absolute right-1.5 top-1/2 -translate-y-1/2 active:-translate-y-1/2"
                 >
                   {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                 </button>
               </div>
-              {!isLogin && (
-                <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">Щонайменше 6 символів</p>
-              )}
+              {!isLogin && <p className="mt-1.5 text-xs font-semibold text-ink-3">Щонайменше 6 символів</p>}
             </div>
 
             <AnimatePresence>
@@ -145,7 +204,7 @@ export function Auth() {
                   role="alert"
                   className="overflow-hidden"
                 >
-                  <div className="flex items-start gap-2 rounded-xl p-3 text-sm bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                  <div className="flex animate-shake items-start gap-2 rounded-2xl bg-rose-500/10 p-3 text-sm font-semibold text-rose-600 dark:text-rose-400">
                     <ExclamationCircleIcon className="h-5 w-5 shrink-0" />
                     <span>{message}</span>
                   </div>
@@ -153,13 +212,9 @@ export function Auth() {
               )}
             </AnimatePresence>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60"
-            >
+            <button type="submit" disabled={isLoading} className="btn btn-primary btn-lg mt-2 w-full">
               {isLoading && (
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
@@ -168,13 +223,9 @@ export function Auth() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-5 text-center text-sm text-ink-3">
             {isLogin ? 'Немає акаунта?' : 'Вже маєте акаунт?'}{' '}
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
-            >
+            <button type="button" onClick={() => setIsLogin(!isLogin)} className="font-bold text-brand-500 hover:underline dark:text-brand-300">
               {isLogin ? 'Зареєструватися' : 'Увійти'}
             </button>
           </p>

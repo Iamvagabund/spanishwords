@@ -1,22 +1,17 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ArrowPathIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  FireIcon,
-  BookOpenIcon,
-  ExclamationTriangleIcon,
-} from '@heroicons/react/24/outline'
 import { useStore, useLangProgress } from '../store/useStore'
 import { useLang } from '../context/LangContext'
 import { langAdverb } from '../utils/lang'
 import { soundManager } from '../utils/sound'
 import { normalizeAnswer } from '../utils/normalize'
+import { ActionBar, LessonHeader, LessonShell, haptic, type Feedback } from '../components/LessonKit'
 import type { Word } from '../types'
 
 type Mode = 'all' | 'mistakes'
+
+const SESSION_GOAL = 20
 
 const isAnswerCorrect = (answer: string, correct: string) => {
   const [a] = normalizeAnswer(answer.trim())
@@ -30,12 +25,22 @@ const pickRandom = (pool: Word[], exclude?: string): Word | null => {
   return candidates[Math.floor(Math.random() * candidates.length)]
 }
 
-const btnBase =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium transition disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60'
-const btnPrimary = `${btnBase} bg-indigo-600 hover:bg-indigo-500 text-white`
-const btnSecondary = `${btnBase} bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100`
+function EmptyState({ emoji, title, text, action }: { emoji: string; title: string; text: string; action: React.ReactNode }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="my-auto py-10 text-center">
+      <div className="relative mx-auto h-32 w-32">
+        <div className="absolute inset-0 animate-float rounded-[42%_58%_55%_45%/45%_45%_55%_55%] bg-brand-gradient opacity-90 shadow-glow" />
+        <div className="relative flex h-full w-full items-center justify-center text-6xl">{emoji}</div>
+      </div>
+      <h1 className="mt-6 text-2xl font-extrabold">{title}</h1>
+      <p className="mx-auto mt-2 max-w-xs text-ink-2">{text}</p>
+      <div className="mt-8">{action}</div>
+    </motion.div>
+  )
+}
 
 export default function Repeat() {
+  const navigate = useNavigate()
   const { code, language, blocks } = useLang()
   const userProgress = useLangProgress(code)
   const addMistake = useStore(s => s.addMistake)
@@ -48,8 +53,9 @@ export default function Repeat() {
   const [answer, setAnswer] = useState('')
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [stats, setStats] = useState({ correct: 0, total: 0, streak: 0, best: 0 })
+  const [shake, setShake] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
-  const nextRef = useRef<HTMLButtonElement>(null)
+  const home = `/${code}`
 
   const learnedPool = useMemo(() => {
     const ids = new Set(userProgress.learnedWords)
@@ -73,22 +79,21 @@ export default function Repeat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool, isCorrect])
 
+  // Keep focus in the input (keeps the mobile keyboard open; Enter submits / goes next)
   useEffect(() => {
-    if (isCorrect === null) inputRef.current?.focus()
-    else nextRef.current?.focus()
-  }, [isCorrect, currentWord])
+    inputRef.current?.focus()
+  }, [currentWord])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const check = () => {
     if (!currentWord || isCorrect !== null || !answer.trim()) return
-
     const ok = isAnswerCorrect(answer, currentWord.term)
     setIsCorrect(ok)
+    haptic(ok)
+    if (!ok) setShake(s => s + 1)
     setStats(s => {
       const streak = ok ? s.streak + 1 : 0
       return { correct: s.correct + (ok ? 1 : 0), total: s.total + 1, streak, best: Math.max(s.best, streak) }
     })
-
     if (ok) {
       soundManager.play('correct')
       if (mode === 'mistakes') removeMistake(code, currentWord.id)
@@ -106,6 +111,26 @@ export default function Repeat() {
     setIsCorrect(null)
   }, [currentWord, pool])
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (isCorrect === null) check()
+    else handleNext()
+  }
+
+  // Enter outside the input (e.g. after tapping elsewhere) -> next
+  useEffect(() => {
+    if (isCorrect === null) return
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null
+      if (e.key === 'Enter' && t?.tagName !== 'INPUT' && t?.tagName !== 'BUTTON') {
+        e.preventDefault()
+        handleNext()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isCorrect, handleNext])
+
   const switchMode = (m: Mode) => {
     if (m === mode) return
     setMode(m)
@@ -115,204 +140,153 @@ export default function Repeat() {
   }
 
   const accuracy = stats.total ? Math.round((stats.correct / stats.total) * 100) : 0
+  const header = (
+    <LessonHeader progress={Math.min(stats.total / SESSION_GOAL, 1)} onClose={() => navigate(home)} combo={stats.streak} />
+  )
 
   if (learnedPool.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mx-auto max-w-md py-12 text-center"
-      >
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-          <BookOpenIcon className="h-7 w-7" />
-        </div>
-        <h1 className="mb-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-          Ще немає вивчених слів
-        </h1>
-        <p className="mb-8 text-zinc-500 dark:text-zinc-400">
-          Пройдіть свій перший блок — і слова з нього з'являться тут для повторення.
-        </p>
-        <Link to={`/${code}/block/${firstBlockOrder}`} className={btnPrimary}>
-          Почати перший блок
-        </Link>
-      </motion.div>
+      <LessonShell header={header}>
+        <EmptyState
+          emoji="📚"
+          title="Ще немає вивчених слів"
+          text="Пройдіть свій перший блок — і слова з нього з'являться тут для повторення."
+          action={
+            <Link to={`${home}/block/${firstBlockOrder}`} className="btn btn-lg btn-primary">
+              Почати перший блок 🚀
+            </Link>
+          }
+        />
+      </LessonShell>
     )
   }
 
+  const feedback: Feedback =
+    isCorrect === null || !currentWord
+      ? null
+      : isCorrect
+        ? { ok: true, answer: currentWord.term, lang: code }
+        : {
+            ok: false,
+            title: 'Правильно:',
+            answer: currentWord.term,
+            example: currentWord.example,
+            exampleTranslation: currentWord.exampleTranslation,
+            lang: code,
+          }
+
   return (
-    <div className="mx-auto max-w-xl py-6 sm:py-10">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-            Повторення
-          </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            {language.flag} {language.name} · вивчені слова
+    <LessonShell
+      header={header}
+      bottom={
+        currentWord ? (
+          <ActionBar
+            feedback={feedback}
+            label={isCorrect === null ? 'Перевірити' : 'Далі'}
+            onClick={() => (isCorrect === null ? check() : handleNext())}
+            disabled={isCorrect === null && !answer.trim()}
+            hint="Enter — перевірити"
+          />
+        ) : undefined
+      }
+    >
+      <div className="flex items-center justify-between gap-3 pt-2">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-extrabold">Повторення</h1>
+          <p className="truncate text-sm text-ink-3">
+            {language.flag} {language.name}
           </p>
         </div>
-        <div
-          role="tablist"
-          className="inline-flex self-start rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800/70"
-        >
+        <div role="tablist" className="relative inline-flex shrink-0 rounded-2xl bg-surface-2 p-1">
           {([
-            ['all', `Усі (${learnedPool.length})`],
-            ['mistakes', `Помилки (${mistakesPool.length})`],
-          ] as const).map(([m, label]) => (
+            ['all', 'Усі', learnedPool.length],
+            ['mistakes', 'Помилки', mistakesPool.length],
+          ] as const).map(([m, label, count]) => (
             <button
               key={m}
               role="tab"
               aria-selected={mode === m}
               onClick={() => switchMode(m)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                mode === m
-                  ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100'
-                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
+              className={`relative z-10 rounded-xl px-3 py-2 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30 ${
+                mode === m ? 'text-ink' : 'text-ink-3 hover:text-ink'
               }`}
             >
-              {label}
+              {mode === m && (
+                <motion.span layoutId="repeat-seg" className="absolute inset-0 -z-10 rounded-xl bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+              )}
+              {label}{' '}
+              <span className={`ml-0.5 rounded-full px-1.5 text-xs ${m === 'mistakes' && count > 0 ? 'bg-rose-500/15 text-rose-500' : 'bg-line/60'}`}>{count}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mb-4 grid grid-cols-3 gap-3">
-        <StatPill label="Відповідей" value={`${stats.correct}/${stats.total}`} />
-        <StatPill label="Точність" value={`${accuracy}%`} />
-        <StatPill
-          label="Серія"
-          value={String(stats.streak)}
-          icon={<FireIcon className={`h-4 w-4 ${stats.streak > 0 ? 'text-amber-500' : ''}`} />}
-        />
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="chip bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">✓ {stats.correct}/{stats.total}</span>
+        <span className="chip bg-sky-500/15 text-sky-600 dark:text-sky-400">🎯 {accuracy}%</span>
+        <span className="chip bg-orange-500/15 text-orange-600 dark:text-orange-400">🔥 найкраща серія {stats.best}</span>
       </div>
 
       {!currentWord ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-8 text-center dark:border-zinc-800 dark:bg-zinc-900">
-          <CheckCircleIcon className="mx-auto mb-3 h-10 w-10 text-emerald-500" />
-          <h2 className="mb-1 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-            Помилок немає
-          </h2>
-          <p className="mb-6 text-zinc-500 dark:text-zinc-400">
-            Чудово! Усі слова з помилками виправлено.
-          </p>
-          <button onClick={() => switchMode('all')} className={btnSecondary}>
-            <ArrowPathIcon className="h-5 w-5" />
-            Повторити всі слова
-          </button>
-        </div>
+        <EmptyState
+          emoji="🎉"
+          title="Помилок немає"
+          text="Чудово! Усі слова з помилками виправлено."
+          action={
+            <button onClick={() => switchMode('all')} className="btn btn-lg btn-primary">
+              Повторити всі слова
+            </button>
+          }
+        />
       ) : (
         <AnimatePresence mode="wait">
           <motion.div
             key={currentWord.id + '-' + stats.total}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.18 }}
-            className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-8"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.2 }}
+            className="pt-8 text-center"
           >
-            <p className="mb-1 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Перекладіть {adverb}
-            </p>
-            <p className="mb-6 text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-              {currentWord.translation}
-            </p>
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full bg-brand-500/10 px-3 py-1 text-sm font-bold text-brand-600 dark:text-brand-300">
+              {mode === 'mistakes' ? '🩹 Виправляємо помилки' : '🔁 Як перекласти?'}
+            </div>
+            <h2 className="mt-5 break-words text-4xl font-extrabold sm:text-5xl">{currentWord.translation}</h2>
+            <p className="mt-2 text-sm text-ink-3">Напишіть {adverb}</p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                ref={inputRef}
-                type="text"
-                value={answer}
-                onChange={e => setAnswer(e.target.value)}
-                readOnly={isCorrect !== null}
-                autoComplete="off"
-                autoCapitalize="off"
-                autoCorrect="off"
-                spellCheck={false}
-                lang={code}
-                aria-label={`Відповідь ${adverb}`}
-                placeholder={`Введіть слово ${adverb}`}
-                className={`w-full rounded-xl border bg-white px-4 py-3 text-lg text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500 ${
-                  isCorrect === null
-                    ? 'border-zinc-300 focus:ring-indigo-500/60 dark:border-zinc-700'
-                    : isCorrect
-                      ? 'border-emerald-500 focus:ring-emerald-500/40'
-                      : 'border-rose-500 focus:ring-rose-500/40'
-                }`}
-              />
-
-              {isCorrect === null ? (
-                <button type="submit" disabled={!answer.trim()} className={`${btnPrimary} w-full`}>
-                  Перевірити
-                </button>
-              ) : (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    role="status"
-                    className={`flex items-start gap-3 rounded-xl p-4 ${
-                      isCorrect
-                        ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
-                        : 'bg-rose-500/10 text-rose-700 dark:text-rose-400'
-                    }`}
-                  >
-                    {isCorrect ? (
-                      <CheckCircleIcon className="h-6 w-6 shrink-0" />
-                    ) : (
-                      <XCircleIcon className="h-6 w-6 shrink-0" />
-                    )}
-                    <div>
-                      <p className="font-medium">{isCorrect ? 'Правильно!' : 'Неправильно'}</p>
-                      <p className="text-sm">
-                        {isCorrect ? 'Відповідь: ' : 'Правильна відповідь: '}
-                        <span className="font-semibold" lang={code}>{currentWord.term}</span>
-                      </p>
-                      {currentWord.example && (
-                        <div className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
-                          <p className="italic" lang={code}>{currentWord.example}</p>
-                          {currentWord.exampleTranslation && (
-                            <p className="text-zinc-500 dark:text-zinc-400">{currentWord.exampleTranslation}</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                  <button
-                    ref={nextRef}
-                    type="button"
-                    onClick={handleNext}
-                    className={`${btnPrimary} w-full`}
-                  >
-                    Наступне слово
-                    <span className="hidden text-xs text-indigo-200 sm:inline">Enter ↵</span>
-                  </button>
-                </>
-              )}
+            <form onSubmit={handleSubmit} className="mt-8">
+              <div key={shake} className={isCorrect === false ? 'animate-shake' : ''}>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={answer}
+                  onChange={e => setAnswer(e.target.value)}
+                  readOnly={isCorrect !== null}
+                  autoFocus
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint={isCorrect === null ? 'done' : 'next'}
+                  lang={code}
+                  aria-label={`Відповідь ${adverb}`}
+                  placeholder="Ваша відповідь…"
+                  className={`input py-5 text-center font-display text-2xl font-bold sm:text-3xl ${
+                    isCorrect === true
+                      ? '!border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                      : isCorrect === false
+                        ? '!border-rose-500 text-rose-600 dark:text-rose-400'
+                        : ''
+                  }`}
+                />
+              </div>
+              <p className="mt-3 hidden text-xs text-ink-3 sm:block">Enter — {isCorrect === null ? 'перевірити' : 'далі'}</p>
             </form>
+            {mode === 'mistakes' && <p className="mt-4 text-sm text-ink-3">Правильна відповідь прибирає слово зі списку помилок.</p>}
           </motion.div>
         </AnimatePresence>
       )}
-
-      {mode === 'mistakes' && currentWord && (
-        <p className="mt-4 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-          <ExclamationTriangleIcon className="h-4 w-4 text-amber-500" />
-          Правильна відповідь прибирає слово зі списку помилок.
-        </p>
-      )}
-      {stats.best > 1 && (
-        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Найкраща серія: {stats.best}</p>
-      )}
-    </div>
+    </LessonShell>
   )
 }
 
-function StatPill({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
-  return (
-    <div className="rounded-xl border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900">
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>
-      <p className="flex items-center gap-1 text-lg font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
-        {icon}
-        {value}
-      </p>
-    </div>
-  )
-}
