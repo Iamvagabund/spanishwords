@@ -18,6 +18,7 @@ export interface IBlock extends mongoose.Document {
   description: string
   level: string
   words: IWord[]
+  tip?: { title: string; body: string }
 }
 
 const wordSchema = new mongoose.Schema({
@@ -36,6 +37,16 @@ const blockSchema = new mongoose.Schema(
     description: { type: String, default: '', trim: true, maxlength: 1000 },
     level: { type: String, enum: LEVELS, default: 'A1' },
     words: { type: [wordSchema], default: [] },
+    tip: {
+      type: new mongoose.Schema(
+        {
+          title: { type: String, required: true, trim: true, maxlength: 80 },
+          body: { type: String, required: true, trim: true, maxlength: 1500 },
+        },
+        { _id: false }
+      ),
+      required: false,
+    },
   },
   { timestamps: true }
 )
@@ -51,6 +62,7 @@ export const serializeBlock = (b: any) => ({
   titleTarget: b.titleTarget ?? '',
   description: b.description ?? '',
   level: b.level,
+  ...(b.tip && b.tip.title ? { tip: { title: b.tip.title, body: b.tip.body ?? '' } } : {}),
   words: (b.words || []).map((w: any) => ({
     id: String(w._id),
     term: w.term,

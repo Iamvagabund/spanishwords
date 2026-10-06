@@ -22,6 +22,8 @@ import { useAuthStore } from '../store/authStore'
 import { useStore } from '../store/useStore'
 import Stats from '../components/Stats'
 import { useTheme } from '../context/ThemeContext'
+import { useActivityStore } from '../store/activityStore'
+import { getAutoSpeak, setAutoSpeak, speechSupported } from '../utils/speech'
 
 const resizeImage = (file: File, maxSize = 200): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -45,6 +47,96 @@ const resizeImage = (file: File, maxSize = 200): Promise<string> =>
     }
     img.src = url
   })
+
+const GOALS = [5, 10, 20, 30, 50]
+
+function DailyGoalSetting() {
+  const user = useAuthStore(s => s.user)
+  const updateProfile = useAuthStore(s => s.updateProfile)
+  const storeGoal = useActivityStore(s => s.dailyGoal)
+  const goal = user?.dailyGoal ?? storeGoal
+  const [saving, setSaving] = useState<number | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [autoSpeak, setAuto] = useState(getAutoSpeak)
+
+  const choose = async (g: number) => {
+    if (g === goal || saving) return
+    setSaving(g)
+    setError(null)
+    useActivityStore.getState().setGoal(g)
+    try {
+      await updateProfile({ dailyGoal: g })
+    } catch (e) {
+      useActivityStore.getState().setGoal(goal)
+      setError(errorMessage(e, 'Не вдалося зберегти ціль'))
+    } finally {
+      setSaving(null)
+    }
+  }
+
+  return (
+    <section>
+      <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wider text-ink-3">Щоденна ціль</h2>
+      <div className="card space-y-4 rounded-3xl p-4">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 text-xl shadow-soft">🎯</span>
+          <div className="min-w-0">
+            <p className="font-semibold text-ink">Слів на день</p>
+            <p className="text-sm text-ink-3">Правильних відповідей, щоб зберегти 🔥 серію</p>
+          </div>
+        </div>
+        <div role="radiogroup" aria-label="Щоденна ціль" className="grid grid-cols-5 gap-1 rounded-2xl bg-surface-2 p-1">
+          {GOALS.map(g => {
+            const active = g === goal
+            return (
+              <button
+                key={g}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                onClick={() => void choose(g)}
+                className={`relative min-h-[44px] rounded-xl text-sm font-extrabold tabular-nums transition active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60 ${
+                  active ? 'text-white' : 'text-ink-2'
+                } ${saving === g ? 'animate-pulse' : ''}`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="daily-goal-seg"
+                    className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 shadow-soft"
+                    transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                  />
+                )}
+                <span className="relative">{g}</span>
+              </button>
+            )
+          })}
+        </div>
+        {error && <p className="text-sm font-semibold text-rose-500">{error}</p>}
+        {speechSupported && (
+          <button
+            type="button"
+            role="switch"
+            aria-checked={autoSpeak}
+            onClick={() => {
+              setAutoSpeak(!autoSpeak)
+              setAuto(!autoSpeak)
+            }}
+            className="flex w-full items-center gap-3 text-left"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-500 text-xl shadow-soft">🔊</span>
+            <span className="flex-1">
+              <span className="block font-semibold text-ink">Автоозвучення</span>
+              <span className="block text-sm text-ink-3">Вимовляти правильне слово після перевірки</span>
+            </span>
+            <span className={`relative h-7 w-12 shrink-0 rounded-full transition ${autoSpeak ? 'bg-emerald-500' : 'bg-line'}`}>
+              <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all ${autoSpeak ? 'left-[1.375rem]' : 'left-0.5'}`} />
+            </span>
+          </button>
+        )}
+      </div>
+    </section>
+  )
+}
 
 export function ProfilePage() {
   const { user, updateProfile, logout, setSelectedLanguage } = useAuthStore()
@@ -303,6 +395,7 @@ export function ProfilePage() {
 
         {/* SETTINGS */}
         <div className="space-y-6">
+          <DailyGoalSetting />
           <section>
             <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wider text-ink-3">Налаштування</h2>
             <div className="card divide-y divide-line overflow-hidden rounded-3xl p-0">

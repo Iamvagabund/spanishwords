@@ -6,6 +6,7 @@ import { useLang } from '../context/LangContext'
 import type { Word } from '../types'
 import Stats, { ProgressRing, useProgressSummary } from '../components/Stats'
 import { blockEmoji, blockTone, languageTone } from '../theme/palette'
+import SpeakButton from '../components/SpeakButton'
 
 const scoreColor = (score: number) =>
   score >= 8 ? 'from-emerald-400 to-teal-500' : score >= 5 ? 'from-amber-300 to-orange-500' : 'from-pink-400 to-rose-500'
@@ -132,6 +133,7 @@ export default function StatsPage() {
                         </p>
                         <p className="truncate text-sm text-ink-2">{word.translation}</p>
                       </div>
+                      <SpeakButton text={word.term} lang={code} size="sm" className="ml-auto" label={`Озвучити: ${word.term}`} />
                       <span className="flex h-8 min-w-[2.5rem] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-500 px-2 text-sm font-extrabold tabular-nums text-white">
                         ×{count}
                       </span>

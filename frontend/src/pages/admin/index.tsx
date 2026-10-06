@@ -4,10 +4,12 @@ import { card } from './ui'
 import AdminOverview from './Overview'
 import AdminContent from './Content'
 import AdminUsers from './Users'
+import AdminResources from './Resources'
 
 const tabs = [
   { to: '/admin', label: 'Огляд', icon: '📊', end: true },
   { to: '/admin/content', label: 'Контент', icon: '📚', end: false },
+  { to: '/admin/resources', label: 'Матеріали', icon: '🎒', end: false },
   { to: '/admin/users', label: 'Користувачі', icon: '👥', end: false },
 ]
 
@@ -41,7 +43,7 @@ function AdminLayout() {
             <p className="text-sm text-ink-3">Керування мовами, блоками та учнями</p>
           </div>
         </div>
-        <nav className="grid grid-cols-3 gap-1 rounded-2xl border border-line/70 bg-surface-2 p-1 lg:w-auto">
+        <nav className="grid grid-cols-2 gap-1 sm:grid-cols-4 rounded-2xl border border-line/70 bg-surface-2 p-1 lg:w-auto">
           {tabs.map((t) => (
             <NavLink
               key={t.to}
@@ -70,6 +72,7 @@ export const adminRoute: RouteObject = {
   children: [
     { index: true, element: <AdminOverview /> },
     { path: 'content', element: <AdminContent /> },
+    { path: 'resources', element: <AdminResources /> },
     { path: 'users', element: <AdminUsers /> },
     { path: '*', element: <Navigate to="/admin" replace /> },
   ],

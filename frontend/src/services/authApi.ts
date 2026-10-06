@@ -21,7 +21,7 @@ export async function getProfile(token: string): Promise<User> {
   return data
 }
 
-export async function updateProfile(token: string, body: Partial<Pick<User, 'nickname' | 'avatar' | 'selectedLanguage'>>): Promise<User> {
+export async function updateProfile(token: string, body: Partial<Pick<User, 'nickname' | 'avatar' | 'selectedLanguage' | 'dailyGoal'>>): Promise<User> {
   const { data } = await http.put<User>('/user/profile', body, { headers: authHeader(token) })
   return data
 }

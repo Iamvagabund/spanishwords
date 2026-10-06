@@ -5,8 +5,9 @@ import type { User } from '../types'
 import * as authApi from '../services/authApi'
 import { errorMessage } from '../services/http'
 import { useStore, flushAll } from './useStore'
+import { useActivityStore } from './activityStore'
 
-type ProfilePatch = Partial<Pick<User, 'nickname' | 'avatar' | 'selectedLanguage'>>
+type ProfilePatch = Partial<Pick<User, 'nickname' | 'avatar' | 'selectedLanguage' | 'dailyGoal'>>
 
 interface AuthState {
   user: User | null
@@ -32,6 +33,7 @@ export const useAuthStore = create<AuthState>()(
           const { user, token } = await fn()
           if (!token || !user) throw new Error(fallback)
           set({ user, token, isAuthenticated: true, isLoading: false, error: null })
+          void useActivityStore.getState().load()
           await useStore.getState().loadProgress()
         } catch (error) {
           set({ isLoading: false, error: errorMessage(error, fallback) })
@@ -53,6 +55,7 @@ export const useAuthStore = create<AuthState>()(
         logout: () => {
           flushAll()
           useStore.getState().clear()
+          useActivityStore.getState().reset()
           set({ user: null, token: null, isAuthenticated: false, error: null, isLoading: false })
         },
 
@@ -64,6 +67,7 @@ export const useAuthStore = create<AuthState>()(
           }
           // Cached progress shows immediately; server progress refreshes in parallel.
           const progressPromise = useStore.getState().loadProgress()
+          void useActivityStore.getState().load()
           try {
             const user = await authApi.getProfile(token)
             set({ user: { ...get().user, ...user }, isAuthenticated: true, error: null })
@@ -81,6 +85,7 @@ export const useAuthStore = create<AuthState>()(
           const updated = await authApi.updateProfile(token, data)
           const current = get().user
           if (current) set({ user: { ...current, ...updated } })
+          if (data.dailyGoal) useActivityStore.getState().setGoal(updated?.dailyGoal ?? data.dailyGoal)
         },
 
         setSelectedLanguage: async code => {

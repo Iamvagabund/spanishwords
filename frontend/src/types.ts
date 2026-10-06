@@ -24,6 +24,26 @@ export interface Block {
   description: string
   level: Level
   words: Word[]
+  tip?: BlockTip
+}
+
+export interface BlockTip {
+  title: string
+  /** plain text, `\n` line breaks, `**bold**` only */
+  body: string
+}
+
+export type ResourceType = 'book' | 'podcast' | 'youtube' | 'app' | 'website' | 'series'
+
+export interface Resource {
+  id: string
+  level: Level | 'C2' | 'all'
+  type: ResourceType
+  title: string
+  author?: string
+  description: string
+  url: string
+  order: number
 }
 
 export interface CompletedBlock {
@@ -49,4 +69,5 @@ export interface User {
   nickname?: string
   avatar?: string
   selectedLanguage?: string
+  dailyGoal?: number
 }

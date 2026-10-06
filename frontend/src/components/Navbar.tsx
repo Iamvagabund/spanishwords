@@ -1,10 +1,11 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { HomeIcon, ArrowPathIcon, ChartBarIcon, Cog6ToothIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { HomeIcon, ArrowPathIcon, ChartBarIcon, BookOpenIcon, Cog6ToothIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import {
   HomeIcon as HomeIconSolid,
   ArrowPathIcon as ArrowPathIconSolid,
   ChartBarIcon as ChartBarIconSolid,
+  BookOpenIcon as BookOpenIconSolid,
   Cog6ToothIcon as Cog6ToothIconSolid,
   UserCircleIcon as UserCircleIconSolid,
 } from '@heroicons/react/24/solid'
@@ -27,6 +28,7 @@ function pageTitle(pathname: string, langName?: string) {
   if (pathname.startsWith('/admin')) return 'Адмінка'
   if (pathname.startsWith('/languages') || pathname === '/') return 'Мови'
   if (pathname.endsWith('/stats')) return 'Статистика'
+  if (pathname.endsWith('/guide')) return 'Гід'
   if (pathname.endsWith('/completion')) return 'Результат'
   return langName ?? 'Слова'
 }
@@ -43,6 +45,7 @@ export function Navbar() {
       ? [
           { to: `${base}/review`, label: 'Повторення', icon: ArrowPathIcon, solid: ArrowPathIconSolid, end: false },
           { to: `${base}/stats`, label: 'Статистика', icon: ChartBarIcon, solid: ChartBarIconSolid, end: false },
+          { to: `${base}/guide`, label: 'Гід', icon: BookOpenIcon, solid: BookOpenIconSolid, end: false },
         ]
       : []),
   ]
@@ -135,7 +138,7 @@ export function Navbar() {
             >
               {({ isActive }) => (
                 <>
-                  <span className="relative grid h-8 w-14 place-items-center">
+                  <span className="relative grid h-8 w-12 max-w-full place-items-center">
                     {isActive && (
                       <motion.span
                         layoutId="tab-pill"

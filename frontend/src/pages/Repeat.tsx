@@ -8,6 +8,8 @@ import { soundManager } from '../utils/sound'
 import { normalizeAnswer } from '../utils/normalize'
 import { ActionBar, LessonHeader, LessonShell, haptic, type Feedback } from '../components/LessonKit'
 import type { Word } from '../types'
+import SpeakButton from '../components/SpeakButton'
+import { useActivityStore } from '../store/activityStore'
 
 type Mode = 'all' | 'mistakes'
 
@@ -45,6 +47,7 @@ export default function Repeat() {
   const userProgress = useLangProgress(code)
   const addMistake = useStore(s => s.addMistake)
   const removeMistake = useStore(s => s.removeMistake)
+  const recordActivity = useActivityStore(s => s.record)
   const adverb = langAdverb(language)
   const words = useMemo(() => blocks.flatMap(b => b.words), [blocks])
   const firstBlockOrder = useMemo(() => Math.min(...blocks.map(b => b.order), 1), [blocks])
@@ -96,6 +99,7 @@ export default function Repeat() {
     })
     if (ok) {
       soundManager.play('correct')
+      recordActivity(1)
       if (mode === 'mistakes') removeMistake(code, currentWord.id)
     } else {
       soundManager.play('incorrect')
@@ -165,7 +169,7 @@ export default function Repeat() {
     isCorrect === null || !currentWord
       ? null
       : isCorrect
-        ? { ok: true, answer: currentWord.term, lang: code }
+        ? { ok: true, answer: currentWord.term, lang: code, speak: currentWord.term }
         : {
             ok: false,
             title: 'Правильно:',
@@ -173,6 +177,7 @@ export default function Repeat() {
             example: currentWord.example,
             exampleTranslation: currentWord.exampleTranslation,
             lang: code,
+            speak: currentWord.term,
           }
 
   return (
@@ -253,6 +258,11 @@ export default function Repeat() {
             </div>
             <h2 className="mt-5 break-words text-4xl font-extrabold sm:text-5xl">{currentWord.translation}</h2>
             <p className="mt-2 text-sm text-ink-3">Напишіть {adverb}</p>
+            {isCorrect !== null && (
+              <div className="mt-3 flex justify-center">
+                <SpeakButton text={currentWord.term} lang={code} />
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="mt-8">
               <div key={shake} className={isCorrect === false ? 'animate-shake' : ''}>

@@ -26,6 +26,8 @@ export interface IUser extends mongoose.Document {
   // documents with the old flat progress shape never fail to cast.
   // Always read through normalizeProgressMap().
   progress: any
+  activity: Record<string, number>
+  dailyGoal: number
   createdAt: Date
   updatedAt: Date
   comparePassword(candidatePassword: string): Promise<boolean>
@@ -56,6 +58,8 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     selectedLanguage: { type: String, trim: true, lowercase: true },
     progress: { type: mongoose.Schema.Types.Mixed, default: {} },
+    activity: { type: mongoose.Schema.Types.Mixed, default: {} },
+    dailyGoal: { type: Number, default: 10, min: 5, max: 100 },
   },
   { timestamps: true, minimize: false }
 )

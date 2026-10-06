@@ -3,7 +3,8 @@ import path from 'path'
 import { Language } from '../models/Language'
 import { Block } from '../models/Block'
 import { User } from '../models/User'
-import { parseBlockInput } from '../utils/blocks'
+import { Resource, parseResourceInput } from '../models/Resource'
+import { blockDoc, parseBlockInput, parseTip } from '../utils/blocks'
 
 /**
  * Content JSON lives in src/seed/content. In dev (ts-node) __dirname is src/seed;
@@ -28,7 +29,7 @@ const readSeedFiles = (): SeedFile[] => {
   if (!dir) return []
   return fs
     .readdirSync(dir)
-    .filter((f) => f.endsWith('.json'))
+    .filter((f) => f.endsWith('.json') && !f.startsWith('resources-'))
     .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) as SeedFile)
     .filter((s) => s && s.language && typeof s.language.code === 'string' && Array.isArray(s.blocks))
 }
@@ -48,12 +49,61 @@ const seedLanguage = async (data: SeedFile, force: boolean): Promise<boolean> =>
   )
   const blocks = data.blocks.map((b, i) => {
     const parsed = parseBlockInput(b)
-    return { ...parsed, order: parsed.order ?? i + 1, language: code }
+    return { ...blockDoc(parsed), order: parsed.order ?? i + 1, language: code }
   })
   if (force) await Block.deleteMany({ language: code })
   await Block.insertMany(blocks)
   console.log(`Seeded language "${code}" with ${blocks.length} blocks`)
   return true
+}
+
+/** Fill in missing block tips from the seed file by (language, order); never overwrites an existing tip. */
+const backfillTips = async (data: SeedFile) => {
+  const code = data.language.code.toLowerCase()
+  const ops: any[] = []
+  data.blocks.forEach((b, i) => {
+    if (!b || b.tip === undefined || b.tip === null) return
+    let tip
+    try {
+      tip = parseTip(b.tip)
+    } catch {
+      return
+    }
+    if (!tip) return
+    const order = Number.isInteger(b.order) && b.order >= 1 ? b.order : i + 1
+    ops.push({
+      updateOne: {
+        filter: { language: code, order, $or: [{ tip: { $exists: false } }, { tip: null }] },
+        update: { $set: { tip } },
+      },
+    })
+  })
+  if (!ops.length) return
+  const res = await Block.bulkWrite(ops)
+  if (res.modifiedCount) console.log(`Backfilled ${res.modifiedCount} tip(s) for "${code}"`)
+}
+
+/** Insert resources from resources-<code>.json when the language has none. Missing file is fine. */
+const seedResources = async (code: string) => {
+  const dir = findContentDir()
+  if (!dir) return
+  const file = path.join(dir, `resources-${code}.json`)
+  if (!fs.existsSync(file)) return
+  if (await Resource.exists({ language: code })) return
+  const data = JSON.parse(fs.readFileSync(file, 'utf8'))
+  if (!data || !Array.isArray(data.resources)) return
+  const docs: any[] = []
+  data.resources.forEach((r: any, i: number) => {
+    try {
+      const input = parseResourceInput(r, false)
+      docs.push({ ...input, order: input.order ?? i + 1, language: code })
+    } catch (error) {
+      console.error(`Skipping invalid resource #${i + 1} for "${code}":`, (error as Error).message)
+    }
+  })
+  if (!docs.length) return
+  await Resource.insertMany(docs)
+  console.log(`Seeded ${docs.length} resource(s) for "${code}"`)
 }
 
 /** Seed every language (from content JSON) that has no blocks yet; `force` replaces blocks. */
@@ -65,6 +115,16 @@ export const seedContent = async (options: { force?: boolean; only?: string[] } 
       await seedLanguage(file, !!options.force)
     } catch (error) {
       console.error(`Failed to seed language "${code}":`, (error as Error).message)
+    }
+    try {
+      await backfillTips(file)
+    } catch (error) {
+      console.error(`Failed to backfill tips for "${code}":`, (error as Error).message)
+    }
+    try {
+      await seedResources(code)
+    } catch (error) {
+      console.error(`Failed to seed resources for "${code}":`, (error as Error).message)
     }
   }
 }

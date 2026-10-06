@@ -78,3 +78,30 @@ Env `ADMIN_EMAILS` (comma-separated): on startup, matching users get `role: 'adm
 - `/auth`, `/` (redirect to `/:lang` from `selectedLanguage`, or language picker if none)
 - `/:lang` home, `/:lang/block/:order`, `/:lang/block/:order/completion`, `/:lang/review`, `/:lang/stats`, `/profile`
 - `/admin/*` (admin only), exported as `adminRoute: RouteObject` from `frontend/src/pages/admin/index.tsx`.
+
+## v2 additions: tips, resources, daily activity
+
+### Block tip
+`Block.tip?: { title: string, body: string }`. `body` is plain text with `\n` line breaks and `**bold**` only. Returned in public and admin block payloads; editable in admin (PUT/POST blocks). Seed JSON blocks may include `tip`. On startup, for existing blocks whose `tip` is missing, backfill it from the seed file by `(language, order)` (never overwrite a tip an admin set).
+
+### Resources (useful materials)
+Model `Resource { language, level: 'A1'|'A2'|'B1'|'B2'|'C1'|'C2'|'all', type: 'book'|'podcast'|'youtube'|'app'|'website'|'series', title, author?, description, url, order }`.
+Seed file `backend/src/seed/content/resources-<code>.json` = `{ "resources": [ ...Resource without language ] }`, inserted on startup when the language has no resources.
+
+| Method | Path | Auth | Notes |
+|---|---|---|---|
+| GET | `/languages/:code/resources` | none | `[{ id, level, type, title, author?, description, url, order }]` sorted by level then order |
+| GET | `/admin/resources?language=es` | admin | same shape |
+| POST | `/admin/resources` | admin | `{ language, level, type, title, author?, description, url }` (url must be http/https) |
+| PUT | `/admin/resources/:id` | admin | partial update |
+| DELETE | `/admin/resources/:id` | admin | |
+
+### Daily activity & goal
+`User.activity: { [YYYY-MM-DD]: number }` (words answered correctly that day, all languages, client local date). `User.dailyGoal: number` (default 10, allowed 5–100), returned in profile/auth user and accepted by `PUT /user/profile`.
+
+| Method | Path | Auth | Notes |
+|---|---|---|---|
+| GET | `/user/activity` | user | `{ dailyGoal, activity: { [date]: count } }` (last 90 days) |
+| POST | `/user/activity` | user | `{ date: 'YYYY-MM-DD', delta: number (1–100) }` → increments, returns `{ dailyGoal, activity }`. Reject dates more than 1 day from server date. |
+
+Streak is computed on the client: consecutive days up to today (or yesterday if today is 0) with count ≥ 1.

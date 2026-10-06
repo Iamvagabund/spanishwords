@@ -7,6 +7,7 @@ import { BlockPage } from './pages/BlockPage'
 import { BlockCompletionPage } from './pages/BlockCompletionPage'
 import Repeat from './pages/Repeat'
 import StatsPage from './pages/StatsPage'
+import Guide from './pages/Guide'
 import LanguagePicker from './pages/LanguagePicker'
 import { Auth } from './components/Auth'
 import { ProfilePage } from './pages/ProfilePage'
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
           { path: 'block/:order/completion', element: <BlockCompletionPage /> },
           { path: 'review', element: <Repeat /> },
           { path: 'stats', element: <StatsPage /> },
+          { path: 'guide', element: <Guide /> },
         ],
       },
       { path: '*', element: <LanguagePicker /> },

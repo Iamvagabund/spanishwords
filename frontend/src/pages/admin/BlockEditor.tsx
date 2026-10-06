@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { adminApi, type AdminBlock, type BlockInput, type Level, LEVELS, type WordInput } from '../../services/adminApi'
 import { blockEmoji, blockTone } from '../../theme/palette'
+import { RichText } from '../guide/RichText'
 import { btnGhost, btnPrimary, card, chip, errMsg, iconBtn, input, label, Message } from './ui'
 
 type Row = WordInput & { key: string }
@@ -44,6 +45,8 @@ export default function BlockEditor({
   const [level, setLevel] = useState<Level>(block?.level ?? 'A1')
   const [order, setOrder] = useState<string>(block ? String(block.order) : '')
   const [rows, setRows] = useState<Row[]>(() => (block?.words.length ? block.words.map((w) => newRow(w)) : [newRow()]))
+  const [tipTitle, setTipTitle] = useState(block?.tip?.title ?? '')
+  const [tipBody, setTipBody] = useState(block?.tip?.body ?? '')
   const [paste, setPaste] = useState('')
   const [showPaste, setShowPaste] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -75,6 +78,8 @@ export default function BlockEditor({
     if (!words.length) return setError('Додайте хоча б одне слово')
     const bad = words.findIndex((w) => !w.term || !w.translation)
     if (bad >= 0) return setError(`Рядок ${bad + 1}: потрібні слово і переклад`)
+    const hasTip = !!(tipTitle.trim() || tipBody.trim())
+    if (hasTip && !tipBody.trim()) return setError('Порада: додайте текст поради')
     const body: BlockInput = {
       language,
       title: title.trim(),
@@ -82,6 +87,11 @@ export default function BlockEditor({
       description: description.trim(),
       level,
       words,
+      ...(hasTip
+        ? { tip: { title: tipTitle.trim() || 'Порада', body: tipBody.trim() } }
+        : block?.tip
+          ? { tip: null }
+          : {}),
       ...(order.trim() ? { order: Number(order) } : {}),
     }
     setSaving(true)
@@ -255,6 +265,41 @@ export default function BlockEditor({
           <button className={`${btnGhost} w-full`} onClick={() => setRows((rs) => [...rs, newRow()])}>
             + Додати слово
           </button>
+        </div>
+      </div>
+
+      <div className={`${card} space-y-4`}>
+        <div className="flex items-center gap-2">
+          <h3 className="mr-auto text-lg font-bold text-ink">💡 Порада</h3>
+          {(tipTitle || tipBody) && (
+            <button className={btnGhost} onClick={() => { setTipTitle(''); setTipBody('') }}>
+              Очистити
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-ink-3">Необов’язково. Порожнє — порада не показується. Підтримується **жирний** і перенесення рядків.</p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-3">
+            <div>
+              <label className={label}>Заголовок</label>
+              <input className={input} value={tipTitle} placeholder="Напр.: Ser чи estar?" onChange={(e) => setTipTitle(e.target.value)} />
+            </div>
+            <div>
+              <label className={label}>Текст</label>
+              <textarea className={`${input} h-36`} value={tipBody} onChange={(e) => setTipBody(e.target.value)} />
+            </div>
+          </div>
+          <div>
+            <label className={label}>Попередній перегляд</label>
+            {tipTitle.trim() || tipBody.trim() ? (
+              <div className={`rounded-3xl border border-line p-4 ${tone.soft}`}>
+                <p className="flex items-center gap-2 font-extrabold text-ink">💡 {tipTitle.trim() || 'Порада'}</p>
+                <p className="mt-2 text-sm text-ink-2"><RichText text={tipBody} /></p>
+              </div>
+            ) : (
+              <div className="rounded-3xl border-2 border-dashed border-line p-6 text-center text-sm text-ink-3">Без поради</div>
+            )}
+          </div>
         </div>
       </div>
 

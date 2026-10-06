@@ -17,6 +17,8 @@ import { blockState, langAdverb } from '../utils/lang'
 import { blockEmoji, blockTone, languageTone } from '../theme/palette'
 import { ProgressRing } from '../components/Stats'
 import type { Block, CompletedBlock } from '../types'
+import TodayWidget from '../components/TodayWidget'
+import { GoalCelebration } from '../components/LessonKit'
 
 const greeting = () => {
   const h = new Date().getHours()
@@ -147,6 +149,7 @@ export default function Home() {
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-8">
         {/* PATH */}
         <section aria-label="Шлях навчання" className="space-y-6">
+          {user && <TodayWidget className="lg:hidden" />}
           {mistakeCount > 0 && <ReviewCard code={code} count={mistakeCount} className="lg:hidden" />}
           {groups.length === 0 && (
             <div className="card rounded-3xl p-8 text-center">
@@ -206,6 +209,7 @@ export default function Home() {
 
         {/* SIDE PANEL (desktop) */}
         <aside className="hidden space-y-4 lg:sticky lg:top-24 lg:block">
+          {user && <TodayWidget />}
           <div className="card rounded-3xl p-5">
             <p className="text-sm font-bold uppercase tracking-wide text-ink-3">Ціль курсу</p>
             <div className="mt-3 flex items-center gap-4">
@@ -237,6 +241,7 @@ export default function Home() {
         </aside>
       </div>
 
+      <GoalCelebration />
       <BlockSheet
         block={selected}
         code={code}

@@ -2,6 +2,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import { XMarkIcon, ArrowRightIcon, ArrowPathIcon, HomeIcon } from '@heroicons/react/24/outline'
+import SpeakButton from './SpeakButton'
+import { getAutoSpeak, setAutoSpeak, speak, speechSupported } from '../utils/speech'
+import { useActivityStore, useTodayCount } from '../store/activityStore'
 
 export const haptic = (ok: boolean) => {
   try {
@@ -21,6 +24,7 @@ export function LessonShell({ header, children, bottom }: { header: ReactNode; c
       <div className="sticky top-0 z-30 pt-safe bg-app/80 backdrop-blur-xl">{header}</div>
       <main className="mx-auto flex w-full max-w-xl flex-1 flex-col px-4 pb-6 pt-2">{children}</main>
       {bottom}
+      <GoalCelebration />
     </div>
   )
 }
@@ -52,6 +56,7 @@ export function LessonHeader({
         </motion.div>
       </div>
       {right}
+      <DailyGoalBadge />
       <ComboBadge combo={combo} />
     </div>
   )
@@ -76,7 +81,103 @@ export function ComboBadge({ combo }: { combo: number }) {
   )
 }
 
-export type Feedback = { ok: boolean; title?: string; answer?: string; example?: string; exampleTranslation?: string; lang?: string } | null
+/** Compact daily-goal ring shown in lesson headers. */
+export function DailyGoalBadge() {
+  const today = useTodayCount()
+  const goal = useActivityStore(s => s.dailyGoal)
+  const pct = Math.min(today / Math.max(goal, 1), 1)
+  const done = today >= goal
+  const r = 9
+  const c = 2 * Math.PI * r
+  return (
+    <div
+      className={`hidden shrink-0 items-center gap-1 rounded-full px-2 py-1 text-xs font-extrabold tabular-nums min-[380px]:flex ${done ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'text-ink-3'}`}
+      title={`Щоденна ціль: ${today}/${goal} слів`}
+    >
+      <svg viewBox="0 0 24 24" className="h-5 w-5 -rotate-90" aria-hidden>
+        <circle cx="12" cy="12" r={r} fill="none" strokeWidth="3.5" className="stroke-line" />
+        <circle
+          cx="12"
+          cy="12"
+          r={r}
+          fill="none"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - pct)}
+          className={`transition-[stroke-dashoffset] duration-500 ${done ? 'stroke-emerald-500' : 'stroke-brand-500'}`}
+        />
+      </svg>
+      {today}/{goal}
+    </div>
+  )
+}
+
+/** Toast + confetti once per day when the daily goal is reached. */
+export function GoalCelebration() {
+  const show = useActivityStore(s => s.justReachedGoal)
+  const goal = useActivityStore(s => s.dailyGoal)
+  const dismiss = useActivityStore(s => s.dismissCelebration)
+  useEffect(() => {
+    if (!show) return
+    const t = setTimeout(dismiss, 4000)
+    return () => clearTimeout(t)
+  }, [show, dismiss])
+  return (
+    <>
+      {show && <Confetti />}
+      <AnimatePresence>
+        {show && (
+          <motion.button
+            type="button"
+            onClick={dismiss}
+            initial={{ y: -80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -80, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+            className="fixed inset-x-4 top-3 z-50 mx-auto flex max-w-sm items-center gap-3 rounded-3xl bg-gradient-to-r from-orange-500 to-rose-500 p-4 pt-safe text-left text-white shadow-glow"
+            role="status"
+          >
+            <span className="text-3xl">🏆</span>
+            <span>
+              <span className="block font-display text-lg font-extrabold">Ціль на сьогодні виконано!</span>
+              <span className="text-sm opacity-90">{goal} слів — так тримати 🔥</span>
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
+export type Feedback = {
+  ok: boolean
+  title?: string
+  answer?: string
+  example?: string
+  exampleTranslation?: string
+  lang?: string
+  /** text to pronounce (correct term); auto-spoken when the toggle is on */
+  speak?: string
+} | null
+
+function AutoSpeakToggle() {
+  const [on, setOn] = useState(getAutoSpeak)
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        setAutoSpeak(!on)
+        setOn(!on)
+      }}
+      aria-pressed={on}
+      className={`chip shrink-0 transition active:scale-95 ${on ? 'bg-brand-500/15 text-brand-600 dark:text-brand-300' : 'bg-surface-2 text-ink-3'}`}
+      title="Автоматично озвучувати правильну відповідь"
+    >
+      {on ? '🔊' : '🔇'} Автоозвучення
+    </button>
+  )
+}
 
 /** Sticky bottom action bar that becomes the green/red feedback sheet after checking. */
 export function ActionBar({
@@ -94,6 +195,11 @@ export function ActionBar({
   hint?: string
   secondary?: ReactNode
 }) {
+  const speakText = feedback?.speak
+  const speakLang = feedback?.lang ?? 'es'
+  useEffect(() => {
+    if (speakText && getAutoSpeak()) speak(speakText, speakLang)
+  }, [speakText, speakLang])
   const tone = feedback ? (feedback.ok ? 'bg-emerald-500/15 border-emerald-500/30' : 'bg-rose-500/15 border-rose-500/30') : 'border-line/60'
   const btn = feedback ? (feedback.ok ? 'btn-success' : 'btn-danger') : 'btn-primary'
   return (
@@ -121,7 +227,7 @@ export function ActionBar({
                   >
                     {feedback.ok ? '✓' : '✗'}
                   </motion.span>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="font-display text-xl font-extrabold">{feedback.title ?? (feedback.ok ? randomPraise() : 'Правильно:')}</p>
                     {feedback.answer && (
                       <p className="text-lg font-bold break-words" lang={feedback.lang}>{feedback.answer}</p>
@@ -133,7 +239,17 @@ export function ActionBar({
                       </div>
                     )}
                   </div>
+                  {feedback.speak && speechSupported && (
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <SpeakButton text={feedback.speak} lang={speakLang} />
+                    </div>
+                  )}
                 </div>
+                {feedback.speak && speechSupported && (
+                  <div className="-mt-2 mb-3 flex justify-end">
+                    <AutoSpeakToggle />
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

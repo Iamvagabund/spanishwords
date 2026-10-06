@@ -21,7 +21,7 @@ router.get('/profile', async (req, res, next) => {
 
 router.put('/profile', async (req, res, next) => {
   try {
-    const { email, nickname, avatar, selectedLanguage } = req.body ?? {}
+    const { email, nickname, avatar, selectedLanguage, dailyGoal } = req.body ?? {}
     const updateData: Record<string, unknown> = {}
     const unset: Record<string, 1> = {}
 
@@ -55,6 +55,13 @@ router.put('/profile', async (req, res, next) => {
         if (!lang) throw new AppError('Language not found', 400)
         updateData.selectedLanguage = selectedLanguage
       }
+    }
+
+    if (dailyGoal !== undefined) {
+      if (!Number.isInteger(dailyGoal) || dailyGoal < 5 || dailyGoal > 100) {
+        throw new AppError('dailyGoal must be an integer between 5 and 100', 400)
+      }
+      updateData.dailyGoal = dailyGoal
     }
 
     const update: Record<string, unknown> = {}
@@ -116,6 +123,68 @@ router.delete('/progress/:code', async (req, res, next) => {
     user.markModified('progress')
     await user.save()
     res.json(map)
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ---- Daily activity ----
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+const DAY_MS = 86_400_000
+
+/** UTC midnight timestamp of a YYYY-MM-DD string, or NaN if not a real date. */
+const dayValue = (date: string) => {
+  if (!DATE_RE.test(date)) return NaN
+  const t = Date.parse(`${date}T00:00:00Z`)
+  return Number.isNaN(t) || new Date(t).toISOString().slice(0, 10) !== date ? NaN : t
+}
+
+const todayValue = () => dayValue(new Date().toISOString().slice(0, 10))
+
+/** Keep only well-formed entries within the last `days` days (relative to server date, +1 day for timezones). */
+const recentActivity = (raw: any, days: number): Record<string, number> => {
+  const out: Record<string, number> = {}
+  if (!raw || typeof raw !== 'object') return out
+  const today = todayValue()
+  for (const [date, count] of Object.entries(raw)) {
+    const t = dayValue(date)
+    if (Number.isNaN(t) || typeof count !== 'number' || !Number.isFinite(count) || count < 0) continue
+    if (t < today - (days - 1) * DAY_MS || t > today + DAY_MS) continue
+    out[date] = count
+  }
+  return out
+}
+
+const activityResponse = (user: any) => ({
+  dailyGoal: user.dailyGoal ?? 10,
+  activity: recentActivity(user.activity, 90),
+})
+
+router.get('/activity', async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select('activity dailyGoal')
+    if (!user) throw new AppError('User not found', 404)
+    res.json(activityResponse(user))
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/activity', async (req, res, next) => {
+  try {
+    const { date, delta } = req.body ?? {}
+    if (typeof date !== 'string' || Number.isNaN(dayValue(date))) throw new AppError('date must be YYYY-MM-DD', 400)
+    if (Math.abs(dayValue(date) - todayValue()) > DAY_MS) throw new AppError('date is too far from today', 400)
+    if (!Number.isInteger(delta) || delta < 1 || delta > 100) throw new AppError('delta must be an integer 1-100', 400)
+    const user = await User.findById(req.user._id)
+    if (!user) throw new AppError('User not found', 404)
+    const activity = recentActivity(user.activity, 120)
+    activity[date] = (activity[date] ?? 0) + delta
+    user.activity = activity
+    user.markModified('activity')
+    await user.save()
+    res.json(activityResponse(user))
   } catch (error) {
     next(error)
   }

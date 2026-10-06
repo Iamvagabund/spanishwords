@@ -1,0 +1,155 @@
+{
+  "resources": [
+    {
+      "level": "A1",
+      "type": "app",
+      "title": "Duolingo",
+      "description": "Короткі щоденні вправи, що допомагають виробити звичку і запам'ятати базові слова.",
+      "url": "https://www.duolingo.com/",
+      "order": 1
+    },
+    {
+      "level": "A1",
+      "type": "youtube",
+      "title": "BBC Learning English",
+      "author": "BBC",
+      "description": "Короткі уроки з граматики, вимови та лексики від BBC для початківців і не тільки.",
+      "url": "https://www.youtube.com/@bbclearningenglish",
+      "order": 2
+    },
+    {
+      "level": "A1",
+      "type": "website",
+      "title": "Cambridge English — Learning English",
+      "author": "Cambridge University Press & Assessment",
+      "description": "Безкоштовні ігри та вправи від Cambridge, розділені за рівнями.",
+      "url": "https://www.cambridgeenglish.org/learning-english/",
+      "order": 3
+    },
+    {
+      "level": "A2",
+      "type": "book",
+      "title": "Penguin Readers",
+      "author": "Penguin",
+      "description": "Адаптовані книжки за рівнями — читання цілих історій простою англійською.",
+      "url": "https://www.penguinreaders.co.uk/",
+      "order": 1
+    },
+    {
+      "level": "A2",
+      "type": "website",
+      "title": "VOA Learning English",
+      "author": "Voice of America",
+      "description": "Новини, прочитані повільно й простою мовою, з текстом — тренують слухання.",
+      "url": "https://learningenglish.voanews.com/",
+      "order": 2
+    },
+    {
+      "level": "A2",
+      "type": "website",
+      "title": "Randall's ESL Cyber Listening Lab",
+      "author": "Randall Davis",
+      "description": "Аудіо з вправами на розуміння, розділені за складністю.",
+      "url": "https://www.esl-lab.com/",
+      "order": 3
+    },
+    {
+      "level": "B1",
+      "type": "podcast",
+      "title": "6 Minute English",
+      "author": "BBC Learning English",
+      "description": "Шестихвилинні розмови на цікаві теми з новими словами — легко слухати щодня.",
+      "url": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
+      "order": 1
+    },
+    {
+      "level": "B1",
+      "type": "book",
+      "title": "English Grammar in Use",
+      "author": "Raymond Murphy",
+      "description": "Найвідоміший підручник граматики: коротке пояснення ліворуч, вправи праворуч.",
+      "url": "https://www.englishgrammarinuse.com/",
+      "order": 2
+    },
+    {
+      "level": "B1",
+      "type": "youtube",
+      "title": "English with Lucy",
+      "author": "Lucy Earl",
+      "description": "Уроки британської вимови, лексики й граматики від викладачки-носійки.",
+      "url": "https://www.youtube.com/@EnglishwithLucy",
+      "order": 3
+    },
+    {
+      "level": "B2",
+      "type": "podcast",
+      "title": "The English We Speak",
+      "author": "BBC Learning English",
+      "description": "Короткі епізоди про сучасні ідіоми та сленг — щоб звучати природно.",
+      "url": "https://www.bbc.co.uk/learningenglish/english/features/the-english-we-speak",
+      "order": 1
+    },
+    {
+      "level": "B2",
+      "type": "podcast",
+      "title": "All Ears English",
+      "author": "Lindsay McMahon, Michelle Kaplan",
+      "description": "Розмовний подкаст про американську англійську та впевнене спілкування.",
+      "url": "https://www.allearsenglish.com/",
+      "order": 2
+    },
+    {
+      "level": "B2",
+      "type": "youtube",
+      "title": "Learn English with TV Series",
+      "author": "Learn English with TV Series",
+      "description": "Розбір фраз і вимови на прикладах сцен із популярних серіалів і фільмів.",
+      "url": "https://www.youtube.com/@LearnEnglishWithTVSeries",
+      "order": 3
+    },
+    {
+      "level": "C1",
+      "type": "website",
+      "title": "BBC Learning English — Towards Advanced",
+      "author": "BBC",
+      "description": "Безкоштовний курс BBC для переходу на просунутий рівень.",
+      "url": "https://www.bbc.co.uk/learningenglish/english/course/towards-advanced",
+      "order": 1
+    },
+    {
+      "level": "C1",
+      "type": "website",
+      "title": "TED Talks",
+      "author": "TED",
+      "description": "Виступи експертів на тисячі тем із субтитрами — слухання справжньої академічної мови.",
+      "url": "https://www.ted.com/",
+      "order": 2
+    },
+    {
+      "level": "all",
+      "type": "website",
+      "title": "Cambridge Dictionary",
+      "author": "Cambridge University Press",
+      "description": "Словник з транскрипцією, британською та американською вимовою і прикладами.",
+      "url": "https://dictionary.cambridge.org/",
+      "order": 1
+    },
+    {
+      "level": "all",
+      "type": "website",
+      "title": "Oxford Learner's Dictionaries",
+      "author": "Oxford University Press",
+      "description": "Словник для тих, хто вивчає мову: прості визначення та позначки рівня слів.",
+      "url": "https://www.oxfordlearnersdictionaries.com/",
+      "order": 2
+    },
+    {
+      "level": "all",
+      "type": "app",
+      "title": "Anki",
+      "description": "Флешкартки з інтервальним повторенням для закріплення будь-яких слів.",
+      "url": "https://apps.ankiweb.net/",
+      "order": 3
+    }
+  ]
+}

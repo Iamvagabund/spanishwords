@@ -8,6 +8,9 @@ import { langAdverb } from '../utils/lang'
 import { blockEmoji, blockTone } from '../theme/palette'
 import { ActionBar, ExitSheet, LessonHeader, LessonShell, ResultScreen, formatTime, haptic, type Feedback } from '../components/LessonKit'
 import type { Word } from '../types'
+import SpeakButton from '../components/SpeakButton'
+import { TipButton, TipCard, TipSheet } from '../components/BlockTip'
+import { useActivityStore } from '../store/activityStore'
 
 type Phase = 'list' | 'choice' | 'intro' | 'typing' | 'result'
 
@@ -54,8 +57,16 @@ function FlashCard({ word, index, lang, gradient }: { word: Word; index: number;
   const [flipped, setFlipped] = useState(false)
   const face = 'absolute inset-0 flex flex-col items-center justify-center rounded-3xl p-5 text-center [backface-visibility:hidden] [-webkit-backface-visibility:hidden]'
   return (
-    <motion.button
-      type="button"
+    <motion.div
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault()
+          e.stopPropagation()
+          setFlipped(f => !f)
+        }
+      }}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.04, 0.4) }}
@@ -71,8 +82,16 @@ function FlashCard({ word, index, lang, gradient }: { word: Word; index: number;
         <div className={`${face} bg-gradient-to-br ${gradient} text-white shadow-lift`}>
           <span className="absolute left-4 top-3 text-xs font-bold opacity-70">{index + 1}</span>
           <span className="absolute right-4 top-3 text-xs font-bold opacity-70">↻</span>
-          <span className="font-display text-3xl font-extrabold break-words" lang={lang}>{word.term}</span>
-          {word.example && <span className="mt-2 line-clamp-2 text-sm italic opacity-90" lang={lang}>{word.example}</span>}
+          <span className="flex max-w-full items-center gap-2">
+            <span className="font-display text-3xl font-extrabold break-words" lang={lang}>{word.term}</span>
+            <SpeakButton text={word.term} lang={lang} size="sm" className="!bg-white/20 !text-white hover:!bg-white/30" label={`Озвучити: ${word.term}`} />
+          </span>
+          {word.example && (
+            <span className="mt-2 flex max-w-full items-center gap-1.5">
+              <span className="line-clamp-2 text-sm italic opacity-90" lang={lang}>{word.example}</span>
+              <SpeakButton text={word.example} lang={lang} size="sm" className="!h-7 !w-7 !bg-white/15 !text-xs !text-white hover:!bg-white/30" label="Озвучити приклад" />
+            </span>
+          )}
         </div>
         <div className={`${face} border-2 border-line bg-surface shadow-soft [transform:rotateY(180deg)]`}>
           <span className="absolute left-4 top-3 text-xs font-bold text-ink-3">🇺🇦</span>
@@ -80,7 +99,7 @@ function FlashCard({ word, index, lang, gradient }: { word: Word; index: number;
           {word.exampleTranslation && <span className="mt-2 line-clamp-2 text-sm text-ink-2">{word.exampleTranslation}</span>}
         </div>
       </motion.div>
-    </motion.button>
+    </motion.div>
   )
 }
 
@@ -92,6 +111,8 @@ export function BlockPage() {
   const completeBlock = useStore(s => s.completeBlock)
   const addMistake = useStore(s => s.addMistake)
   const removeMistake = useStore(s => s.removeMistake)
+  const recordActivity = useActivityStore(s => s.record)
+  const [tipOpen, setTipOpen] = useState(false)
   const adverb = langAdverb(language)
 
   const numericOrder = Number(order)
@@ -125,6 +146,7 @@ export function BlockPage() {
     setSelected(null)
     setCombo(0)
     setConfirmExit(false)
+    setTipOpen(false)
   }
 
   // Reset all learning state when navigating to another block
@@ -181,6 +203,7 @@ export function BlockPage() {
 
   const registerResult = (ok: boolean) => {
     haptic(ok)
+    if (ok) recordActivity(1)
     setCombo(c => (ok ? c + 1 : 0))
     if (!ok) setShake(s => s + 1)
   }
@@ -244,7 +267,7 @@ export function BlockPage() {
 
   // Keyboard: 1-4 choose, Enter check/next (outside inputs/buttons, which handle Enter natively)
   useEffect(() => {
-    if (confirmExit) return
+    if (confirmExit || tipOpen) return
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return
       if (phase === 'choice') {
@@ -337,6 +360,7 @@ export function BlockPage() {
           <p className="opacity-90" lang={code}>{block.titleTarget}</p>
           <div className="mt-3 inline-flex rounded-full bg-white/20 px-3 py-1 text-sm font-bold backdrop-blur">{total} слів · торкніться картки, щоб перевернути</div>
         </div>
+        {block.tip && <TipCard tip={block.tip} tone={tone} />}
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {blockWords.map((w, i) => (
             <FlashCard key={w.id} word={w} index={i} lang={code} gradient={tone.gradient} />
@@ -353,7 +377,11 @@ export function BlockPage() {
         ? 0.5
         : (total + index + (checked !== null ? 1 : 0)) / (total * 2)
 
-  const header = <LessonHeader progress={progress} onClose={requestClose} combo={combo} />
+  const tip = block.tip
+  const header = (
+    <LessonHeader progress={progress} onClose={requestClose} combo={combo} right={tip ? <TipButton onClick={() => setTipOpen(true)} /> : undefined} />
+  )
+  const tipSheet = tip ? <TipSheet tip={tip} tone={tone} open={tipOpen} onClose={() => setTipOpen(false)} /> : null
 
   const prompt = (label: string) => (
     <div className="pt-4 text-center">
@@ -371,7 +399,7 @@ export function BlockPage() {
     checked === null || !currentWord
       ? null
       : checked
-        ? { ok: true, answer: phase === 'typing' ? currentWord.term : undefined, lang: code }
+        ? { ok: true, answer: phase === 'typing' ? currentWord.term : undefined, lang: code, speak: currentWord.term }
         : {
             ok: false,
             title: 'Правильно:',
@@ -379,6 +407,7 @@ export function BlockPage() {
             example: currentWord.example,
             exampleTranslation: currentWord.exampleTranslation,
             lang: code,
+            speak: currentWord.term,
           }
 
   // ---------- INTRO TO TYPING ----------
@@ -391,6 +420,7 @@ export function BlockPage() {
           <p className="mt-2 text-ink-2">Тепер напишіть слова самостійно — перекладайте з української {adverb}.</p>
         </motion.div>
         {exitSheet}
+        {tipSheet}
       </LessonShell>
     )
   }
@@ -449,6 +479,7 @@ export function BlockPage() {
           </motion.div>
         </AnimatePresence>
         {exitSheet}
+        {tipSheet}
       </LessonShell>
     )
   }
@@ -507,6 +538,7 @@ export function BlockPage() {
         </motion.div>
       </AnimatePresence>
       {exitSheet}
+      {tipSheet}
     </LessonShell>
   )
 }

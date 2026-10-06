@@ -5,7 +5,8 @@ import { Language, serializeLanguage } from '../models/Language'
 import { Block, serializeBlock } from '../models/Block'
 import { AppError } from '../middleware/errorHandler'
 import { adminMiddleware, authenticateToken } from '../middleware/auth'
-import { parseBlockInput } from '../utils/blocks'
+import { blockDoc, parseBlockInput } from '../utils/blocks'
+import { Resource, parseResourceInput, serializeResource, sortResources } from '../models/Resource'
 import { LANG_CODE_RE, normalizeProgressMap, serializeUser } from '../utils/progress'
 
 const router = Router()
@@ -102,7 +103,7 @@ router.post('/blocks', async (req, res, next) => {
     const input = parseBlockInput(req.body)
     const order = input.order ?? (await nextOrder(language))
     if (await Block.exists({ language, order })) throw new AppError('A block with this order already exists', 400)
-    const block = await Block.create({ ...input, order, language })
+    const block = await Block.create({ ...blockDoc(input), order, language })
     res.status(201).json(serializeBlock(block))
   } catch (error) {
     next(error)
@@ -144,7 +145,7 @@ router.post('/blocks/import', async (req, res, next) => {
     }
     const parsed = blocks.map(parseBlockInput)
     const start = await nextOrder(language)
-    const docs = parsed.map((b, i) => ({ ...b, order: start + i, language }))
+    const docs = parsed.map((b, i) => ({ ...blockDoc(b), order: start + i, language }))
     const created = await Block.insertMany(docs)
     res.status(201).json(created.map(serializeBlock))
   } catch (error) {
@@ -162,7 +163,11 @@ router.put('/blocks/:id', async (req, res, next) => {
     if (order !== block.order && (await Block.exists({ language: block.language, order, _id: { $ne: block._id } }))) {
       throw new AppError('A block with this order already exists', 400)
     }
-    block.set({ ...input, order })
+    const { tip, ...rest } = input
+    block.set({ ...rest, order })
+    // tip omitted = keep, null/empty = clear
+    if (tip === null) block.set('tip', undefined)
+    else if (tip) block.set('tip', tip)
     await block.save()
     res.json(serializeBlock(block))
   } catch (error) {
@@ -175,6 +180,58 @@ router.delete('/blocks/:id', async (req, res, next) => {
     const id = requireId(req.params.id)
     const block = await Block.findByIdAndDelete(id)
     if (!block) throw new AppError('Block not found', 404)
+    res.json({ status: 'success' })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ---- Resources ----
+
+router.get('/resources', async (req, res, next) => {
+  try {
+    const language = await requireLanguage(req.query.language)
+    const items = await Resource.find({ language }).lean()
+    res.json(sortResources(items).map(serializeResource))
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/resources', async (req, res, next) => {
+  try {
+    const language = await requireLanguage(req.body?.language)
+    const input = parseResourceInput(req.body, false)
+    if (input.order === undefined) {
+      const last = await Resource.findOne({ language }).sort({ order: -1 }).select('order').lean()
+      input.order = (last?.order ?? 0) + 1
+    }
+    const created = await Resource.create({ ...input, language })
+    res.status(201).json(serializeResource(created))
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.put('/resources/:id', async (req, res, next) => {
+  try {
+    const id = requireId(req.params.id)
+    const resource = await Resource.findById(id)
+    if (!resource) throw new AppError('Resource not found', 404)
+    const input = parseResourceInput(req.body, true)
+    for (const [k, v] of Object.entries(input)) resource.set(k, v === null ? undefined : v)
+    await resource.save()
+    res.json(serializeResource(resource))
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.delete('/resources/:id', async (req, res, next) => {
+  try {
+    const id = requireId(req.params.id)
+    const resource = await Resource.findByIdAndDelete(id)
+    if (!resource) throw new AppError('Resource not found', 404)
     res.json({ status: 'success' })
   } catch (error) {
     next(error)

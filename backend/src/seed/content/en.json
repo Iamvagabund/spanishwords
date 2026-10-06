@@ -73,7 +73,11 @@
           "example": "Nice to meet you, John.",
           "exampleTranslation": "Приємно познайомитися, Джоне."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Hello і час доби",
+        "body": "**Good morning** — до 12:00, **good afternoon** — до ~18:00, **good evening** — увечері.\n**Good night** — лише на прощання або перед сном, а не як привітання!\n**Hi** — неформально, **hello** — нейтрально."
+      }
     },
     {
       "order": 2,
@@ -142,7 +146,11 @@
           "example": "No problem, I can wait.",
           "exampleTranslation": "Без проблем, я можу почекати."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Please, sorry, excuse me",
+        "body": "**Excuse me** — щоб привернути увагу або пройти.\n**Sorry** — коли вже щось сталося.\nНа **thank you** відповідають **you're welcome** або **no problem**.\n**Please** часто в кінці: A coffee, **please**."
+      }
     },
     {
       "order": 3,
@@ -211,7 +219,11 @@
           "example": "It costs ten pounds.",
           "exampleTranslation": "Це коштує десять фунтів."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Числа 1–10 і множина",
+        "body": "Після **one** — однина: one cat.\nПісля 2+ — множина з **-s**: two cat**s**, three book**s**.\n**Eight** читається [ейт] — gh не вимовляються."
+      }
     },
     {
       "order": 4,
@@ -280,7 +292,11 @@
           "example": "There are one hundred people here.",
           "exampleTranslation": "Тут сто людей."
         }
-      ]
+      ],
+      "tip": {
+        "title": "-teen чи -ty?",
+        "body": "**-teen** (13–19): наголос у кінці — fif**TEEN**.\n**-ty** (20, 30…): наголос на початку — **FIF**ty.\nДесятки з одиницями — через дефіс: **twenty-one**, forty-five.\nУвага на правопис: **forty** (без u), **fifteen**, **fifty**."
+      }
     },
     {
       "order": 5,
@@ -349,7 +365,11 @@
           "example": "My shoes are brown.",
           "exampleTranslation": "Моє взуття коричневе."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Колір перед іменником",
+        "body": "Прикметник стоїть **перед** іменником і не змінюється: a **red** car, two **red** cars.\nЗапитати колір: **What colour** is it? (брит.) / **color** (амер.)."
+      }
     },
     {
       "order": 6,
@@ -418,7 +438,11 @@
           "example": "His wife is very kind.",
           "exampleTranslation": "Його дружина дуже добра."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Присвійний 's",
+        "body": "«Мамин брат» = my mother**'s** brother.\n**Parents** — батьки, **relatives** — родичі.\nMy sister **is**…, my parents **are**…"
+      }
     },
     {
       "order": 7,
@@ -487,7 +511,11 @@
           "example": "My heart is beating fast.",
           "exampleTranslation": "Моє серце б'ється швидко."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Неправильна множина",
+        "body": "**foot** → **feet**, **tooth** → **teeth**.\n**eye** → eyes, **hand** → hands (звичайне -s).\nПро біль: My head **hurts** / I have **a headache**."
+      }
     },
     {
       "order": 8,
@@ -556,7 +584,11 @@
           "example": "A salad, please.",
           "exampleTranslation": "Салат, будь ласка."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Злічувані й незлічувані",
+        "body": "**bread, cheese, meat** — незлічувані: без **a** і без -s: some bread.\n**an egg** — злічуване: **an** перед голосним звуком.\nЯк тварина — **a chicken**, як їжа — **chicken** (без артикля)."
+      }
     },
     {
       "order": 9,
@@ -625,7 +657,11 @@
           "example": "I buy a bottle of water.",
           "exampleTranslation": "Я купую пляшку води."
         }
-      ]
+      ],
+      "tip": {
+        "title": "A cup of… / some",
+        "body": "Напої незлічувані: **some** water, не «a water».\nЩоб порахувати: **a cup of** tea, **a glass of** milk, **a bottle of** wine.\nУ кафе можна: **Two coffees**, please — «дві кави»."
+      }
     },
     {
       "order": 10,
@@ -694,7 +730,11 @@
           "example": "I live in a flat in London.",
           "exampleTranslation": "Я живу в квартирі в Лондоні."
         }
-      ]
+      ],
+      "tip": {
+        "title": "In / at з домом",
+        "body": "**at home** — «вдома» (без артикля).\n**in the kitchen**, **in the bedroom** — у кімнаті.\n**There is** a window — «є вікно», **there are** two doors."
+      }
     },
     {
       "order": 11,
@@ -763,7 +803,11 @@
           "example": "I have a blue jacket.",
           "exampleTranslation": "У мене синя куртка."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Завжди множина: trousers",
+        "body": "**trousers, jeans, shorts** — завжди множина: My trousers **are** black.\nОдна штука: **a pair of** trousers.\n**Wear** — носити, **put on** — одягати: I **put on** my shoes."
+      }
     },
     {
       "order": 12,
@@ -832,7 +876,11 @@
           "example": "In August we go to the sea.",
           "exampleTranslation": "У серпні ми їдемо на море."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Дні з великої + on / in",
+        "body": "Дні й місяці — з **великої літери**: Monday, January.\n**on** + день: **on** Monday. **in** + місяць: **in** May. **at** + час: **at** 5 o'clock.\nWeekend: **at** the weekend (брит.)."
+      }
     },
     {
       "order": 13,
@@ -901,7 +949,11 @@
           "example": "It's cold in winter.",
           "exampleTranslation": "Взимку холодно."
         }
-      ]
+      ],
+      "tip": {
+        "title": "It's sunny / it's raining",
+        "body": "Про погоду — з **it**: **It's** sunny, **it's** cold.\n**Rain** — дощ; **it's raining** — іде дощ.\n**Hour** — h не читається: **an** hour [ен ауе].\n**What time is it?** — «Котра година?»"
+      }
     },
     {
       "order": 14,
@@ -970,7 +1022,11 @@
           "example": "The shop opens at ten.",
           "exampleTranslation": "Магазин відчиняється о десятій."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Where is…? і there is",
+        "body": "Питання про місце: **Where is** the bank? — It's **on** Main Street.\n**on** the street, **in** the square.\n**Is there** a pharmacy near here? — «Тут є аптека поблизу?»"
+      }
     },
     {
       "order": 15,
@@ -1039,7 +1095,11 @@
           "example": "I need a one-way ticket.",
           "exampleTranslation": "Мені потрібен квиток в один бік."
         }
-      ]
+      ],
+      "tip": {
+        "title": "By car, on foot",
+        "body": "Спосіб пересування — **by**: **by** bus, **by** train, **by** plane.\nАле **on foot** — пішки.\n**Underground** (брит.) = **subway** (амер.) = **metro**.\nGet **on** the bus, get **in** the car."
+      }
     },
     {
       "order": 16,
@@ -1108,7 +1168,11 @@
           "example": "The driver stops the bus.",
           "exampleTranslation": "Водій зупиняє автобус."
         }
-      ]
+      ],
+      "tip": {
+        "title": "A / an перед професією",
+        "body": "Професія — завжди з **a / an**: I'm **a** doctor, she's **an** engineer.\n**an** — перед голосним **звуком**: **an** engineer, **a** teacher.\n**What do you do?** — «Ким ви працюєте?»"
+      }
     },
     {
       "order": 17,
@@ -1177,7 +1241,11 @@
           "example": "We fly to Rome tomorrow.",
           "exampleTranslation": "Завтра ми летимо до Рима."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Go to / arrive at",
+        "body": "**go to** + місце: I go **to** work. Але **go home** (без to).\n**arrive at** (будівля) / **arrive in** (місто): arrive **in** London.\n**come** — до мовця, **go** — від мовця."
+      }
     },
     {
       "order": 18,
@@ -1246,7 +1314,11 @@
           "example": "I cook dinner every evening.",
           "exampleTranslation": "Я готую вечерю щовечора."
         }
-      ]
+      ],
+      "tip": {
+        "title": "He / she + -s",
+        "body": "Present Simple: I **work**, але he / she **works**.\nПісля -s, -sh, -ch, -o — **-es**: he go**es**, she watch**es**.\nЗаперечення: I **don't** eat meat. He **doesn't** eat meat."
+      }
     },
     {
       "order": 19,
@@ -1315,7 +1387,11 @@
           "example": "I am surprised.",
           "exampleTranslation": "Я здивований."
         }
-      ]
+      ],
+      "tip": {
+        "title": "How are you? і I'm tired",
+        "body": "На **How are you?** відповідають: **I'm fine, thanks**, **I'm good** або **Not bad**.\nПочуття — з **be**: I **am** tired, she **is** happy.\n**angry with** someone — «сердитий на когось»."
+      }
     },
     {
       "order": 20,
@@ -1384,7 +1460,11 @@
           "example": "I'm on holiday.",
           "exampleTranslation": "Я у відпустці."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Trip і travel",
+        "body": "**trip** — поїздка (туди й назад): a business trip.\n**travel** — подорожувати (дієслово): I love **to travel**.\n**on the beach**, **at the airport**, **in a hotel**."
+      }
     }
   ]
 }

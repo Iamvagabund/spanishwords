@@ -17,6 +17,7 @@ const authUser = (user: any) => ({
   avatar: user.avatar,
   role: user.role,
   selectedLanguage: user.selectedLanguage,
+  dailyGoal: user.dailyGoal ?? 10,
 })
 
 const readCredentials = (body: any) => {

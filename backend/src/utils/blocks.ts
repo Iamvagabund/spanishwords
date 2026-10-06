@@ -27,6 +27,20 @@ export interface BlockInput {
     example?: string
     exampleTranslation?: string
   }>
+  /** undefined = not provided, null = clear */
+  tip?: { title: string; body: string } | null
+}
+
+/** Parse an optional tip: undefined when absent, null when explicitly cleared. */
+export const parseTip = (t: any): BlockInput['tip'] => {
+  if (t === undefined) return undefined
+  if (t === null || t === '') return null
+  if (typeof t !== 'object' || Array.isArray(t)) throw new AppError('Invalid tip', 400)
+  const title = str(t.title, 'tip.title', 80, false)
+  const body = str(t.body, 'tip.body', 1500, false)
+  if (!title && !body) return null
+  if (!title || !body) throw new AppError('tip requires both title and body', 400)
+  return { title, body }
 }
 
 /** Validate a block payload (seed-JSON / admin shape). */
@@ -64,5 +78,12 @@ export const parseBlockInput = (b: any): BlockInput => {
     description: str(b.description, 'description', 1000, false) ?? '',
     level,
     words,
+    tip: parseTip(b.tip),
   }
+}
+
+/** Strip an absent/cleared tip so it is not stored as null on create. */
+export const blockDoc = (input: BlockInput) => {
+  const { tip, ...rest } = input
+  return tip ? { ...rest, tip } : rest
 }

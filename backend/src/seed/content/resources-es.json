@@ -1,0 +1,147 @@
+{
+  "resources": [
+    {
+      "level": "A1",
+      "type": "podcast",
+      "title": "Coffee Break Spanish",
+      "author": "Coffee Break Languages",
+      "description": "Покроковий аудіокурс від нуля з поясненнями граматики — ідеальний старт.",
+      "url": "https://coffeebreaklanguages.com/coffeebreakspanish/",
+      "order": 1
+    },
+    {
+      "level": "A1",
+      "type": "app",
+      "title": "Duolingo",
+      "description": "Короткі щоденні вправи, що допомагають виробити звичку і запам'ятати базові слова.",
+      "url": "https://www.duolingo.com/",
+      "order": 2
+    },
+    {
+      "level": "A1",
+      "type": "youtube",
+      "title": "Dreaming Spanish",
+      "author": "Pablo Román",
+      "description": "Відео для «зрозумілого слухання» від суперпростого рівня — вчать розуміти мову без перекладу.",
+      "url": "https://www.youtube.com/@DreamingSpanish",
+      "order": 3
+    },
+    {
+      "level": "A1",
+      "type": "app",
+      "title": "Language Transfer — Complete Spanish",
+      "author": "Mihalis Eleftheriou",
+      "description": "Безкоштовний аудіокурс, що вчить будувати фрази самостійно, а не зубрити.",
+      "url": "https://www.languagetransfer.org/",
+      "order": 4
+    },
+    {
+      "level": "A2",
+      "type": "youtube",
+      "title": "Easy Spanish",
+      "author": "Easy Languages",
+      "description": "Вуличні інтерв'ю з субтитрами іспанською та англійською — жива мова в реальних ситуаціях.",
+      "url": "https://www.youtube.com/@EasySpanish",
+      "order": 1
+    },
+    {
+      "level": "A2",
+      "type": "website",
+      "title": "Dreaming Spanish",
+      "author": "Pablo Román",
+      "description": "Платформа з тисячами відео, розсортованих за складністю, і трекером годин слухання.",
+      "url": "https://www.dreamingspanish.com/",
+      "order": 2
+    },
+    {
+      "level": "A2",
+      "type": "book",
+      "title": "Lecturas graduadas Difusión",
+      "author": "Difusión",
+      "description": "Адаптовані книжки для читання від видавництва Difusión за рівнями A1–C1.",
+      "url": "https://www.difusion.com/catalogo/lecturas",
+      "order": 3
+    },
+    {
+      "level": "B1",
+      "type": "podcast",
+      "title": "Notes in Spanish",
+      "author": "Ben Curtis, Marina Diez",
+      "description": "Природні діалоги про життя в Іспанії — для переходу від підручника до живої мови.",
+      "url": "https://www.notesinspanish.com/",
+      "order": 1
+    },
+    {
+      "level": "B1",
+      "type": "youtube",
+      "title": "Spanish After Hours",
+      "author": "Spanish After Hours",
+      "description": "Відео про граматику та розмовні звороти, пояснені просто і з прикладами.",
+      "url": "https://www.youtube.com/@SpanishAfterHours",
+      "order": 2
+    },
+    {
+      "level": "B1",
+      "type": "youtube",
+      "title": "Butterfly Spanish",
+      "author": "Ana",
+      "description": "Чіткі пояснення граматики й вимови від викладачки-носійки.",
+      "url": "https://www.youtube.com/@ButterflySpanish",
+      "order": 3
+    },
+    {
+      "level": "B2",
+      "type": "series",
+      "title": "El Ministerio del Tiempo",
+      "author": "RTVE",
+      "description": "Популярний іспанський серіал про подорожі в часі — офіційно і безкоштовно на RTVE Play.",
+      "url": "https://www.rtve.es/play/videos/el-ministerio-del-tiempo/",
+      "order": 1
+    },
+    {
+      "level": "B2",
+      "type": "website",
+      "title": "RTVE Play",
+      "author": "RTVE",
+      "description": "Державне телебачення Іспанії: новини, серіали й документалки для занурення в мову.",
+      "url": "https://www.rtve.es/play/",
+      "order": 2
+    },
+    {
+      "level": "C1",
+      "type": "podcast",
+      "title": "Radio Ambulante",
+      "author": "NPR",
+      "description": "Документальні історії з Латинської Америки — для розуміння різних акцентів на високому рівні.",
+      "url": "https://radioambulante.org/",
+      "order": 1
+    },
+    {
+      "level": "C1",
+      "type": "website",
+      "title": "Centro Virtual Cervantes",
+      "author": "Instituto Cervantes",
+      "description": "Матеріали Інституту Сервантеса: тексти, вправи та довідка для поглибленого вивчення.",
+      "url": "https://cvc.cervantes.es/ensenanza/",
+      "order": 2
+    },
+    {
+      "level": "all",
+      "type": "website",
+      "title": "AVE Global",
+      "author": "Instituto Cervantes",
+      "description": "Офіційний онлайн-курс Інституту Сервантеса від A1 до C1.",
+      "url": "https://ave.cervantes.es/",
+      "order": 1
+    },
+    {
+      "level": "all",
+      "type": "website",
+      "title": "SpanishDict",
+      "author": "SpanishDict",
+      "description": "Словник із відмінюванням дієслів і прикладами — зручний на будь-якому рівні.",
+      "url": "https://www.spanishdict.com/",
+      "order": 2
+    }
+  ]
+}

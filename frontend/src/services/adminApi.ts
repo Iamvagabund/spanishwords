@@ -1,5 +1,6 @@
 import { API_URL } from '../config'
 import { useAuthStore } from '../store/authStore'
+import type { BlockTip, Resource } from '../types'
 
 export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
 export const LEVELS: Level[] = ['A1', 'A2', 'B1', 'B2', 'C1']
@@ -28,6 +29,7 @@ export interface AdminBlock {
   titleTarget: string
   description: string
   level: Level
+  tip?: BlockTip
   words: (WordInput & { id: string })[]
 }
 
@@ -38,6 +40,8 @@ export interface BlockInput {
   titleTarget: string
   description: string
   level: Level
+  /** null clears the tip */
+  tip?: BlockTip | null
   words: WordInput[]
 }
 
@@ -73,6 +77,9 @@ export interface Statistics {
     completedBlocks: number
   }[]
 }
+
+export type AdminResource = Resource
+export type ResourceInput = Omit<Resource, 'id' | 'order'> & { language: string }
 
 export class ApiError extends Error {
   status: number
@@ -138,6 +145,13 @@ export const adminApi = {
     request<unknown>('/admin/blocks/reorder', json('POST', { language, ids })),
   importBlocks: (language: string, blocks: ImportBlock[]) =>
     request<unknown>('/admin/blocks/import', json('POST', { language, blocks })),
+
+  getResources: (language: string) =>
+    request<AdminResource[]>(`/admin/resources?language=${encodeURIComponent(language)}`),
+  createResource: (b: ResourceInput) => request<AdminResource>('/admin/resources', json('POST', b)),
+  updateResource: (id: string, b: Partial<ResourceInput>) =>
+    request<AdminResource>(`/admin/resources/${id}`, json('PUT', b)),
+  deleteResource: (id: string) => request<unknown>(`/admin/resources/${id}`, json('DELETE')),
 
   getUsers: () => request<AdminUser[]>('/admin/users'),
   setRole: (id: string, role: 'user' | 'admin') =>

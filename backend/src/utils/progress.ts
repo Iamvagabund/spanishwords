@@ -105,6 +105,7 @@ export const serializeUser = (u: any, withProgress = false) => ({
   avatar: u.avatar,
   role: u.role,
   selectedLanguage: u.selectedLanguage,
+  dailyGoal: u.dailyGoal ?? 10,
   createdAt: u.createdAt,
   updatedAt: u.updatedAt,
   ...(withProgress ? { progress: normalizeProgressMap(u.progress) } : {}),

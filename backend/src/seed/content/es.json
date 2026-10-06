@@ -73,7 +73,11 @@
           "example": "Mucho gusto, soy Pedro.",
           "exampleTranslation": "Приємно познайомитися, я Педро."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Hola і час доби",
+        "body": "**Buenos días** — до обіду, **buenas tardes** — після обіду до темряви, **buenas noches** — увечері й на прощання перед сном.\n**Hola** звучить без «h»: [ола].\n**Hasta luego** — «до зустрічі», навіть якщо не скоро."
+      }
     },
     {
       "order": 2,
@@ -142,7 +146,11 @@
           "example": "Bienvenido a España.",
           "exampleTranslation": "Ласкаво просимо до Іспанії."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Ввічливість по-іспанськи",
+        "body": "**Perdón** — щоб перепросити або привернути увагу.\n**Lo siento** — щире «мені шкода».\n**Con permiso** — «дозвольте пройти».\nНа **gracias** відповідають **de nada**."
+      }
     },
     {
       "order": 3,
@@ -211,7 +219,11 @@
           "example": "Cuesta diez euros.",
           "exampleTranslation": "Це коштує десять євро."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Числа 1–10 і рід",
+        "body": "**Uno** перед іменником чоловічого роду стає **un**, жіночого — **una**.\nПриклад: **un** libro, **una** casa.\nІнші числа не змінюються: dos libros, dos casas."
+      }
     },
     {
       "order": 4,
@@ -280,7 +292,11 @@
           "example": "Hay cien personas aquí.",
           "exampleTranslation": "Тут сто людей."
         }
-      ]
+      ],
+      "tip": {
+        "title": "16–29 пишуться разом",
+        "body": "Числа 16–29 пишуться **одним словом**: dieciséis, veinte → **veintiuno**, veintidós.\nВід 31 — через **y**: treinta **y** uno, cuarenta **y** cinco.\n**100** = **cien**, але 101 = **ciento** uno."
+      }
     },
     {
       "order": 5,
@@ -349,7 +365,11 @@
           "example": "Mis zapatos son marrones.",
           "exampleTranslation": "Мої черевики коричневі."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Кольори змінюються за родом",
+        "body": "Кольори на **-o** мають форму на **-a**: rojo → **roja**.\nКольори на **-e** чи приголосну однакові: verde, azul.\nКолір стоїть **після** іменника: la casa **blanca**.\nМножина: rojos, azules."
+      }
     },
     {
       "order": 6,
@@ -418,7 +438,11 @@
           "example": "Su esposa es médica.",
           "exampleTranslation": "Його дружина лікарка."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Рід у родині: -o / -a",
+        "body": "Часто пара: hij**o** / hij**a**, herman**o** / herman**a**.\n**El** — чоловічий рід, **la** — жіночий.\n**Los padres** — «батьки» (мама й тато), **los hermanos** — брати й сестри."
+      }
     },
     {
       "order": 7,
@@ -487,7 +511,11 @@
           "example": "El corazón late rápido.",
           "exampleTranslation": "Серце б'ється швидко."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Не «моя рука», а «la mano»",
+        "body": "З частинами тіла іспанці кажуть артикль, а не «мій»: Me duele **la** cabeza — «У мене болить голова».\nУвага: **la mano** — жіночий рід, хоч і закінчується на -o."
+      }
     },
     {
       "order": 8,
@@ -556,7 +584,11 @@
           "example": "Una ensalada, por favor.",
           "exampleTranslation": "Салат, будь ласка."
         }
-      ]
+      ],
+      "tip": {
+        "title": "El / la з їжею",
+        "body": "Слова на **-o** зазвичай чоловічого роду (el queso), на **-a** — жіночого (la carne).\nУ магазині: **Quiero** pan, por favor — «Я хочу хліба, будь ласка» (без артикля, коли «трохи»)."
+      }
     },
     {
       "order": 9,
@@ -625,7 +657,11 @@
           "example": "Compro una botella de agua.",
           "exampleTranslation": "Я купую пляшку води."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Чому «el agua»?",
+        "body": "**Agua** — жіночий рід, але перед наголошеним **a-** ставлять **el**: **el** agua fría.\nУ множині знову **las**: las aguas.\n**Zumo** — в Іспанії, **jugo** — в Латинській Америці."
+      }
     },
     {
       "order": 10,
@@ -694,7 +730,11 @@
           "example": "Vivo en un piso en Madrid.",
           "exampleTranslation": "Я живу в квартирі в Мадриді."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Артиклі el / la у домі",
+        "body": "Запам'ятовуй слово **разом з артиклем**: **la** casa, **el** baño.\nМножина: el → **los**, la → **las**: las ventanas.\nEstoy **en** la cocina — «Я на кухні»."
+      }
     },
     {
       "order": 11,
@@ -763,7 +803,11 @@
           "example": "Llevo una chaqueta azul.",
           "exampleTranslation": "Я в синій куртці."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Одяг у множині",
+        "body": "**Los pantalones** — «штани», зазвичай у множині, як і в українській.\nМножина: -s після голосної (camisas), **-es** після приголосної.\nLlevo **una camiseta** — «Я в футболці»."
+      }
     },
     {
       "order": 12,
@@ -832,7 +876,11 @@
           "example": "En agosto vamos a la playa.",
           "exampleTranslation": "У серпні ми їдемо на пляж."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Дні та місяці з малої",
+        "body": "Дні й місяці пишуться з **малої літери**: lunes, enero.\n«У понеділок» = **el** lunes (без прийменника).\n«По понеділках» = **los** lunes.\n**Mañana** — «завтра», **la mañana** — «ранок»."
+      }
     },
     {
       "order": 13,
@@ -901,7 +949,11 @@
           "example": "En invierno hace frío.",
           "exampleTranslation": "Взимку холодно."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Погода: hace, hay, llueve",
+        "body": "**Hace** sol / frío / calor — «сонячно / холодно / спекотно».\n**Llueve** — «іде дощ», **nieva** — «іде сніг».\n**¿Qué hora es?** — «Котра година?» Зверни увагу на **¿** на початку."
+      }
     },
     {
       "order": 14,
@@ -970,7 +1022,11 @@
           "example": "La tienda abre a las diez.",
           "exampleTranslation": "Магазин відчиняється о десятій."
         }
-      ]
+      ],
+      "tip": {
+        "title": "¿Dónde está…? і ¡¿ на початку",
+        "body": "Питання й оклик мають знак **на початку** перевернутий: **¿**Dónde está el banco?\n**Está** — для місця: La farmacia **está** en la plaza.\n**Hay** — «є» (існує): **Hay** un hospital aquí."
+      }
     },
     {
       "order": 15,
@@ -1039,7 +1095,11 @@
           "example": "Necesito un billete de ida.",
           "exampleTranslation": "Мені потрібен квиток в один бік."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Їхати чимось: en coche",
+        "body": "Транспорт — з прийменником **en**: voy **en** autobús, **en** tren.\nАле пішки — **a pie**.\n**Metro** скорочено від metropolitano, тому **el** metro; **la** bici — від la bicicleta."
+      }
     },
     {
       "order": 16,
@@ -1108,7 +1168,11 @@
           "example": "El conductor para el autobús.",
           "exampleTranslation": "Водій зупиняє автобус."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Професія: без артикля",
+        "body": "Після **ser** професію кажуть без артикля: Soy **médico**.\nЖіночий рід: profesor → profesor**a**, médico → médic**a**.\n**Estudiante** однаковий: el / la estudiante."
+      }
     },
     {
       "order": 17,
@@ -1177,7 +1241,11 @@
           "example": "Vamos a bajar ahora.",
           "exampleTranslation": "Ми зараз спустимося."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Ir a + місце",
+        "body": "**Ir** неправильне: voy, vas, va, vamos, vais, van.\nКуди — з **a**: Voy **a** Madrid. a + el = **al**: Voy **al** hotel.\n**Salir de** — виходити з, **entrar en** — заходити в."
+      }
     },
     {
       "order": 18,
@@ -1246,7 +1314,11 @@
           "example": "Sé cocinar muy bien.",
           "exampleTranslation": "Я вмію дуже добре готувати."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Дієслова на -ar, -er, -ir",
+        "body": "Від інфінітива відкидаємо закінчення: habl**ar** → habl**o**, habl**as**, habl**a**.\ncom**er** → com**o**, com**es**, com**e**.\nЗайменник часто опускають: **Hablo** español — «Я розмовляю іспанською»."
+      }
     },
     {
       "order": 19,
@@ -1315,7 +1387,11 @@
           "example": "Estoy sorprendido.",
           "exampleTranslation": "Я здивований."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Estar для емоцій",
+        "body": "Тимчасовий стан — **estar**: **Estoy** cansado, **está** nerviosa.\n**Feliz** можна і з **ser**, і з **estar**: Soy feliz / Estoy feliz.\nЖінка: cansad**a**, contento → content**a**; feliz і triste не змінюються."
+      }
     },
     {
       "order": 20,
@@ -1384,7 +1460,11 @@
           "example": "Estoy de vacaciones.",
           "exampleTranslation": "Я у відпустці."
         }
-      ]
+      ],
+      "tip": {
+        "title": "Tú чи usted у подорожі",
+        "body": "**Tú** — для друзів і ровесників, **usted** — ввічливо до незнайомих (дієслово як для él): ¿**Tiene usted** una habitación?\nВ аеропорту: ¿Dónde está la salida? — «Де вихід?»"
+      }
     }
   ]
 }
