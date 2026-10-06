@@ -10,6 +10,7 @@
     "create-admin": "node build/scripts/createAdmin.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node build/scripts/seed.js",
+    "migrate": "node build/scripts/migrate.js",
     "seed:dev": "ts-node-dev --transpile-only src/scripts/seed.ts"
   },
   "keywords": [],

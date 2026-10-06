@@ -105,3 +105,22 @@ Seed file `backend/src/seed/content/resources-<code>.json` = `{ "resources": [ .
 | POST | `/user/activity` | user | `{ date: 'YYYY-MM-DD', delta: number (1–100) }` → increments, returns `{ dailyGoal, activity }`. Reject dates more than 1 day from server date. |
 
 Streak is computed on the client: consecutive days up to today (or yesterday if today is 0) with count ≥ 1.
+
+## v3: CEFR correction + A2 expansion (content migration)
+
+Seed files after this change:
+- `es.json` / `en.json`: blocks 1–20 keep their order and (unless listed in changes) their words; blocks 13–20 become `A1`. New blocks are appended: A1 gap-fillers first (e.g. remaining months, numbers 13–29), then genuine A2 blocks, up to ~40 blocks per language. Every block has a `tip`.
+- `changes-2026-10.json` (one file for both languages):
+```json
+{
+  "id": "2026-10-cefr",
+  "relevel": [{ "language": "es", "order": 13, "level": "A1" }],
+  "replaceWords": [{ "language": "en", "order": 17, "oldTerm": "climb", "term": "go up", "translation": "підніматися", "example": "...", "exampleTranslation": "..." }]
+}
+```
+
+Backend migration (runs once on startup, recorded in a `migrations` collection by `id`):
+1. `relevel`: set `level` on the block matching `(language, order)`.
+2. `replaceWords`: in the block matching `(language, order)`, find the word with `term === oldTerm` and replace its fields **in place, keeping its `_id`** (progress refers to word ids). Skip silently if not found (admin may have edited).
+3. Append seed blocks missing from the DB: a seed block is "missing" if no DB block of that language has the same `titleTarget`. Insert with `order = current max + 1` (keep seed relative order). Never delete or reorder existing blocks.
+Must be idempotent and safe on a fresh DB (where normal seeding already inserted everything).

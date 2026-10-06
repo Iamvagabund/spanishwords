@@ -1,0 +1,150 @@
+{
+  "id": "2026-10-cefr",
+  "relevel": [
+    {
+      "language": "es",
+      "order": 13,
+      "level": "A1"
+    },
+    {
+      "language": "es",
+      "order": 14,
+      "level": "A1"
+    },
+    {
+      "language": "es",
+      "order": 15,
+      "level": "A1"
+    },
+    {
+      "language": "es",
+      "order": 16,
+      "level": "A1"
+    },
+    {
+      "language": "es",
+      "order": 17,
+      "level": "A1"
+    },
+    {
+      "language": "es",
+      "order": 18,
+      "level": "A1"
+    },
+    {
+      "language": "es",
+      "order": 19,
+      "level": "A1"
+    },
+    {
+      "language": "es",
+      "order": 20,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 13,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 14,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 15,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 16,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 17,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 18,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 19,
+      "level": "A1"
+    },
+    {
+      "language": "en",
+      "order": 20,
+      "level": "A1"
+    }
+  ],
+  "replaceWords": [
+    {
+      "language": "es",
+      "order": 17,
+      "oldTerm": "subir",
+      "term": "subir",
+      "translation": "підніматися (вгору)",
+      "example": "Tenemos que subir al tercer piso.",
+      "exampleTranslation": "Нам треба піднятися на третій поверх."
+    },
+    {
+      "language": "es",
+      "order": 7,
+      "oldTerm": "el ojo",
+      "term": "el ojo",
+      "translation": "око",
+      "example": "Me duele el ojo derecho.",
+      "exampleTranslation": "У мене болить праве око."
+    },
+    {
+      "language": "es",
+      "order": 15,
+      "oldTerm": "el taxi",
+      "term": "el taxi",
+      "translation": "таксі",
+      "example": "Cogemos un taxi a la estación.",
+      "exampleTranslation": "Ми беремо таксі до вокзалу."
+    },
+    {
+      "language": "es",
+      "order": 17,
+      "oldTerm": "llegar",
+      "term": "llegar",
+      "translation": "прибувати",
+      "example": "El tren llega a las diez.",
+      "exampleTranslation": "Потяг прибуває о десятій."
+    },
+    {
+      "language": "en",
+      "order": 17,
+      "oldTerm": "climb",
+      "term": "go up",
+      "translation": "підніматися",
+      "example": "We go up the stairs to the second floor.",
+      "exampleTranslation": "Ми піднімаємося сходами на другий поверх."
+    },
+    {
+      "language": "en",
+      "order": 17,
+      "oldTerm": "leave",
+      "term": "leave",
+      "translation": "від'їжджати, виходити",
+      "example": "I leave home at eight.",
+      "exampleTranslation": "Я виходжу з дому о восьмій."
+    },
+    {
+      "language": "en",
+      "order": 18,
+      "oldTerm": "cook dinner",
+      "term": "clean",
+      "translation": "прибирати",
+      "example": "I clean my room on Saturday.",
+      "exampleTranslation": "Я прибираю свою кімнату в суботу."
+    }
+  ]
+}

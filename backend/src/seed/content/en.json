@@ -887,7 +887,7 @@
       "title": "Час і погода",
       "titleTarget": "Time and weather",
       "description": "Як говорити про час і погоду",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "today",
@@ -960,7 +960,7 @@
       "title": "Місто",
       "titleTarget": "The city",
       "description": "Місця в місті",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "street",
@@ -1033,7 +1033,7 @@
       "title": "Транспорт",
       "titleTarget": "Transport",
       "description": "Як пересуватися",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "car",
@@ -1106,7 +1106,7 @@
       "title": "Професії",
       "titleTarget": "Jobs",
       "description": "Хто ким працює",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "doctor",
@@ -1179,7 +1179,7 @@
       "title": "Дієслова руху",
       "titleTarget": "Verbs of movement",
       "description": "Як описати рух",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "go",
@@ -1201,9 +1201,9 @@
         },
         {
           "term": "leave",
-          "translation": "їхати геть",
-          "example": "I leave at eight.",
-          "exampleTranslation": "Я виходжу о восьмій."
+          "translation": "від'їжджати, виходити",
+          "example": "I leave home at eight.",
+          "exampleTranslation": "Я виходжу з дому о восьмій."
         },
         {
           "term": "enter",
@@ -1230,10 +1230,10 @@
           "exampleTranslation": "Я хочу повернутися додому."
         },
         {
-          "term": "climb",
+          "term": "go up",
           "translation": "підніматися",
-          "example": "We climb the stairs.",
-          "exampleTranslation": "Ми піднімаємося сходами."
+          "example": "We go up the stairs to the second floor.",
+          "exampleTranslation": "Ми піднімаємося сходами на другий поверх."
         },
         {
           "term": "fly",
@@ -1252,7 +1252,7 @@
       "title": "Повсякденні дієслова",
       "titleTarget": "Everyday verbs",
       "description": "Дії кожного дня",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "eat",
@@ -1309,10 +1309,10 @@
           "exampleTranslation": "Сьогодні мені треба вчитися."
         },
         {
-          "term": "cook dinner",
-          "translation": "готувати вечерю",
-          "example": "I cook dinner every evening.",
-          "exampleTranslation": "Я готую вечерю щовечора."
+          "term": "clean",
+          "translation": "прибирати",
+          "example": "I clean my room on Saturday.",
+          "exampleTranslation": "Я прибираю свою кімнату в суботу."
         }
       ],
       "tip": {
@@ -1325,7 +1325,7 @@
       "title": "Емоції",
       "titleTarget": "Emotions",
       "description": "Почуття та настрій",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "happy",
@@ -1398,7 +1398,7 @@
       "title": "Подорожі",
       "titleTarget": "Travel",
       "description": "Слова для мандрівника",
-      "level": "A2",
+      "level": "A1",
       "words": [
         {
           "term": "trip",
@@ -1464,6 +1464,1466 @@
       "tip": {
         "title": "Trip і travel",
         "body": "**trip** — поїздка (туди й назад): a business trip.\n**travel** — подорожувати (дієслово): I love **to travel**.\n**on the beach**, **at the airport**, **in a hotel**."
+      }
+    },
+    {
+      "order": 21,
+      "title": "Місяці",
+      "titleTarget": "Months",
+      "description": "Решта місяців року",
+      "level": "A1",
+      "words": [
+        {
+          "term": "February",
+          "translation": "лютий",
+          "example": "My birthday is in February.",
+          "exampleTranslation": "Мій день народження в лютому."
+        },
+        {
+          "term": "March",
+          "translation": "березень",
+          "example": "Spring starts in March.",
+          "exampleTranslation": "Весна починається в березні."
+        },
+        {
+          "term": "April",
+          "translation": "квітень",
+          "example": "It often rains in April.",
+          "exampleTranslation": "У квітні часто йде дощ."
+        },
+        {
+          "term": "June",
+          "translation": "червень",
+          "example": "School finishes in June.",
+          "exampleTranslation": "Навчання закінчується в червні."
+        },
+        {
+          "term": "July",
+          "translation": "липень",
+          "example": "July is very hot here.",
+          "exampleTranslation": "Липень тут дуже спекотний."
+        },
+        {
+          "term": "September",
+          "translation": "вересень",
+          "example": "We go back to school in September.",
+          "exampleTranslation": "Ми повертаємося до школи у вересні."
+        },
+        {
+          "term": "October",
+          "translation": "жовтень",
+          "example": "The leaves fall in October.",
+          "exampleTranslation": "Листя опадає в жовтні."
+        },
+        {
+          "term": "November",
+          "translation": "листопад",
+          "example": "November is cold and dark.",
+          "exampleTranslation": "Листопад холодний і темний."
+        },
+        {
+          "term": "December",
+          "translation": "грудень",
+          "example": "Christmas is in December.",
+          "exampleTranslation": "Різдво в грудні."
+        },
+        {
+          "term": "month",
+          "translation": "місяць",
+          "example": "I visit my parents once a month.",
+          "exampleTranslation": "Я відвідую батьків раз на місяць."
+        }
+      ],
+      "tip": {
+        "title": "Місяці — з великої літери + in",
+        "body": "Місяці завжди пишуться з **великої літери**: March, June.\nПрийменник **in**: **in** July, **in** December.\nКонкретна дата — **on**: **on** 5 March."
+      }
+    },
+    {
+      "order": 22,
+      "title": "Числа 13–29",
+      "titleTarget": "Numbers 13–29",
+      "description": "Числа від тринадцяти до двадцяти дев'яти",
+      "level": "A1",
+      "words": [
+        {
+          "term": "thirteen",
+          "translation": "тринадцять",
+          "example": "My sister is thirteen.",
+          "exampleTranslation": "Моїй сестрі тринадцять."
+        },
+        {
+          "term": "fourteen",
+          "translation": "чотирнадцять",
+          "example": "There are fourteen students in the class.",
+          "exampleTranslation": "У класі чотирнадцять учнів."
+        },
+        {
+          "term": "sixteen",
+          "translation": "шістнадцять",
+          "example": "He is sixteen years old.",
+          "exampleTranslation": "Йому шістнадцять років."
+        },
+        {
+          "term": "seventeen",
+          "translation": "сімнадцять",
+          "example": "The shop is at number seventeen.",
+          "exampleTranslation": "Магазин у будинку номер сімнадцять."
+        },
+        {
+          "term": "eighteen",
+          "translation": "вісімнадцять",
+          "example": "You can drive at eighteen.",
+          "exampleTranslation": "Водити можна з вісімнадцяти."
+        },
+        {
+          "term": "nineteen",
+          "translation": "дев'ятнадцять",
+          "example": "The ticket costs nineteen pounds.",
+          "exampleTranslation": "Квиток коштує дев'ятнадцять фунтів."
+        },
+        {
+          "term": "twenty-one",
+          "translation": "двадцять один",
+          "example": "I live at number twenty-one.",
+          "exampleTranslation": "Я живу в будинку номер двадцять один."
+        },
+        {
+          "term": "twenty-two",
+          "translation": "двадцять два",
+          "example": "She is twenty-two today.",
+          "exampleTranslation": "Їй сьогодні двадцять два."
+        },
+        {
+          "term": "twenty-five",
+          "translation": "двадцять п'ять",
+          "example": "It takes twenty-five minutes.",
+          "exampleTranslation": "Це займає двадцять п'ять хвилин."
+        },
+        {
+          "term": "twenty-nine",
+          "translation": "двадцять дев'ять",
+          "example": "February sometimes has twenty-nine days.",
+          "exampleTranslation": "У лютому іноді двадцять дев'ять днів."
+        }
+      ],
+      "tip": {
+        "title": "-teen чи -ty?",
+        "body": "**-teen** (13–19) — наголос у кінці: thir**teen**.\n**-ty** (20, 30…) — наголос на початку: **thir**ty.\nСкладені числа — через дефіс: twenty**-**one, twenty**-**five."
+      }
+    },
+    {
+      "order": 23,
+      "title": "Минулий час: коли?",
+      "titleTarget": "Past time expressions",
+      "description": "Слова, що вказують на минуле",
+      "level": "A2",
+      "words": [
+        {
+          "term": "last week",
+          "translation": "минулого тижня",
+          "example": "I saw her last week.",
+          "exampleTranslation": "Я бачив її минулого тижня."
+        },
+        {
+          "term": "last month",
+          "translation": "минулого місяця",
+          "example": "We moved last month.",
+          "exampleTranslation": "Ми переїхали минулого місяця."
+        },
+        {
+          "term": "last year",
+          "translation": "торік",
+          "example": "I went to Spain last year.",
+          "exampleTranslation": "Торік я їздив до Іспанії."
+        },
+        {
+          "term": "last night",
+          "translation": "учора ввечері",
+          "example": "Did you sleep well last night?",
+          "exampleTranslation": "Ти добре спав минулої ночі?"
+        },
+        {
+          "term": "ago",
+          "translation": "тому (про час)",
+          "example": "He left ten minutes ago.",
+          "exampleTranslation": "Він пішов десять хвилин тому."
+        },
+        {
+          "term": "yesterday morning",
+          "translation": "учора вранці",
+          "example": "I called you yesterday morning.",
+          "exampleTranslation": "Я дзвонив тобі вчора вранці."
+        },
+        {
+          "term": "the day before yesterday",
+          "translation": "позавчора",
+          "example": "She arrived the day before yesterday.",
+          "exampleTranslation": "Вона приїхала позавчора."
+        },
+        {
+          "term": "already",
+          "translation": "вже",
+          "example": "I have already eaten.",
+          "exampleTranslation": "Я вже поїв."
+        },
+        {
+          "term": "recently",
+          "translation": "нещодавно",
+          "example": "I recently started a new job.",
+          "exampleTranslation": "Я нещодавно почав нову роботу."
+        },
+        {
+          "term": "then",
+          "translation": "потім, тоді",
+          "example": "We had dinner and then watched a film.",
+          "exampleTranslation": "Ми повечеряли, а потім подивилися фільм."
+        }
+      ],
+      "tip": {
+        "title": "Ago, last — без прийменника",
+        "body": "**ago** стоїть **після** проміжку: two days **ago**.\n**last** без the і без in: **last** week, **last** year.\nЗ цими словами — Past Simple: I **saw** him last night."
+      }
+    },
+    {
+      "order": 24,
+      "title": "Неправильні дієслова",
+      "titleTarget": "Irregular past forms",
+      "description": "Минулі форми найчастіших дієслів",
+      "level": "A2",
+      "words": [
+        {
+          "term": "went",
+          "translation": "пішов, поїхав (go → went)",
+          "example": "We went to the cinema on Friday.",
+          "exampleTranslation": "Ми ходили в кіно в п'ятницю."
+        },
+        {
+          "term": "saw",
+          "translation": "бачив (see → saw)",
+          "example": "I saw a good film yesterday.",
+          "exampleTranslation": "Учора я бачив гарний фільм."
+        },
+        {
+          "term": "bought",
+          "translation": "купив (buy → bought)",
+          "example": "She bought a new coat.",
+          "exampleTranslation": "Вона купила нове пальто."
+        },
+        {
+          "term": "ate",
+          "translation": "їв (eat → ate)",
+          "example": "We ate pizza for lunch.",
+          "exampleTranslation": "Ми їли піцу на обід."
+        },
+        {
+          "term": "had",
+          "translation": "мав (have → had)",
+          "example": "I had a great weekend.",
+          "exampleTranslation": "У мене були чудові вихідні."
+        },
+        {
+          "term": "made",
+          "translation": "зробив (make → made)",
+          "example": "He made a cake for her birthday.",
+          "exampleTranslation": "Він спік торт на її день народження."
+        },
+        {
+          "term": "took",
+          "translation": "взяв (take → took)",
+          "example": "I took the bus to work.",
+          "exampleTranslation": "Я поїхав на роботу автобусом."
+        },
+        {
+          "term": "gave",
+          "translation": "дав (give → gave)",
+          "example": "My friend gave me a book.",
+          "exampleTranslation": "Друг подарував мені книжку."
+        },
+        {
+          "term": "came",
+          "translation": "прийшов (come → came)",
+          "example": "They came home late.",
+          "exampleTranslation": "Вони прийшли додому пізно."
+        },
+        {
+          "term": "found",
+          "translation": "знайшов (find → found)",
+          "example": "I found my keys under the sofa.",
+          "exampleTranslation": "Я знайшов ключі під диваном."
+        }
+      ],
+      "tip": {
+        "title": "Past Simple: тільки у ствердженні",
+        "body": "Форма went / saw — лише в **ствердженні**: I **went** home.\nУ питанні й запереченні — **did** + базова форма: **Did** you **go**? I **didn't go**.\nНеправильні форми треба просто запам'ятати."
+      }
+    },
+    {
+      "order": 25,
+      "title": "Зовнішність і характер",
+      "titleTarget": "Describing people",
+      "description": "Як описати людину",
+      "level": "A2",
+      "words": [
+        {
+          "term": "tall",
+          "translation": "високий (про людину)",
+          "example": "My brother is very tall.",
+          "exampleTranslation": "Мій брат дуже високий."
+        },
+        {
+          "term": "slim",
+          "translation": "стрункий",
+          "example": "She is slim and has long hair.",
+          "exampleTranslation": "Вона струнка й має довге волосся."
+        },
+        {
+          "term": "beautiful",
+          "translation": "гарний, красивий",
+          "example": "What a beautiful baby!",
+          "exampleTranslation": "Яке гарне немовля!"
+        },
+        {
+          "term": "curly",
+          "translation": "кучерявий",
+          "example": "He has short curly hair.",
+          "exampleTranslation": "У нього коротке кучеряве волосся."
+        },
+        {
+          "term": "beard",
+          "translation": "борода",
+          "example": "My grandfather has a grey beard.",
+          "exampleTranslation": "У мого дідуся сива борода."
+        },
+        {
+          "term": "friendly",
+          "translation": "привітний",
+          "example": "Our neighbours are very friendly.",
+          "exampleTranslation": "Наші сусіди дуже привітні."
+        },
+        {
+          "term": "kind",
+          "translation": "добрий",
+          "example": "It was kind of you to help.",
+          "exampleTranslation": "Дуже мило з вашого боку, що допомогли."
+        },
+        {
+          "term": "funny",
+          "translation": "смішний, кумедний",
+          "example": "He tells funny stories.",
+          "exampleTranslation": "Він розповідає смішні історії."
+        },
+        {
+          "term": "clever",
+          "translation": "розумний",
+          "example": "She is a clever student.",
+          "exampleTranslation": "Вона розумна студентка."
+        },
+        {
+          "term": "shy",
+          "translation": "сором'язливий",
+          "example": "The boy was shy at first.",
+          "exampleTranslation": "Спочатку хлопчик соромився."
+        }
+      ],
+      "tip": {
+        "title": "What does he look like?",
+        "body": "Зовнішність: **What does she look like?** — She's **tall** with **curly** hair.\nХарактер: **What is she like?** — She's **friendly**.\n**have got** для рис: He**'s got** a beard."
+      }
+    },
+    {
+      "order": 26,
+      "title": "Порівняння",
+      "titleTarget": "Comparisons",
+      "description": "Порівнюємо речі та людей",
+      "level": "A2",
+      "words": [
+        {
+          "term": "better",
+          "translation": "кращий, краще",
+          "example": "This phone is better than my old one.",
+          "exampleTranslation": "Цей телефон кращий за мій старий."
+        },
+        {
+          "term": "worse",
+          "translation": "гірший, гірше",
+          "example": "The weather is worse today.",
+          "exampleTranslation": "Сьогодні погода гірша."
+        },
+        {
+          "term": "bigger",
+          "translation": "більший",
+          "example": "London is bigger than Kyiv.",
+          "exampleTranslation": "Лондон більший за Київ."
+        },
+        {
+          "term": "cheaper",
+          "translation": "дешевший",
+          "example": "The bus is cheaper than a taxi.",
+          "exampleTranslation": "Автобус дешевший за таксі."
+        },
+        {
+          "term": "more expensive",
+          "translation": "дорожчий",
+          "example": "This hotel is more expensive.",
+          "exampleTranslation": "Цей готель дорожчий."
+        },
+        {
+          "term": "than",
+          "translation": "ніж, за",
+          "example": "She is older than me.",
+          "exampleTranslation": "Вона старша за мене."
+        },
+        {
+          "term": "the best",
+          "translation": "найкращий",
+          "example": "He is the best player in the team.",
+          "exampleTranslation": "Він найкращий гравець у команді."
+        },
+        {
+          "term": "the worst",
+          "translation": "найгірший",
+          "example": "It was the worst day of my life.",
+          "exampleTranslation": "Це був найгірший день у моєму житті."
+        },
+        {
+          "term": "the same as",
+          "translation": "такий самий, як",
+          "example": "My bag is the same as yours.",
+          "exampleTranslation": "Моя сумка така сама, як твоя."
+        },
+        {
+          "term": "different from",
+          "translation": "відмінний від",
+          "example": "Life here is different from home.",
+          "exampleTranslation": "Життя тут не таке, як удома."
+        }
+      ],
+      "tip": {
+        "title": "-er than / more … than",
+        "body": "Короткі слова: **-er + than**: big → bigg**er than**.\nДовгі: **more** expensive **than**.\nВиключення: good → **better** → **the best**, bad → **worse** → **the worst**."
+      }
+    },
+    {
+      "order": 27,
+      "title": "Покупки й гроші",
+      "titleTarget": "Shopping and money",
+      "description": "Магазин, ціни та оплата",
+      "level": "A2",
+      "words": [
+        {
+          "term": "price",
+          "translation": "ціна",
+          "example": "The price is too high.",
+          "exampleTranslation": "Ціна надто висока."
+        },
+        {
+          "term": "cost",
+          "translation": "коштувати",
+          "example": "How much does it cost?",
+          "exampleTranslation": "Скільки це коштує?"
+        },
+        {
+          "term": "pay",
+          "translation": "платити",
+          "example": "Can I pay by card?",
+          "exampleTranslation": "Можна заплатити карткою?"
+        },
+        {
+          "term": "cash",
+          "translation": "готівка",
+          "example": "I don't have any cash.",
+          "exampleTranslation": "У мене немає готівки."
+        },
+        {
+          "term": "credit card",
+          "translation": "кредитна картка",
+          "example": "Do you take credit cards?",
+          "exampleTranslation": "Ви приймаєте кредитні картки?"
+        },
+        {
+          "term": "change",
+          "translation": "решта",
+          "example": "Here is your change.",
+          "exampleTranslation": "Ось ваша решта."
+        },
+        {
+          "term": "receipt",
+          "translation": "чек",
+          "example": "Can I have a receipt, please?",
+          "exampleTranslation": "Можна чек, будь ласка?"
+        },
+        {
+          "term": "expensive",
+          "translation": "дорогий",
+          "example": "This watch is very expensive.",
+          "exampleTranslation": "Цей годинник дуже дорогий."
+        },
+        {
+          "term": "cheap",
+          "translation": "дешевий",
+          "example": "The food here is cheap.",
+          "exampleTranslation": "Їжа тут дешева."
+        },
+        {
+          "term": "sale",
+          "translation": "розпродаж",
+          "example": "These jeans were in the sale.",
+          "exampleTranslation": "Ці джинси були на розпродажі."
+        }
+      ],
+      "tip": {
+        "title": "How much is it?",
+        "body": "Ціна: **How much is** this? / **How much are** these shoes?\n**cost** — дієслово: It **costs** £10.\n**pay for** + річ: I **paid for** the tickets."
+      }
+    },
+    {
+      "order": 28,
+      "title": "Здоров'я і лікар",
+      "titleTarget": "Health and the doctor",
+      "description": "Самопочуття та візит до лікаря",
+      "level": "A2",
+      "words": [
+        {
+          "term": "headache",
+          "translation": "головний біль",
+          "example": "I've got a terrible headache.",
+          "exampleTranslation": "У мене жахливо болить голова."
+        },
+        {
+          "term": "toothache",
+          "translation": "зубний біль",
+          "example": "He has toothache.",
+          "exampleTranslation": "У нього болить зуб."
+        },
+        {
+          "term": "sore throat",
+          "translation": "біль у горлі",
+          "example": "I have a sore throat.",
+          "exampleTranslation": "У мене болить горло."
+        },
+        {
+          "term": "cough",
+          "translation": "кашель",
+          "example": "She has a bad cough.",
+          "exampleTranslation": "У неї сильний кашель."
+        },
+        {
+          "term": "temperature",
+          "translation": "температура (жар)",
+          "example": "The child has a temperature.",
+          "exampleTranslation": "У дитини температура."
+        },
+        {
+          "term": "medicine",
+          "translation": "ліки",
+          "example": "Take this medicine twice a day.",
+          "exampleTranslation": "Приймайте ці ліки двічі на день."
+        },
+        {
+          "term": "appointment",
+          "translation": "запис (до лікаря)",
+          "example": "I have an appointment at ten.",
+          "exampleTranslation": "Я записаний на десяту."
+        },
+        {
+          "term": "ill",
+          "translation": "хворий",
+          "example": "I was ill last week.",
+          "exampleTranslation": "Минулого тижня я хворів."
+        },
+        {
+          "term": "hurt",
+          "translation": "боліти",
+          "example": "My back hurts.",
+          "exampleTranslation": "У мене болить спина."
+        },
+        {
+          "term": "dentist",
+          "translation": "стоматолог",
+          "example": "I go to the dentist twice a year.",
+          "exampleTranslation": "Я ходжу до стоматолога двічі на рік."
+        }
+      ],
+      "tip": {
+        "title": "I've got a headache",
+        "body": "Хвороби — з **have got**: I**'ve got** a headache / a cough.\nЗ артиклем a: **a** cough, **a** sore throat, **a** temperature.\n**hurt**: My leg **hurts**. — Мені болить нога."
+      }
+    },
+    {
+      "order": 29,
+      "title": "Робота й офіс",
+      "titleTarget": "Work and the office",
+      "description": "Слова для робочого дня",
+      "level": "A2",
+      "words": [
+        {
+          "term": "job",
+          "translation": "робота (посада)",
+          "example": "She has a good job.",
+          "exampleTranslation": "У неї хороша робота."
+        },
+        {
+          "term": "office",
+          "translation": "офіс",
+          "example": "I work in an office.",
+          "exampleTranslation": "Я працюю в офісі."
+        },
+        {
+          "term": "manager",
+          "translation": "менеджер, керівник",
+          "example": "I need to speak to the manager.",
+          "exampleTranslation": "Мені треба поговорити з керівником."
+        },
+        {
+          "term": "colleague",
+          "translation": "колега",
+          "example": "My colleagues are nice.",
+          "exampleTranslation": "Мої колеги приємні."
+        },
+        {
+          "term": "meeting",
+          "translation": "нарада, зустріч",
+          "example": "The meeting starts at nine.",
+          "exampleTranslation": "Нарада починається о дев'ятій."
+        },
+        {
+          "term": "salary",
+          "translation": "зарплата",
+          "example": "He earns a good salary.",
+          "exampleTranslation": "Він отримує хорошу зарплату."
+        },
+        {
+          "term": "interview",
+          "translation": "співбесіда",
+          "example": "I have a job interview tomorrow.",
+          "exampleTranslation": "Завтра в мене співбесіда."
+        },
+        {
+          "term": "company",
+          "translation": "компанія",
+          "example": "She works for a big company.",
+          "exampleTranslation": "Вона працює у великій компанії."
+        },
+        {
+          "term": "customer",
+          "translation": "клієнт, покупець",
+          "example": "The customer is always right.",
+          "exampleTranslation": "Клієнт завжди правий."
+        },
+        {
+          "term": "email",
+          "translation": "електронний лист",
+          "example": "I sent you an email.",
+          "exampleTranslation": "Я надіслав тобі лист."
+        }
+      ],
+      "tip": {
+        "title": "Job чи work?",
+        "body": "**job** — злічуване: I've got a new **job**.\n**work** — незлічуване: I have a lot of **work**. Не \"a work\".\n**at work** — на роботі; **go to work** — без the."
+      }
+    },
+    {
+      "order": 30,
+      "title": "Хобі й дозвілля",
+      "titleTarget": "Hobbies and free time",
+      "description": "Чим зайнятися у вільний час",
+      "level": "A2",
+      "words": [
+        {
+          "term": "hobby",
+          "translation": "хобі",
+          "example": "My hobby is cooking.",
+          "exampleTranslation": "Моє хобі — готування."
+        },
+        {
+          "term": "free time",
+          "translation": "вільний час",
+          "example": "What do you do in your free time?",
+          "exampleTranslation": "Що ти робиш у вільний час?"
+        },
+        {
+          "term": "painting",
+          "translation": "малювання (фарбами)",
+          "example": "She enjoys painting.",
+          "exampleTranslation": "Вона любить малювати."
+        },
+        {
+          "term": "photography",
+          "translation": "фотографія",
+          "example": "He is interested in photography.",
+          "exampleTranslation": "Він цікавиться фотографією."
+        },
+        {
+          "term": "chess",
+          "translation": "шахи",
+          "example": "Do you play chess?",
+          "exampleTranslation": "Ти граєш у шахи?"
+        },
+        {
+          "term": "guitar",
+          "translation": "гітара",
+          "example": "I play the guitar.",
+          "exampleTranslation": "Я граю на гітарі."
+        },
+        {
+          "term": "dance",
+          "translation": "танцювати",
+          "example": "We danced all night.",
+          "exampleTranslation": "Ми танцювали всю ніч."
+        },
+        {
+          "term": "go shopping",
+          "translation": "ходити по магазинах",
+          "example": "Let's go shopping on Saturday.",
+          "exampleTranslation": "Ходімо по магазинах у суботу."
+        },
+        {
+          "term": "cinema",
+          "translation": "кінотеатр",
+          "example": "We often go to the cinema.",
+          "exampleTranslation": "Ми часто ходимо в кіно."
+        },
+        {
+          "term": "collect",
+          "translation": "колекціонувати",
+          "example": "He collects old coins.",
+          "exampleTranslation": "Він колекціонує старі монети."
+        }
+      ],
+      "tip": {
+        "title": "Like + -ing",
+        "body": "Про вподобання: **like / love / enjoy + -ing**: I **enjoy painting**.\n**go + -ing** для активностей: **go shopping**, go swimming.\nІнструменти — з the: play **the** guitar."
+      }
+    },
+    {
+      "order": 31,
+      "title": "Спорт",
+      "titleTarget": "Sport",
+      "description": "Види спорту та змагання",
+      "level": "A2",
+      "words": [
+        {
+          "term": "football",
+          "translation": "футбол",
+          "example": "They play football after school.",
+          "exampleTranslation": "Вони грають у футбол після школи."
+        },
+        {
+          "term": "tennis",
+          "translation": "теніс",
+          "example": "Do you play tennis?",
+          "exampleTranslation": "Ти граєш у теніс?"
+        },
+        {
+          "term": "swimming",
+          "translation": "плавання",
+          "example": "Swimming is good for you.",
+          "exampleTranslation": "Плавання корисне."
+        },
+        {
+          "term": "ski",
+          "translation": "кататися на лижах",
+          "example": "We ski every winter.",
+          "exampleTranslation": "Ми катаємося на лижах щозими."
+        },
+        {
+          "term": "team",
+          "translation": "команда",
+          "example": "Which team do you support?",
+          "exampleTranslation": "За яку команду ти вболіваєш?"
+        },
+        {
+          "term": "match",
+          "translation": "матч",
+          "example": "We watched the match on TV.",
+          "exampleTranslation": "Ми дивилися матч по телевізору."
+        },
+        {
+          "term": "player",
+          "translation": "гравець",
+          "example": "He is a famous player.",
+          "exampleTranslation": "Він відомий гравець."
+        },
+        {
+          "term": "win",
+          "translation": "вигравати",
+          "example": "Our team won the game.",
+          "exampleTranslation": "Наша команда виграла гру."
+        },
+        {
+          "term": "lose",
+          "translation": "програвати",
+          "example": "They lost two matches.",
+          "exampleTranslation": "Вони програли два матчі."
+        },
+        {
+          "term": "gym",
+          "translation": "спортзал",
+          "example": "I go to the gym three times a week.",
+          "exampleTranslation": "Я ходжу в спортзал тричі на тиждень."
+        }
+      ],
+      "tip": {
+        "title": "Play, go чи do?",
+        "body": "**play** — ігри з м'ячем: play **football**, **tennis**.\n**go** — на -ing: **go swimming**, go skiing.\n**do** — інші: **do** yoga, do karate."
+      }
+    },
+    {
+      "order": 32,
+      "title": "Житло й оренда",
+      "titleTarget": "Housing and renting",
+      "description": "Квартира, оренда та сусіди",
+      "level": "A2",
+      "words": [
+        {
+          "term": "rent",
+          "translation": "орендувати",
+          "example": "We rent a small flat.",
+          "exampleTranslation": "Ми орендуємо невелику квартиру."
+        },
+        {
+          "term": "landlord",
+          "translation": "орендодавець",
+          "example": "The landlord fixed the shower.",
+          "exampleTranslation": "Орендодавець полагодив душ."
+        },
+        {
+          "term": "neighbour",
+          "translation": "сусід",
+          "example": "Our neighbour has a dog.",
+          "exampleTranslation": "У нашого сусіда є собака."
+        },
+        {
+          "term": "floor",
+          "translation": "поверх",
+          "example": "I live on the third floor.",
+          "exampleTranslation": "Я живу на четвертому поверсі."
+        },
+        {
+          "term": "furniture",
+          "translation": "меблі",
+          "example": "The flat has no furniture.",
+          "exampleTranslation": "У квартирі немає меблів."
+        },
+        {
+          "term": "garden",
+          "translation": "сад",
+          "example": "The house has a big garden.",
+          "exampleTranslation": "Біля будинку великий сад."
+        },
+        {
+          "term": "sofa",
+          "translation": "диван",
+          "example": "The cat sleeps on the sofa.",
+          "exampleTranslation": "Кіт спить на дивані."
+        },
+        {
+          "term": "balcony",
+          "translation": "балкон",
+          "example": "We have breakfast on the balcony.",
+          "exampleTranslation": "Ми снідаємо на балконі."
+        },
+        {
+          "term": "move house",
+          "translation": "переїжджати",
+          "example": "We moved house last year.",
+          "exampleTranslation": "Ми переїхали торік."
+        },
+        {
+          "term": "downstairs",
+          "translation": "унизу (поверхом нижче)",
+          "example": "The kitchen is downstairs.",
+          "exampleTranslation": "Кухня внизу."
+        }
+      ],
+      "tip": {
+        "title": "Floor: британський рахунок",
+        "body": "**ground floor** — перший поверх; **first floor** — другий (брит.).\n**rent** — і дієслово, і іменник: I **rent** a flat. The **rent** is high.\n**move house** — переїжджати (без the)."
+      }
+    },
+    {
+      "order": 33,
+      "title": "Розпорядок дня",
+      "titleTarget": "Daily routine",
+      "description": "Що ми робимо щодня",
+      "level": "A2",
+      "words": [
+        {
+          "term": "wake up",
+          "translation": "прокидатися",
+          "example": "I wake up at seven.",
+          "exampleTranslation": "Я прокидаюся о сьомій."
+        },
+        {
+          "term": "get up",
+          "translation": "вставати",
+          "example": "He gets up early.",
+          "exampleTranslation": "Він рано встає."
+        },
+        {
+          "term": "have a shower",
+          "translation": "приймати душ",
+          "example": "I have a shower every morning.",
+          "exampleTranslation": "Я приймаю душ щоранку."
+        },
+        {
+          "term": "brush your teeth",
+          "translation": "чистити зуби",
+          "example": "Brush your teeth before bed.",
+          "exampleTranslation": "Почисть зуби перед сном."
+        },
+        {
+          "term": "get dressed",
+          "translation": "одягатися",
+          "example": "I get dressed quickly.",
+          "exampleTranslation": "Я швидко одягаюся."
+        },
+        {
+          "term": "have breakfast",
+          "translation": "снідати",
+          "example": "We have breakfast at eight.",
+          "exampleTranslation": "Ми снідаємо о восьмій."
+        },
+        {
+          "term": "have lunch",
+          "translation": "обідати",
+          "example": "I have lunch at work.",
+          "exampleTranslation": "Я обідаю на роботі."
+        },
+        {
+          "term": "catch the bus",
+          "translation": "сідати на автобус",
+          "example": "I catch the bus at the corner.",
+          "exampleTranslation": "Я сідаю на автобус на розі."
+        },
+        {
+          "term": "get home",
+          "translation": "діставатися додому",
+          "example": "I get home at six.",
+          "exampleTranslation": "Я приходжу додому о шостій."
+        },
+        {
+          "term": "go to bed",
+          "translation": "лягати спати",
+          "example": "The children go to bed at nine.",
+          "exampleTranslation": "Діти лягають спати о дев'ятій."
+        }
+      ],
+      "tip": {
+        "title": "Have breakfast, не \"eat breakfast\"",
+        "body": "Їжа й дії з **have**: **have** breakfast, **have** a shower.\n**wake up** — прокинутися, **get up** — встати з ліжка.\n**go to bed** — без the."
+      }
+    },
+    {
+      "order": 34,
+      "title": "Як пройти",
+      "titleTarget": "Directions",
+      "description": "Пояснюємо дорогу",
+      "level": "A2",
+      "words": [
+        {
+          "term": "turn left",
+          "translation": "повернути ліворуч",
+          "example": "Turn left at the bank.",
+          "exampleTranslation": "Поверніть ліворуч біля банку."
+        },
+        {
+          "term": "turn right",
+          "translation": "повернути праворуч",
+          "example": "Turn right after the bridge.",
+          "exampleTranslation": "Поверніть праворуч після мосту."
+        },
+        {
+          "term": "go straight on",
+          "translation": "іти прямо",
+          "example": "Go straight on for two minutes.",
+          "exampleTranslation": "Ідіть прямо дві хвилини."
+        },
+        {
+          "term": "corner",
+          "translation": "ріг",
+          "example": "The café is on the corner.",
+          "exampleTranslation": "Кафе на розі."
+        },
+        {
+          "term": "traffic lights",
+          "translation": "світлофор",
+          "example": "Stop at the traffic lights.",
+          "exampleTranslation": "Зупиніться біля світлофора."
+        },
+        {
+          "term": "crossroads",
+          "translation": "перехрестя",
+          "example": "Turn right at the crossroads.",
+          "exampleTranslation": "На перехресті поверніть праворуч."
+        },
+        {
+          "term": "opposite",
+          "translation": "навпроти",
+          "example": "The bank is opposite the park.",
+          "exampleTranslation": "Банк навпроти парку."
+        },
+        {
+          "term": "next to",
+          "translation": "поруч з",
+          "example": "The pharmacy is next to the school.",
+          "exampleTranslation": "Аптека поруч зі школою."
+        },
+        {
+          "term": "between",
+          "translation": "між",
+          "example": "It's between the bank and the shop.",
+          "exampleTranslation": "Це між банком і магазином."
+        },
+        {
+          "term": "behind",
+          "translation": "позаду, за",
+          "example": "The car park is behind the hotel.",
+          "exampleTranslation": "Парковка за готелем."
+        }
+      ],
+      "tip": {
+        "title": "Наказовий спосіб",
+        "body": "Вказівки — **наказовий спосіб** (без you): **Turn left**, **go straight on**.\nЗапитати: **How do I get to** the station?\n**next to** = поруч з, **opposite** = навпроти."
+      }
+    },
+    {
+      "order": 35,
+      "title": "У ресторані",
+      "titleTarget": "At the restaurant",
+      "description": "Замовлення та оплата в ресторані",
+      "level": "A2",
+      "words": [
+        {
+          "term": "menu",
+          "translation": "меню",
+          "example": "Can I see the menu, please?",
+          "exampleTranslation": "Можна меню, будь ласка?"
+        },
+        {
+          "term": "order",
+          "translation": "замовляти",
+          "example": "Are you ready to order?",
+          "exampleTranslation": "Ви готові замовити?"
+        },
+        {
+          "term": "book a table",
+          "translation": "забронювати столик",
+          "example": "I'd like to book a table for two.",
+          "exampleTranslation": "Я хотів би забронювати столик на двох."
+        },
+        {
+          "term": "starter",
+          "translation": "закуска",
+          "example": "For a starter, I'll have soup.",
+          "exampleTranslation": "На закуску я візьму суп."
+        },
+        {
+          "term": "main course",
+          "translation": "основна страва",
+          "example": "The main course was delicious.",
+          "exampleTranslation": "Основна страва була смачною."
+        },
+        {
+          "term": "dessert",
+          "translation": "десерт",
+          "example": "Would you like a dessert?",
+          "exampleTranslation": "Бажаєте десерт?"
+        },
+        {
+          "term": "bill",
+          "translation": "рахунок",
+          "example": "Could we have the bill, please?",
+          "exampleTranslation": "Можна рахунок, будь ласка?"
+        },
+        {
+          "term": "tip",
+          "translation": "чайові",
+          "example": "We left a ten per cent tip.",
+          "exampleTranslation": "Ми залишили десять відсотків чайових."
+        },
+        {
+          "term": "vegetarian",
+          "translation": "вегетаріанський",
+          "example": "Do you have any vegetarian dishes?",
+          "exampleTranslation": "У вас є вегетаріанські страви?"
+        },
+        {
+          "term": "delicious",
+          "translation": "смачний",
+          "example": "This cake is delicious!",
+          "exampleTranslation": "Цей торт дуже смачний!"
+        }
+      ],
+      "tip": {
+        "title": "I'd like…",
+        "body": "Ввічливе замовлення: **I'd like** the soup, please.\nЗапитання: **Could I have** the bill, please?\n**bill** — рахунок (брит.), **tip** — чайові."
+      }
+    },
+    {
+      "order": 36,
+      "title": "Природа",
+      "titleTarget": "Nature",
+      "description": "Ландшафт і природа",
+      "level": "A2",
+      "words": [
+        {
+          "term": "mountain",
+          "translation": "гора",
+          "example": "We walked up a high mountain.",
+          "exampleTranslation": "Ми зійшли на високу гору."
+        },
+        {
+          "term": "river",
+          "translation": "річка",
+          "example": "The river is very wide here.",
+          "exampleTranslation": "Тут річка дуже широка."
+        },
+        {
+          "term": "lake",
+          "translation": "озеро",
+          "example": "We swam in the lake.",
+          "exampleTranslation": "Ми плавали в озері."
+        },
+        {
+          "term": "forest",
+          "translation": "ліс",
+          "example": "There are bears in the forest.",
+          "exampleTranslation": "У лісі водяться ведмеді."
+        },
+        {
+          "term": "sea",
+          "translation": "море",
+          "example": "I love swimming in the sea.",
+          "exampleTranslation": "Я люблю плавати в морі."
+        },
+        {
+          "term": "island",
+          "translation": "острів",
+          "example": "They live on a small island.",
+          "exampleTranslation": "Вони живуть на маленькому острові."
+        },
+        {
+          "term": "field",
+          "translation": "поле",
+          "example": "Cows are in the field.",
+          "exampleTranslation": "Корови в полі."
+        },
+        {
+          "term": "sky",
+          "translation": "небо",
+          "example": "The sky is blue today.",
+          "exampleTranslation": "Сьогодні небо блакитне."
+        },
+        {
+          "term": "tree",
+          "translation": "дерево",
+          "example": "There is an old tree in our garden.",
+          "exampleTranslation": "У нашому саду старе дерево."
+        },
+        {
+          "term": "flower",
+          "translation": "квітка",
+          "example": "She gave me some flowers.",
+          "exampleTranslation": "Вона подарувала мені квіти."
+        }
+      ],
+      "tip": {
+        "title": "The з морями й горами",
+        "body": "З **the**: **the** sea, **the** mountains, **the** River Thames.\nБез the: окремі озера й вершини — Lake Victoria.\n**in the forest**, **on the island**, **in the sky**."
+      }
+    },
+    {
+      "order": 37,
+      "title": "Погода детальніше",
+      "titleTarget": "Weather in detail",
+      "description": "Описуємо погоду точніше",
+      "level": "A2",
+      "words": [
+        {
+          "term": "sunny",
+          "translation": "сонячний",
+          "example": "It's sunny today.",
+          "exampleTranslation": "Сьогодні сонячно."
+        },
+        {
+          "term": "cloudy",
+          "translation": "хмарний",
+          "example": "It was cloudy all day.",
+          "exampleTranslation": "Цілий день було хмарно."
+        },
+        {
+          "term": "rainy",
+          "translation": "дощовий",
+          "example": "I don't like rainy days.",
+          "exampleTranslation": "Я не люблю дощові дні."
+        },
+        {
+          "term": "windy",
+          "translation": "вітряний",
+          "example": "It's very windy by the sea.",
+          "exampleTranslation": "Біля моря дуже вітряно."
+        },
+        {
+          "term": "foggy",
+          "translation": "туманний",
+          "example": "It was foggy this morning.",
+          "exampleTranslation": "Сьогодні вранці був туман."
+        },
+        {
+          "term": "warm",
+          "translation": "теплий",
+          "example": "It's warm in spring.",
+          "exampleTranslation": "Навесні тепло."
+        },
+        {
+          "term": "cool",
+          "translation": "прохолодний",
+          "example": "The evenings are cool.",
+          "exampleTranslation": "Вечори прохолодні."
+        },
+        {
+          "term": "storm",
+          "translation": "гроза, буря",
+          "example": "There was a big storm last night.",
+          "exampleTranslation": "Минулої ночі була сильна гроза."
+        },
+        {
+          "term": "degree",
+          "translation": "градус",
+          "example": "It's five degrees outside.",
+          "exampleTranslation": "Надворі п'ять градусів."
+        },
+        {
+          "term": "weather forecast",
+          "translation": "прогноз погоди",
+          "example": "Did you see the weather forecast?",
+          "exampleTranslation": "Ти бачив прогноз погоди?"
+        }
+      ],
+      "tip": {
+        "title": "It's sunny: іменник + -y",
+        "body": "Прикметники з іменників: sun → **sunny**, cloud → **cloudy**, wind → **windy**.\nПро погоду — з **It**: **It's** foggy. It's raining.\nТемпература: It's 20 **degrees**."
+      }
+    },
+    {
+      "order": 38,
+      "title": "Технології",
+      "titleTarget": "Technology",
+      "description": "Телефон, комп'ютер та інтернет",
+      "level": "A2",
+      "words": [
+        {
+          "term": "mobile phone",
+          "translation": "мобільний телефон",
+          "example": "I left my mobile phone at home.",
+          "exampleTranslation": "Я залишив мобільний удома."
+        },
+        {
+          "term": "laptop",
+          "translation": "ноутбук",
+          "example": "She works on her laptop.",
+          "exampleTranslation": "Вона працює на ноутбуці."
+        },
+        {
+          "term": "password",
+          "translation": "пароль",
+          "example": "Don't tell anyone your password.",
+          "exampleTranslation": "Нікому не кажи свій пароль."
+        },
+        {
+          "term": "website",
+          "translation": "вебсайт",
+          "example": "I found it on a website.",
+          "exampleTranslation": "Я знайшов це на сайті."
+        },
+        {
+          "term": "download",
+          "translation": "завантажувати",
+          "example": "Download the app for free.",
+          "exampleTranslation": "Завантажте застосунок безкоштовно."
+        },
+        {
+          "term": "screen",
+          "translation": "екран",
+          "example": "The screen is broken.",
+          "exampleTranslation": "Екран розбитий."
+        },
+        {
+          "term": "battery",
+          "translation": "акумулятор",
+          "example": "My battery is low.",
+          "exampleTranslation": "У мене сідає акумулятор."
+        },
+        {
+          "term": "charger",
+          "translation": "зарядний пристрій",
+          "example": "Can I borrow your charger?",
+          "exampleTranslation": "Можна позичити твою зарядку?"
+        },
+        {
+          "term": "text message",
+          "translation": "SMS-повідомлення",
+          "example": "I sent her a text message.",
+          "exampleTranslation": "Я надіслав їй повідомлення."
+        },
+        {
+          "term": "log in",
+          "translation": "увійти (в акаунт)",
+          "example": "You need to log in first.",
+          "exampleTranslation": "Спочатку потрібно увійти."
+        }
+      ],
+      "tip": {
+        "title": "Mobile phone і on the internet",
+        "body": "Брит. **mobile phone** (або **mobile**), амер. cell phone.\nПрийменник **on**: **on** the internet, **on** a website, **on** my phone.\n**log in** — увійти в акаунт."
+      }
+    },
+    {
+      "order": 39,
+      "title": "Стосунки й почуття",
+      "titleTarget": "Relationships and feelings",
+      "description": "Люди навколо нас і наші емоції",
+      "level": "A2",
+      "words": [
+        {
+          "term": "boyfriend",
+          "translation": "хлопець (партнер)",
+          "example": "Her boyfriend is from Italy.",
+          "exampleTranslation": "Її хлопець з Італії."
+        },
+        {
+          "term": "girlfriend",
+          "translation": "дівчина (партнерка)",
+          "example": "He lives with his girlfriend.",
+          "exampleTranslation": "Він живе зі своєю дівчиною."
+        },
+        {
+          "term": "get married",
+          "translation": "одружуватися",
+          "example": "They got married in June.",
+          "exampleTranslation": "Вони одружилися в червні."
+        },
+        {
+          "term": "fall in love",
+          "translation": "закохатися",
+          "example": "They fell in love in Paris.",
+          "exampleTranslation": "Вони закохалися в Парижі."
+        },
+        {
+          "term": "miss",
+          "translation": "сумувати (за кимось)",
+          "example": "I miss my family.",
+          "exampleTranslation": "Я сумую за родиною."
+        },
+        {
+          "term": "worried",
+          "translation": "стурбований",
+          "example": "Mum is worried about you.",
+          "exampleTranslation": "Мама хвилюється за тебе."
+        },
+        {
+          "term": "bored",
+          "translation": "якому нудно",
+          "example": "The kids are bored.",
+          "exampleTranslation": "Дітям нудно."
+        },
+        {
+          "term": "excited",
+          "translation": "схвильований (радісно)",
+          "example": "I'm so excited about the trip!",
+          "exampleTranslation": "Я так чекаю на подорож!"
+        },
+        {
+          "term": "lonely",
+          "translation": "самотній",
+          "example": "He feels lonely in the new city.",
+          "exampleTranslation": "Він почувається самотнім у новому місті."
+        },
+        {
+          "term": "proud",
+          "translation": "гордий",
+          "example": "We are proud of you.",
+          "exampleTranslation": "Ми пишаємося тобою."
+        }
+      ],
+      "tip": {
+        "title": "Bored чи boring?",
+        "body": "**-ed** — що відчуваю я: I'm **bored**, I'm **excited**.\n**-ing** — що викликає почуття: The film is **boring**.\n**miss** — сумувати за: I **miss** you."
+      }
+    },
+    {
+      "order": 40,
+      "title": "Як часто?",
+      "titleTarget": "Frequency",
+      "description": "Прислівники частотності",
+      "level": "A2",
+      "words": [
+        {
+          "term": "always",
+          "translation": "завжди",
+          "example": "I always drink coffee in the morning.",
+          "exampleTranslation": "Я завжди п'ю каву вранці."
+        },
+        {
+          "term": "usually",
+          "translation": "зазвичай",
+          "example": "We usually eat at home.",
+          "exampleTranslation": "Ми зазвичай їмо вдома."
+        },
+        {
+          "term": "often",
+          "translation": "часто",
+          "example": "She often visits her grandmother.",
+          "exampleTranslation": "Вона часто відвідує бабусю."
+        },
+        {
+          "term": "sometimes",
+          "translation": "іноді",
+          "example": "I sometimes work at weekends.",
+          "exampleTranslation": "Я іноді працюю у вихідні."
+        },
+        {
+          "term": "rarely",
+          "translation": "рідко",
+          "example": "He rarely watches TV.",
+          "exampleTranslation": "Він рідко дивиться телевізор."
+        },
+        {
+          "term": "hardly ever",
+          "translation": "майже ніколи",
+          "example": "I hardly ever eat meat.",
+          "exampleTranslation": "Я майже ніколи не їм м'яса."
+        },
+        {
+          "term": "never",
+          "translation": "ніколи",
+          "example": "She is never late.",
+          "exampleTranslation": "Вона ніколи не запізнюється."
+        },
+        {
+          "term": "every day",
+          "translation": "щодня",
+          "example": "I walk the dog every day.",
+          "exampleTranslation": "Я щодня вигулюю собаку."
+        },
+        {
+          "term": "once a week",
+          "translation": "раз на тиждень",
+          "example": "We play tennis once a week.",
+          "exampleTranslation": "Ми граємо в теніс раз на тиждень."
+        },
+        {
+          "term": "twice",
+          "translation": "двічі",
+          "example": "I've been there twice.",
+          "exampleTranslation": "Я був там двічі."
+        }
+      ],
+      "tip": {
+        "title": "Місце прислівника частотності",
+        "body": "Перед основним дієсловом: I **always** get up early.\nАле **після be**: She **is never** late.\nВирази на кшталт **once a week** — у кінці речення."
       }
     }
   ]

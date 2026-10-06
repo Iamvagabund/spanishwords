@@ -9,6 +9,7 @@ import { languagesRouter } from './routes/languages'
 import { errorHandler } from './middleware/errorHandler'
 import { authenticateToken } from './middleware/auth'
 import { bootstrapAdmins, seedContent } from './seed/seed'
+import { runMigrations } from './seed/migrations'
 
 dotenv.config()
 
@@ -39,6 +40,7 @@ mongoose
     } catch (error) {
       console.error('Startup seeding failed:', (error as Error).message)
     }
+    await runMigrations()
     const port = process.env.PORT || 5000
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`)

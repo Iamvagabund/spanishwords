@@ -11,6 +11,10 @@ import { blockDoc, parseBlockInput, parseTip } from '../utils/blocks'
  * in the compiled build it is build/seed, so fall back to ../../src/seed/content.
  */
 export const findContentDir = (): string | null => {
+  if (process.env.SEED_CONTENT_DIR) {
+    const dir = path.resolve(process.env.SEED_CONTENT_DIR)
+    return fs.existsSync(dir) && fs.statSync(dir).isDirectory() ? dir : null
+  }
   const candidates = [
     path.join(__dirname, 'content'),
     path.join(__dirname, '../../src/seed/content'),
@@ -19,17 +23,17 @@ export const findContentDir = (): string | null => {
   return candidates.find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory()) ?? null
 }
 
-interface SeedFile {
+export interface SeedFile {
   language: { code: string; name: string; nativeName: string; flag?: string }
   blocks: any[]
 }
 
-const readSeedFiles = (): SeedFile[] => {
+export const readSeedFiles = (): SeedFile[] => {
   const dir = findContentDir()
   if (!dir) return []
   return fs
     .readdirSync(dir)
-    .filter((f) => f.endsWith('.json') && !f.startsWith('resources-'))
+    .filter((f) => f.endsWith('.json') && !f.startsWith('resources-') && !f.startsWith('changes-'))
     .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) as SeedFile)
     .filter((s) => s && s.language && typeof s.language.code === 'string' && Array.isArray(s.blocks))
 }
